@@ -63,7 +63,7 @@
 
     .video-grid {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(3, 1fr); /* Changed to 3 columns */
         gap: 20px;
         padding: 20px;
         max-width: 1200px;
@@ -73,12 +73,14 @@
     .video-container {
         position: relative;
         width: 100%;
-        padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+        padding-bottom: 177.78%; /* 9:16 Aspect Ratio (16/9 = 1.7778) */
         height: 0;
         overflow: hidden;
         border-radius: 12px;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
         transition: transform 0.3s ease, box-shadow 0.3s ease;
+        max-width: 300px; /* Limit maximum width */
+        margin: 0 auto; /* Center the container */
     }
 
     .video-container:hover {
@@ -95,31 +97,19 @@
         border: none;
     }
 
-    .video-title {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
-        color: white;
-        padding: 10px;
-        font-size: 0.9rem;
-        text-align: center;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-
-    .video-container:hover .video-title {
-        opacity: 1;
+    @media (max-width: 1024px) {
+        .video-grid {
+            grid-template-columns: repeat(2, 1fr); /* 2 columns on medium screens */
+        }
     }
 
     @media (max-width: 768px) {
         .video-grid {
             grid-template-columns: 1fr; /* Single column on mobile */
         }
-
-        .title-bar {
-            font-size: 1rem;
+        
+        .video-container {
+            max-width: 250px; /* Slightly smaller on mobile */
         }
     }
 </style>
@@ -135,34 +125,34 @@
                 </div>
             </div>
             <div class="video-grid">
-                <div id="videoContainer">
+                <div class="video-container">
                     <iframe src="https://www.youtube.com/embed/3Xkhmkpkgxg" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
                 </div>
-                <div id="videoContainer">
+                <div class="video-container">
                     <iframe src="https://www.youtube.com/embed/OM6LmPrAXyQ" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
                 </div>
-                <div id="videoContainer">
+                <div class="video-container">
                     <iframe src="https://www.youtube.com/embed/7DN05qqWSvo" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
                 </div>
-                <div id="videoContainer">
+                <div class="video-container">
                     <iframe src="https://www.youtube.com/embed/TipTg_6ODIw" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
                 </div>
-                <div id="videoContainer">
+                <div class="video-container">
                     <iframe src="https://www.youtube.com/embed/Kv3bTvaUQJE" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
                 </div>
-                <div id="videoContainer">
+                <div class="video-container">
                     <iframe src="https://www.youtube.com/embed/XI5eCglem3o" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
                 </div>
-                <div id="videoContainer">
+                <div class="video-container">
                     <iframe src="https://www.youtube.com/embed/h10JM4QkF5w" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
                 </div>
-                <div id="videoContainer">
+                <div class="video-container">
                     <iframe src="https://www.youtube.com/embed/GtxUGHRSlYI" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
-                    </div>
-                <div id="videoContainer">
+                </div>
+                <div class="video-container">
                     <iframe src="https://www.youtube.com/embed/bwdTQ_e8KaI" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
                 </div>
-                <div id="videoContainer">
+                <div class="video-container">
                     <iframe src="https://www.youtube.com/embed/LSJQhoILbIQ" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
                 </div>
             </div>

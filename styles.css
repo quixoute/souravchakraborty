@@ -304,6 +304,42 @@ body {
     background-color: #000080;
 }
 
+.image-1 {
+    position: fixed; /* Fixed positioning relative to viewport */
+    top: 84%; /* Upper-left area */
+    left: 20%;
+    transform: translate(-50%, -50%); /* Center image at position */
+    width: 570px; /* Fixed width */
+    height: 330px; /* Fixed height */
+    z-index: 5; /* Stacking order */
+    pointer-events: none; /* Prevent interaction */
+    object-fit: cover; /* Ensure image fills container */
+}
+
+.image-2 {
+    position: fixed; /* Fixed positioning relative to viewport */
+    top: 53%; /* Upper-left area */
+    left: 14%;
+    transform: translate(-50%, -50%) rotate(8deg); /* Center image at position */
+    width: 550px; /* Fixed width */
+    height: 300px; /* Fixed height */
+    z-index: 7; /* Stacking order */
+    pointer-events: none; /* Prevent interaction */
+    object-fit: cover; /* Ensure image fills container */
+}
+
+.image-3 {
+    position: fixed; /* Fixed positioning relative to viewport */
+    top: 86%; /* Upper-left area */
+    left: 92%;
+    transform: translate(-50%, -50%); /* Center image at position */
+    width: 550px; /* Fixed width */
+    height: 300px; /* Fixed height */
+    z-index: 7; /* Stacking order */
+    pointer-events: none; /* Prevent interaction */
+    object-fit: cover; /* Ensure image fills container */
+}
+
 /* Content area styling */
 .content {
     padding: 10px;

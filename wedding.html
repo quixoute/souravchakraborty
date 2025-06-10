@@ -9,10 +9,34 @@
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             margin: 0;
             padding: 0;
             color: #333;
+            position: relative;
+            overflow-x: hidden; /* Prevent horizontal scroll from large canvas */
+        }
+
+        /* Dotted canvas styling */
+        .dotted-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 5000px;
+            height: 5000px;
+            background-color: #e0e0e0;
+            background-image: radial-gradient(#a0a0a0 15%, transparent 16%);
+            background-size: 20px 20px;
+            z-index: 1;
+            animation: ripple 3s infinite linear;
+        }
+
+        @keyframes ripple {
+            0% {
+                background-position: 0 0;
+            }
+            100% {
+                background-position: 20px 20px;
+            }
         }
 
         .main-container {
@@ -20,6 +44,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            position: relative;
+            z-index: 2; /* Ensure content is above dotted canvas */
         }
 
         .right-align {
@@ -29,7 +55,7 @@
         }
 
         .window {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: #ffffff; /* Solid white for contrast */
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
@@ -50,8 +76,8 @@
             background: rgba(255, 255, 255, 0.2);
             border: none;
             color: rgb(27, 27, 27);
-            font-size: 1rem;
-            padding: 5px 10px;
+            font-size: 1.2rem;
+            padding: 8px 12px;
             border-radius: 5px;
             cursor: pointer;
             transition: background 0.3s ease;
@@ -68,6 +94,7 @@
             padding: 20px;
             max-width: 1200px;
             margin: 0 auto;
+            justify-items: center; /* Center grid items */
         }
 
         .video-container {
@@ -81,7 +108,7 @@
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .video-container:hover {
+        .video-container:hover, .video-container:focus-within {
             transform: translateY(-5px);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         }
@@ -107,15 +134,25 @@
             text-align: center;
             opacity: 0;
             transition: opacity 0.3s ease;
+            aria-hidden: true;
         }
 
-        .video-container:hover .video-title {
+        .video-container:hover .video-title, .video-container:focus-within .video-title {
             opacity: 1;
+            aria-hidden: false;
+        }
+
+        .video-container:last-child:nth-child(odd) {
+            grid-column: span 2; /* Center the last video if odd */
         }
 
         @media (max-width: 768px) {
             .video-grid {
                 grid-template-columns: 1fr; /* Single column on mobile */
+            }
+
+            .video-container:last-child:nth-child(odd) {
+                grid-column: auto; /* Reset for single-column layout */
             }
 
             .title-bar {
@@ -125,12 +162,13 @@
     </style>
 </head>
 <body>
+    <div class="dotted-canvas"></div>
     <div class="main-container">
         <div class="right-align">
             <div class="window">
                 <div class="title-bar">
                     <span class="title">Wedding Videos</span>
-                    <button class="close-button" onclick="window.location.href='index.html'" aria-label="Close window">x</button>
+                    <button class="close-button" onclick="window.location.href='index.html'" aria-label="Close window">×</button>
                 </div>
             </div>
             <div class="video-grid">

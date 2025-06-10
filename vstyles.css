@@ -1,0 +1,312 @@
+/* Floating project containers styling */
+.project-container {
+    width: 100px;
+    height: 50px;
+    background-color: transparent;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #000080;
+    position: fixed;
+    z-index: 6;
+    cursor: pointer;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+#container1 {
+    width: 150px;
+    height: 100px; /* Increased height to match vertical image dimensions */
+}
+
+#container2 {
+    width: 150px;
+    height: 100px; /* Increased height to match vertical image dimensions */
+}
+
+#container4 {
+    width: 150px;
+    height: 100px; /* Increased height to match vertical image dimensions */
+}
+
+#container5 {
+    width: 150px;
+    height: 100px; /* Maintaining the current height */
+}
+
+#container3 {
+    width: 150px;
+    height: 100px; /* Increased height to match vertical image dimensions */
+}
+
+/* Container 10 keeps its original override */
+#container10 {
+    width: 150px;
+    height: 100px;
+}
+
+#container8 {
+    width: 150px;
+    height: 100px;
+}
+
+#container7 {
+    width: 150px;
+    height: 100px;
+}
+
+#container6 {
+    width: 150px;
+    height: 100px;
+}
+
+#container9 {
+    width: 150px;
+    height: 100px;
+}
+
+#container11 {
+    width: 150px;
+    height: 100px;
+}
+
+
+
+/* Update mobile styling */
+@media (max-width: 768px) {
+    .project-container {
+        position: fixed;
+        transform: scale(0.7);
+    }
+
+    #container1 {
+        top: 40px;
+        left: 5px;
+    }
+
+    #container2 {
+        top: 50px;
+        right: 10px;
+        left: auto;
+    }
+
+    #container3 {
+        top: 200px;
+        left: 10px;
+        right: auto;
+    }
+
+    #container4 {
+        bottom: 50px;
+        left: 10px;
+    }
+
+    #container5 {
+        bottom: 50px;
+        right: 10px;
+    }
+
+    #container7 {
+        top: 300px;
+        left: 10px;
+        transform: scale(0.7);
+    }
+
+    #container8 {
+        top: 400px;
+        right: 10px;
+        left: auto;
+    }
+
+    #container10 {
+        top: 550px;
+        left: 50%;
+        transform: translateX(-50%) scale(0.7);
+    }
+
+    #container11 {
+        top: 150px;
+        left: 10px;
+        right: auto;
+        transform: scale(0.7);
+    }
+}
+
+
+/* Main window responsiveness */
+.window {
+    width: 80%;
+    max-width: 800px;
+    margin: auto;
+    border: 1px solid #000000;
+    background-color: #ffffff;
+    box-shadow: 2px 2px 0px #808080, 4px 4px 0px #ffffff;
+    position: fixed;
+    z-index: 10;
+    cursor: move;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+
+
+/* Add dotted canvas styling */
+.dotted-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 5000px;
+    height: 5000px;
+    background-color: #e0e0e0;
+    background-image: radial-gradient(
+        #a0a0a0 15%,
+        transparent 16%
+    );
+    background-size: 20px 20px;
+    z-index: 1;
+    animation: ripple 3s infinite linear; /* Added animation */
+}
+
+/* Keyframes for ripple animation */
+@keyframes ripple {
+    0% {
+        background-position: 0 0;
+    }
+    50% {
+        background-position: 10px 10px;
+    }
+    100% {
+        background-position: 20px 20px;
+    }
+}
+
+/* Title bar styling */
+.title-bar {
+    background-color: #000080;
+    color: #ffffff;
+    padding: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.title-bar .title {
+    padding-left: 5px;
+}
+
+/* Close button */
+.title-bar button {
+    width: 16px;
+    height: 16px;
+    background-color: #c3c7cb;
+    border: 1px solid #ffffff;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+    font-size: 12px;
+    margin-right: 5px;
+}
+
+.title-bar button:active {
+    border: 1px solid #808080;
+    color: #ffffff;
+    background-color: #000080;
+}
+
+/* Content area styling */
+.content {
+    padding: 10px;
+    border: 2px solid #808080;
+    border-top: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Header styling */
+.content h1 {
+    font-size: 20px;
+    color: #000080;
+    margin: 10px 0;
+}
+
+.content h2 {
+    font-size: 13px;
+    color: #000080;
+    margin-bottom: 20px;
+}
+
+/* Thumbnail styling */
+.thumbnail {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border: 2px solid #000080;
+    margin-bottom: 10px;
+}
+
+
+.social-icons {
+    position: fixed;
+    bottom: 250px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 20px;
+    z-index: 5;
+}
+
+.social-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #c3c7cb;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 
+        inset 1px 1px #ffffff,
+        inset -1px -1px #808080,
+        2px 2px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease;
+}
+
+.social-icon:hover {
+    transform: scale(1.1);
+}
+
+.social-icon:active {
+    box-shadow: 
+        inset -1px -1px #ffffff,
+        inset 1px 1px #808080;
+    transform: scale(0.95);
+}
+
+.pixel-icon {
+    width: 26px;
+    height: 26px;
+    image-rendering: pixelated;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.github-icon {
+    background-image: url('logo/25231.png');
+}
+
+.linkedin-icon {
+    background-image: url('logo/circle-linkedin-512.webp');
+}
+
+.instagram-icon {
+    background-image: url('logo/Instagram_icon.png.webp');
+}
+

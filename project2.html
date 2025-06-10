@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project 1 - Sourav Chakraborty</title>
+    <link rel="stylesheet" href="substyles.css">
+    <link rel="stylesheet" href="security.css">    
+</head>
+<body>
+    <!-- Background gallery -->
+    <div class="background-gallery">
+        <img src="ubereats\1.webp" alt="Image 1">
+        <img src="ubereats\2.webp" alt="Image 2" class="horizontal">
+        <img src="ubereats\3.webp" alt="Image 3" class="horizontal">
+        <img src="ubereats\4.webp" alt="Image 4" class="horizontal">
+        <img src="ubereats\5.webp" alt="Image 5" class="horizontal">
+        <img src="ubereats\6.webp" alt="Image 6" class="horizontal">
+        <img src="ubereats\7.webp" alt="Image 7" class="horizontal">
+        <img src="ubereats\8.webp" alt="Image 8" class="horizontal">
+        <img src="ubereats\9.webp" alt="Image 9" class="horizontal">
+        <img src="ubereats\10.webp" alt="Image 10" class="horizontal">
+        <img src="ubereats\11.webp" alt="Image 11" class="horizontal">
+        <img src="ubereats\12.webp" alt="Image 12" class="horizontal">
+    </div>
+
+    <!-- Main container with slideshow -->
+    <div class="window">
+        <div class="title-bar">
+            <span class="title">Uber Eats</span>
+            <button class="close-button" onclick="window.location.href='index.html'">x</button>
+        </div>
+        
+        <div class="slideshow">
+            <button class="nav-button" id="back">Back</button>
+            <img id="slideImage" src="ubereats\1.webp" alt="Slideshow Image">
+            <button class="nav-button" id="forward">Forward</button>
+        </div>
+    </div>
+    <script src="security.js"></script>
+    <script>
+        // Wait for the DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            const images = [
+                "ubereats/1.webp", "ubereats/2.webp", "ubereats/3.webp", "ubereats/4.webp",
+                "ubereats/5.webp", "ubereats/6.webp", "ubereats/7.webp", "ubereats/8.webp",
+                "ubereats/9.webp", "ubereats/10.webp", "ubereats/11.webp", "ubereats/12.webp", 
+            ];
+
+            let currentIndex = 0;
+            const slideImage = document.getElementById('slideImage');
+            const backButton = document.getElementById('back');
+            const forwardButton = document.getElementById('forward');
+
+            // Function to handle image loading
+            function showSlide(index) {
+                // Create a new image object to preload
+                const img = new Image();
+                img.onload = function() {
+                    slideImage.src = this.src;
+                    slideImage.style.opacity = 1;
+                };
+                img.onerror = function() {
+                    console.error('Error loading image:', images[index]);
+                };
+                slideImage.style.opacity = 0;
+                img.src = images[index];
+            }
+
+            function nextSlide() {
+                currentIndex = (currentIndex + 1) % images.length;
+                showSlide(currentIndex);
+            }
+
+            function prevSlide() {
+                currentIndex = (currentIndex - 1 + images.length) % images.length;
+                showSlide(currentIndex);
+            }
+
+            // Add event listeners to buttons
+            backButton.addEventListener('click', prevSlide);
+            forwardButton.addEventListener('click', nextSlide);
+
+            // Initialize first slide
+            showSlide(currentIndex);
+
+            // Auto-play slideshow every 5 seconds
+            let slideInterval = setInterval(nextSlide, 5000);
+
+            // Pause auto-play when user interacts with navigation
+            backButton.addEventListener('mouseenter', () => clearInterval(slideInterval));
+            forwardButton.addEventListener('mouseenter', () => clearInterval(slideInterval));
+
+            // Resume auto-play when user stops interacting
+            backButton.addEventListener('mouseleave', () => slideInterval = setInterval(nextSlide, 5000));
+            forwardButton.addEventListener('mouseleave', () => slideInterval = setInterval(nextSlide, 5000));
+        });
+    </script>
+</body>
+</html>

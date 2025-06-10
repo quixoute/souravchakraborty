@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Browser</title>
+    <link rel="stylesheet" href="security.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            background-color: #c3c7cb;
+            margin: 0;
+            font-family: "MS Sans Serif", Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .dotted-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 5000px;
+            height: 5000px;
+            background-color: #e0e0e0;
+            background-image: radial-gradient(#a0a0a0 15%, transparent 16%);
+            background-size: 20px 20px;
+            z-index: 1;
+            animation: ripple 3s infinite linear;
+        }
+
+        .explorer-window {
+            width: 400px;
+            position: relative;
+            z-index: 2;
+            border: 2px solid #808080;
+            background-color: #c3c7cb;
+            box-shadow: 2px 2px 0px #808080, 4px 4px 0px #ffffff;
+        }
+
+        .title-bar {
+            background-color: #000080;
+            color: white;
+            padding: 3px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .content {
+            padding: 20px;
+            background-color: #c3c7cb;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 5px;
+            border: 2px inset #fff;
+            background-color: #fff;
+            box-sizing: border-box;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        .connect-button {
+            width: 100px;
+            padding: 5px;
+            background-color: #c3c7cb;
+            border: 2px outset #fff;
+            color: #000;
+            cursor: pointer;
+            font-family: "MS Sans Serif", Arial, sans-serif;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .connect-button:active {
+            border-style: inset;
+            background-color: #c3c7cb;
+        }
+
+        .connect-button:focus {
+            outline: 1px dotted #000;
+            outline-offset: -4px;
+        }
+
+        .status-message {
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .file-list {
+            margin-top: 20px;
+            border-top: 1px solid #808080;
+            padding-top: 10px;
+        }
+
+        .file-item {
+            padding: 5px;
+            border-bottom: 1px solid #808080;
+            cursor: pointer;
+        }
+
+        .file-item:hover {
+            background-color: #000080;
+            color: white;
+        }
+
+        .file-item a {
+            color: inherit;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="dotted-canvas"></div>
+    <div class="explorer-window">
+        <div class="title-bar">
+            <span>File Explorer</span>
+            <button class="close-button" onclick="window.location.href='index.html'">x</button>
+        </div>
+        <div class="content">
+            <form id="ftpConnectForm" onsubmit="return connectFTP(event)">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" required>
+                </div>
+                <div class="button-group">
+                    <button type="submit" class="connect-button">Connect</button>
+                </div>
+                <div id="statusMessage" class="status-message"></div>
+            </form>
+
+            <div id="fileList" class="file-list">
+                <!-- File list will be dynamically populated here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="security.js"></script>
+    <script>
+        function connectFTP(event) {
+            event.preventDefault();
+        
+            const host = "1.1.1.1:8000"; // Hardcoded host
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const statusMessage = document.getElementById('statusMessage');
+            const fileList = document.getElementById('fileList');
+
+            fetch('/api/list-files', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    statusMessage.textContent = data.error;
+                 statusMessage.style.color = 'red';
+                 } else {
+                    statusMessage.textContent = 'Connected successfully!';
+                    statusMessage.style.color = 'green';
+                    fileList.innerHTML = '';
+                    data.files.forEach(file => {
+                        let fileItem = document.createElement('div');
+                        fileItem.className = 'file-item';
+                        fileItem.innerHTML = `<a href="/api/download?filename=${file}">${file}</a>`;
+                        fileList.appendChild(fileItem);
+                    });
+                }
+            })
+            .catch(error => {
+            statusMessage.textContent = 'Error connecting to FTP server';
+            statusMessage.style.color = 'red';
+            console.error('Error:', error);
+            });
+
+            return false;
+        }
+    </script>
+</body>
+</html>

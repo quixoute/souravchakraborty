@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Browser</title>
+    <link rel="stylesheet" href="security.css">   
+    <style>
+        body {
+            background-color: #c3c7cb;
+            margin: 0;
+            font-family: "MS Sans Serif", Arial, sans-serif;
+            font-size: 11px;
+            min-height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Add dotted canvas styling */
+        .dotted-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 5000px;
+            height: 5000px;
+            background-color: #e0e0e0;
+            background-image: radial-gradient(
+                #a0a0a0 15%,
+                transparent 16%
+            );
+            background-size: 20px 20px;
+            z-index: 1;
+            animation: ripple 3s infinite linear;
+        }
+
+        /* Keyframes for ripple animation */
+        @keyframes ripple {
+            0% {
+                background-position: 0 0;
+            }
+            50% {
+                background-position: 10px 10px;
+            }
+            100% {
+                background-position: 20px 20px;
+            }
+        }
+
+        .explorer-window {
+            width: 800px;
+            position: relative;
+            z-index: 2;
+            border: 2px solid #808080;
+            background-color: #c3c7cb;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .title-bar {
+            background-color: #000080;
+            color: white;
+            padding: 3px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .menu-bar {
+            border-bottom: 1px solid #808080;
+            padding: 2px 0;
+            background-color: #c3c7cb;
+        }
+
+        .menu-bar span {
+            padding: 2px 8px;
+            cursor: pointer;
+        }
+
+        .menu-bar span:hover {
+            background-color: #000080;
+            color: white;
+        }
+
+        .explorer-content {
+            display: flex;
+            height: 500px;
+        }
+
+        .folders-panel {
+            width: 200px;
+            border-right: 1px solid #808080;
+            background-color: white;
+            padding: 5px;
+            overflow-y: auto;
+        }
+
+        .folder-tree {
+            margin-top: 5px;
+        }
+
+        .folder-item {
+            padding: 2px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .folder-item:hover {
+            background-color: #000080;
+            color: white;
+        }
+
+        .files-panel {
+            flex-grow: 1;
+            background-color: white;
+            overflow-y: auto;
+        }
+
+        .files-header {
+            position: sticky;
+            top: 0;
+            display: grid;
+            grid-template-columns: minmax(200px, 2fr) minmax(100px, 1fr) minmax(150px, 1fr) minmax(150px, 1fr);
+            background-color: #c3c7cb;
+            border-bottom: 1px solid #808080;
+            padding: 2px;
+            font-weight: bold;
+        }
+
+        .files-header span {
+            padding: 2px 5px;
+            border-right: 1px solid #808080;
+        }
+
+        .file-item {
+            display: grid;
+            grid-template-columns: minmax(200px, 2fr) minmax(100px, 1fr) minmax(150px, 1fr) minmax(150px, 1fr);
+            padding: 2px;
+            cursor: pointer;
+        }
+
+        .file-item:hover {
+            background-color: #000080;
+            color: white;
+        }
+
+        .file-item a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .file-item:hover a {
+            color: white;
+        }
+
+        .status-bar {
+            border-top: 1px solid #808080;
+            padding: 2px 5px;
+            display: flex;
+            justify-content: space-between;
+            background-color: #c3c7cb;
+        }
+
+        .close-button {
+            background-color: #c3c7cb;
+            border: 1px solid #ffffff;
+            color: black;
+            width: 16px;
+            height: 14px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .close-button:active {
+            border: 1px solid #808080;
+            background-color: #000080;
+            color: white;
+        }
+
+        .selected {
+            background-color: #000080;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        // Check if user is authenticated
+        if (!sessionStorage.getItem('authenticated')) {
+            window.location.href = 'project4-login.html';
+        }
+    </script>
+    <div class="dotted-canvas"></div>
+    <div class="explorer-window">
+        <div class="title-bar">
+            <span>File Browser</span>
+            <button class="close-button" onclick="window.location.href='index.html'">×</button>
+        </div>
+        <div class="menu-bar">
+            <span>File</span>
+            <span>Edit</span>
+            <span>View</span>
+            <span>Tools</span>
+            <span>Help</span>
+        </div>
+        <div class="explorer-content">
+            <div class="folders-panel">
+                <div class="folder-tree">
+                    <div class="folder-item" onclick="selectFolder(this)">
+                        <span>📁</span>
+                        <span>Documents</span>
+                    </div>
+                    <div class="folder-item" onclick="selectFolder(this)">
+                        <span>📁</span>
+                        <span>Downloads</span>
+                    </div>
+                    <div class="folder-item" onclick="selectFolder(this)">
+                        <span>📁</span>
+                        <span>Pictures</span>
+                    </div>
+                    <div class="folder-item" onclick="selectFolder(this)">
+                        <span>📁</span>
+                        <span>Music</span>
+                    </div>
+                </div>
+            </div>
+            <div class="files-panel">
+                <div class="files-header">
+                    <span>Name</span>
+                    <span>Size</span>
+                    <span>Type</span>
+                    <span>Date modified</span>
+                </div>
+                <div class="file-list" id="fileList">
+                    <!-- Files will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+        <div class="status-bar">
+            <span id="itemCount">0 items</span>
+            <span id="selectedFolder">Documents</span>
+        </div>
+    </div>
+
+    <script>
+        function selectFolder(element) {
+            // Remove selected class from all folders
+            document.querySelectorAll('.folder-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked folder
+            element.classList.add('selected');
+            
+            // Update status bar
+            document.getElementById('selectedFolder').textContent = element.querySelector('span:last-child').textContent;
+            
+            // Here you would typically load files for the selected folder
+            loadFiles(element.querySelector('span:last-child').textContent);
+        }
+
+        function loadFiles(folderName) {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = ''; // Clear current files
+            
+            // This is where you'll add the logic to load actual files
+            // For now, here's an example structure:
+            const files = [
+                {
+                    name: 'example.txt',
+                    size: '1.2 KB',
+                    type: 'Text Document',
+                    date: '2024-02-20',
+                    url: '/files/example.txt'
+                }
+                // Add more files here
+            ];
+
+            files.forEach(file => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <a href="${file.url}" download>
+                        <span>📄 ${file.name}</span>
+                    </a>
+                    <span>${file.size}</span>
+                    <span>${file.type}</span>
+                    <span>${file.date}</span>
+                `;
+                fileList.appendChild(fileItem);
+            });
+
+            // Update item count
+            document.getElementById('itemCount').textContent = `${files.length} items`;
+        }
+
+        // Load initial folder
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFiles('Documents');
+        });
+    </script>
+</body>
+</html>

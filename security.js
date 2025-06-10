@@ -1,0 +1,1 @@
+document.addEventListener("contextmenu",function(e){e.preventDefault()});const images=document.querySelectorAll("img");images.forEach(e=>e.setAttribute("draggable","false")),document.addEventListener("keydown",function(e){(e.ctrlKey&&("s"===e.key||"u"===e.key||"p"===e.key)||"F12"===e.key)&&e.preventDefault()});

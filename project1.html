@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project 1 - Sourav Chakraborty</title>
+    <link rel="stylesheet" href="substyles.css">
+    <link rel="stylesheet" href="security.css">   
+</head>
+<body>
+
+    <!-- Background gallery -->
+    <div class="background-gallery">
+        <img src="Tri/_MG_1408.webp" alt="Image 1" class="horizontal">
+        <img src="Tri/_MG_1451.webp" alt="Image 2">
+        <img src="Tri/_MG_1583.webp" alt="Image 3">
+        <img src="Tri/_MG_1277.webp" alt="Image 4">
+        <img src="Tri/_MG_1279.webp" alt="Image 5">
+        <img src="Tri/_MG_1293.webp" alt="Image 6">
+        <img src="Tri/_MG_1590.webp" alt="Image 7" class="horizontal">
+        <img src="Tri/_MG_1619.webp" alt="Image 8">
+        <img src="Tri/_MG_1634.webp" alt="Image 9">
+        <img src="Tri/_MG_1642.webp" alt="Image 10">
+        <img src="Tri/_MG_1650.webp" alt="Image 11">
+        <img src="Tri/_MG_1718.webp" alt="Image 12">
+        <img src="Tri/_MG_1652.webp" alt="Image 13" class="horizontal">
+    </div>
+
+    <!-- Main container with slideshow -->
+    <div class="main-container">
+        <div class="right-align">
+            <div class="window">
+                <div class="title-bar">
+                    <span class="title">Tri Fashion</span>
+                    <button class="close-button" onclick="window.location.href='index.html'">x</button>
+                </div>
+                
+                <div class="slideshow">
+                    <button class="nav-button" id="back">Back</button>
+                    <img id="slideImage" src="Tri/_MG_1408.webp" alt="Slideshow Image">
+                    <button class="nav-button" id="forward">Forward</button>
+                </div>
+            </div>
+    
+            <div id="videoContainer">
+                <iframe src="https://www.youtube.com/embed/4au7BSmbQgc" title="tri di" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+    <script src="security.js"></script>
+    <script>
+        // Wait for the DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            const images = [
+                "Tri/_MG_1408.webp", "Tri/_MG_1451.webp", "Tri/_MG_1583.webp", "Tri/_MG_1277.webp",
+                "Tri/_MG_1279.webp", "Tri/_MG_1293.webp", "Tri/_MG_1590.webp", "Tri/_MG_1619.webp",
+                "Tri/_MG_1634.webp", "Tri/_MG_1642.webp", "Tri/_MG_1650.webp", "Tri/_MG_1718.webp", 
+                "Tri/_MG_1652.webp"
+            ];
+
+            let currentIndex = 0;
+            const slideImage = document.getElementById('slideImage');
+            const backButton = document.getElementById('back');
+            const forwardButton = document.getElementById('forward');
+
+            // Function to handle image loading
+            function showSlide(index) {
+                // Create a new image object to preload
+                const img = new Image();
+                img.onload = function() {
+                    slideImage.src = this.src;
+                    slideImage.style.opacity = 1;
+                };
+                img.onerror = function() {
+                    console.error('Error loading image:', images[index]);
+                };
+                slideImage.style.opacity = 0;
+                img.src = images[index];
+            }
+
+            function nextSlide() {
+                currentIndex = (currentIndex + 1) % images.length;
+                showSlide(currentIndex);
+            }
+
+            function prevSlide() {
+                currentIndex = (currentIndex - 1 + images.length) % images.length;
+                showSlide(currentIndex);
+            }
+
+            // Add event listeners to buttons
+            backButton.addEventListener('click', prevSlide);
+            forwardButton.addEventListener('click', nextSlide);
+
+            // Initialize first slide
+            showSlide(currentIndex);
+
+            // Auto-play slideshow every 5 seconds
+            let slideInterval = setInterval(nextSlide, 5000);
+
+            // Pause auto-play when user interacts with navigation
+            backButton.addEventListener('mouseenter', () => clearInterval(slideInterval));
+            forwardButton.addEventListener('mouseenter', () => clearInterval(slideInterval));
+
+            // Resume auto-play when user stops interacting
+            backButton.addEventListener('mouseleave', () => slideInterval = setInterval(nextSlide, 5000));
+            forwardButton.addEventListener('mouseleave', () => slideInterval = setInterval(nextSlide, 5000));
+            
+        });
+    </script>
+</body>
+</html>

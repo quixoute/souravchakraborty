@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Layout</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            position: relative;
+            overflow: auto;
+            background-color: #c3c7cb;
+        }
+
+        .dotted-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 5000px;
+            height: 5000px;
+            background-color: #e0e0e0;
+            background-image: radial-gradient(#a0a0a0 15%, transparent 16%);
+            background-size: 20px 20px;
+            z-index: -1;
+            animation: ripple 3s infinite linear;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: translate(0, 0);
+            }
+            100% {
+                transform: translate(-20px, -20px);
+            }
+        }
+
+        .image-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            padding: 20px;
+        }
+
+        .image-container img {
+            position: absolute;
+            margin: 10px;
+            cursor: pointer;
+        }
+
+        /* Position images around the center */
+        .image1 { top: 50px; left: 50px; }
+        .image2 { top: 50px; left: 410px; }
+        .image3 { top: 50px; left: 650px; }
+        .image4 { top: 290px; left: 50px; }
+        .image5 { top: 410px; left: 410px; }
+        .image6 { top: 290px; left: 650px; }
+        .image7 { top: 50px; left: 1010px; }
+        .image8 { top: 410px; left: 1010px; }
+        .image9 { top: 530px; left: 50px; }
+        .image10 { top: 530px; left: 650px; }
+        .image11 { top: 770px; left: 50px; }
+        .image12 { top: 770px; left: 410px; }
+        .image13 { top: 770px; left: 1010px; }
+        .image14 { top: 770px; left: 1010px; }
+        .image15 { top: 950px; left: 1950px; }
+        .image16 { top: 950px; left: 2150px; }
+        .image17 { top: 950px; left: 2350px; }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal img {
+            max-width: 70%;
+            max-height: 70%;
+        }
+
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="dotted-canvas"></div>
+    <div class="image-container">
+        <img src="Untitled/_DSC6638.webp" alt="Image 1" class="image1" onclick="openModal(this.src)">
+        <img src="Untitled/_DSC6754.webp" alt="Image 2" class="image2" onclick="openModal(this.src)">
+        <img src="Untitled/_DSC6700.webp" alt="Image 3" class="image3" onclick="openModal(this.src)">
+        <img src="Untitled/_DSC6714.webp" alt="Image 4" class="image4" onclick="openModal(this.src)">
+        <img src="Untitled/_DSC6797.webp" alt="Image 5" class="image5" onclick="openModal(this.src)">
+        <img src="Untitled/_DSC6909.webp" alt="Image 6" class="image6" onclick="openModal(this.src)">
+        <img src="Untitled/_DSC6801.webp" alt="Image 7" class="image7" onclick="openModal(this.src)">
+        <img src="Untitled/_DSC6822.webp" alt="Image 8" class="image8" onclick="openModal(this.src)">
+        <img src="Untitled/_DSC6858.webp" alt="Image 9" class="image9" onclick="openModal(this.src)">
+        <img src="Untitled/_DSC6659.webp" alt="Image 10" class="image10" onclick="openModal(this.src)">
+        <img src="Untitled/_DSC6916.webp" alt="Image 11" class="image11" onclick="openModal(this.src)">
+        <img src="Untitled/_DSC6944.webp" alt="Image 12" class="image12" onclick="openModal(this.src)">
+        <img src="Untitled/_DSC6979.webp" alt="Image 13" class="image13" onclick="openModal(this.src)">
+        <img src="Untitled/_DSC7013.webp" alt="Image 14" class="image14" onclick="openModal(this.src)">
+        <img src="Untitled/_DSC7030.webp" alt="Image 15" class="image15" onclick="openModal(this.src)">
+        <img src="Untitled/_DSC7034.webp" alt="Image 16" class="image16" onclick="openModal(this.src)">
+        <img src="Untitled/_DSC7062.webp" alt="Image 17" class="image17" onclick="openModal(this.src)">
+    </div>
+
+    <!-- Modal for displaying enlarged image -->
+    <div id="myModal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img id="modalImage" src="" alt="Enlarged Image">
+    </div>
+
+    <script>
+        const images = document.querySelectorAll('.image-container img');
+
+        images.forEach(img => {
+            img.onload = function() {
+                // Check if the image is horizontal or vertical
+                if (this.naturalWidth > this.naturalHeight) {
+                    // Horizontal image
+                    this.style.width = '350px';
+                    this.style.height = '230px';
+                } else {
+                    // Vertical image
+                    this.style.width = '230px';
+                    this.style.height = '350px';
+                }
+            };
+            img.src = img.src; // Trigger the onload event
+        });
+
+        function openModal(src) {
+            const modal = document.getElementById("myModal");
+            const modalImage = document.getElementById("modalImage");
+            modal.style.display = "flex"; // Show the modal
+            modalImage.src = src; // Set the source of the modal image
+        }
+
+        function closeModal() {
+            const modal = document.getElementById("myModal");
+            modal.style.display = "none"; // Hide the modal
+        }
+    </script>
+</body>
+</html>

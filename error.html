@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows 98 Error</title>
+    <style>
+        /* ... (all existing styles remain the same) ... */
+        body {
+            background-color: #008080;
+            margin: 0;
+            padding: 0;
+            font-family: "MS Sans Serif", Tahoma, sans-serif;
+            overflow: hidden;
+        }
+
+        .error-dialog {
+            position: absolute;
+            width: 300px;
+            background: #c0c0c0;
+            border-top: 1px solid #dfdfdf;
+            border-left: 1px solid #dfdfdf;
+            border-right: 2px solid #000;
+            border-bottom: 2px solid #000;
+            box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            cursor: move;
+        }
+
+        .title-bar {
+            height: 18px;
+            background: linear-gradient(90deg, #000080, #1084d0);
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 2px 3px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #000080;
+        }
+
+        .title-bar .title {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .title-bar .close-button {
+            width: 14px;
+            height: 14px;
+            background: #c0c0c0;
+            border-top: 1px solid #fff;
+            border-left: 1px solid #fff;
+            border-right: 1px solid #000;
+            border-bottom: 1px solid #000;
+            color: #000;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            text-shadow: 1px 1px #fff;
+        }
+
+        .title-bar .close-button:active {
+            border-top: 1px solid #000;
+            border-left: 1px solid #000;
+            border-right: 1px solid #fff;
+            border-bottom: 1px solid #fff;
+            padding-top: 1px;
+            padding-left: 1px;
+        }
+
+        .error-content {
+            padding: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .error-icon {
+            width: 32px;
+            height: 32px;
+            background: #fff;
+            border: 1px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #ff0000;
+        }
+
+        .error-message {
+            font-size: 11px;
+            line-height: 1.4;
+            margin-top: 6px;
+        }
+
+        .button-container {
+            padding: 12px;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .win98-button {
+            min-width: 75px;
+            padding: 4px 16px;
+            background: #c0c0c0;
+            border-top: 1px solid #fff;
+            border-left: 1px solid #fff;
+            border-right: 1px solid #000;
+            border-bottom: 1px solid #000;
+            color: #000;
+            font-family: "MS Sans Serif", Tahoma, sans-serif;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .win98-button:focus {
+            outline: 1px dotted #000;
+            outline-offset: -4px;
+        }
+
+        .win98-button:active {
+            border-top: 1px solid #000;
+            border-left: 1px solid #000;
+            border-right: 1px solid #fff;
+            border-bottom: 1px solid #fff;
+            padding-top: 5px;
+            padding-left: 17px;
+            padding-bottom: 3px;
+            padding-right: 15px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Audio element for error sound -->
+    <audio id="error-sound" preload="auto">
+        <source src="error.wav" type="audio/wav">
+    </audio>
+
+    <!-- Template for error dialog -->
+    <template id="error-template">
+        <div class="error-dialog">
+            <div class="title-bar">
+                <div class="title">Error</div>
+                <button class="close-button">x</button>
+            </div>
+            <div class="error-content">
+                <div class="error-icon">⚠</div>
+                <div class="error-message">
+                    A problem has been detected Please restart your Windows to prevent damage to your computer.
+                </div>
+            </div>
+            <div class="button-container">
+                <button class="win98-button">OK</button>
+                <button class="win98-button">Cancel</button>
+            </div>
+        </div>
+    </template>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const template = document.getElementById('error-template');
+            const errorSound = document.getElementById('error-sound');
+            let zIndexCounter = 1000;
+
+            // Function to play error sound
+            function playErrorSound() {
+                errorSound.currentTime = 0; // Reset sound to start
+                errorSound.play().catch(e => console.log('Error playing sound:', e));
+            }
+
+            // Function to create random position within viewport
+            function getRandomPosition() {
+                const maxX = window.innerWidth - 320;
+                const maxY = window.innerHeight - 150;
+                return {
+                    x: Math.max(0, Math.floor(Math.random() * maxX)),
+                    y: Math.max(0, Math.floor(Math.random() * maxY))
+                };
+            }
+
+            // Function to make dialog draggable
+            function makeDraggable(dialog) {
+                let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+                dialog.querySelector('.title-bar').onmousedown = dragMouseDown;
+
+                function dragMouseDown(e) {
+                    e.preventDefault();
+                    dialog.style.zIndex = ++zIndexCounter;
+                    pos3 = e.clientX;
+                    pos4 = e.clientY;
+                    document.onmouseup = closeDragElement;
+                    document.onmousemove = elementDrag;
+                }
+
+                function elementDrag(e) {
+                    e.preventDefault();
+                    pos1 = pos3 - e.clientX;
+                    pos2 = pos4 - e.clientY;
+                    pos3 = e.clientX;
+                    pos4 = e.clientY;
+                    dialog.style.top = (dialog.offsetTop - pos2) + "px";
+                    dialog.style.left = (dialog.offsetLeft - pos1) + "px";
+                }
+
+                function closeDragElement() {
+                    document.onmouseup = null;
+                    document.onmousemove = null;
+                }
+            }
+
+            // Function to create new dialog
+            function createDialog() {
+                const clone = template.content.cloneNode(true);
+                const dialog = clone.querySelector('.error-dialog');
+                const pos = getRandomPosition();
+                
+                dialog.style.left = pos.x + 'px';
+                dialog.style.top = pos.y + 'px';
+                dialog.style.zIndex = ++zIndexCounter;
+                
+                // Add click handlers
+                const closeButton = dialog.querySelector('.close-button');
+                const buttons = dialog.querySelectorAll('.win98-button');
+                
+                const closeDialog = () => {
+                    dialog.remove();
+                };
+
+                closeButton.onclick = () => {
+                    window.location.href = 'index.html';
+                };
+                
+                buttons.forEach(button => button.onclick = closeDialog);
+                
+                makeDraggable(dialog);
+                document.body.appendChild(dialog);
+                
+                // Play error sound when dialog appears
+                playErrorSound();
+            }
+
+            // Create initial dialogs
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => createDialog(), i * 500);
+            }
+
+            // Create new dialog every few seconds
+            setInterval(() => {
+                if (document.querySelectorAll('.error-dialog').length < 15) {
+                    createDialog();
+                }
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

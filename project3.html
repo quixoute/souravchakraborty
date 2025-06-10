@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project 1 - Sourav Chakraborty</title>
+    <link rel="stylesheet" href="substyles.css">
+    <link rel="stylesheet" href="security.css">   
+</head>
+<body>
+    <!-- Background gallery -->
+    <div class="background-gallery">
+        <img src="Dreamer\Dreamer-1.jpg" alt="Image 1" class="horizontal">
+        <img src="Dreamer\Dreamer-2.jpg" alt="Image 2">
+        <img src="Dreamer\Dreamer-3.jpg" alt="Image 3">
+        <img src="Dreamer\Dreamer-4.jpg" alt="Image 4">
+        <img src="Dreamer\Dreamer-5.jpg" alt="Image 5">
+        <img src="Dreamer\Dreamer-6.jpg" alt="Image 6">
+        <img src="Dreamer\Dreamer-7.jpg" alt="Image 7">
+        <img src="Dreamer\Dreamer-8.jpg" alt="Image 8">
+        <img src="Dreamer\Dreamer-9.jpg" alt="Image 9">
+        <img src="Dreamer\Dreamer-10.jpg" alt="Image 10">
+        <img src="Dreamer\Dreamer-11.jpg" alt="Image 11">
+        <img src="Dreamer\Dreamer-12.jpg" alt="Image 12">
+        <img src="Dreamer\Dreamer-13.jpg" alt="Image 12">
+        <img src="Dreamer\Dreamer-14.jpg" alt="Image 12">
+        <img src="Dreamer\Dreamer-15.jpg" alt="Image 12">
+    </div>
+
+    <!-- Main container with slideshow -->
+    <div class="window">
+        <div class="title-bar">
+            <span class="title">Tri Fashion</span>
+            <button class="close-button" onclick="window.location.href='index.html'">x</button>
+        </div>
+        
+        <div class="slideshow">
+            <button class="nav-button" id="back">Back</button>
+            <img id="slideImage" src="Dreamer\Dreamer-1.jpg" alt="Slideshow Image">
+            <button class="nav-button" id="forward">Forward</button>
+        </div>
+    </div>
+    <script src="security.js"></script>
+    <script>
+        // Wait for the DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            const images = [
+                "Dreamer/Dreamer-1.jpg", "Dreamer/Dreamer-2.jpg", "Dreamer/Dreamer-3.jpg", "Dreamer/Dreamer-4.jpg",
+                "Dreamer/Dreamer-5.jpg",  "Dreamer/Dreamer-6.jpg", "Dreamer/Dreamer-7.jpg", "Dreamer/Dreamer-8.jpg",
+                "Dreamer/Dreamer-9.jpg", "Dreamer/Dreamer-10.jpg", "Dreamer/Dreamer-11.jpg", "Dreamer/Dreamer-12.jpg", 
+                "Dreamer/Dreamer-13.jpg", "Dreamer/Dreamer-14.jpg", "Dreamer/Dreamer-15.jpg"
+            ];
+
+            let currentIndex = 0;
+            const slideImage = document.getElementById('slideImage');
+            const backButton = document.getElementById('back');
+            const forwardButton = document.getElementById('forward');
+
+            // Function to handle image loading
+            function showSlide(index) {
+                // Create a new image object to preload
+                const img = new Image();
+                img.onload = function() {
+                    slideImage.src = this.src;
+                    slideImage.style.opacity = 1;
+                };
+                img.onerror = function() {
+                    console.error('Error loading image:', images[index]);
+                };
+                slideImage.style.opacity = 0;
+                img.src = images[index];
+            }
+
+            function nextSlide() {
+                currentIndex = (currentIndex + 1) % images.length;
+                showSlide(currentIndex);
+            }
+
+            function prevSlide() {
+                currentIndex = (currentIndex - 1 + images.length) % images.length;
+                showSlide(currentIndex);
+            }
+
+            // Add event listeners to buttons
+            backButton.addEventListener('click', prevSlide);
+            forwardButton.addEventListener('click', nextSlide);
+
+            // Initialize first slide
+            showSlide(currentIndex);
+
+            // Auto-play slideshow every 5 seconds
+            let slideInterval = setInterval(nextSlide, 5000);
+
+            // Pause auto-play when user interacts with navigation
+            backButton.addEventListener('mouseenter', () => clearInterval(slideInterval));
+            forwardButton.addEventListener('mouseenter', () => clearInterval(slideInterval));
+
+            // Resume auto-play when user stops interacting
+            backButton.addEventListener('mouseleave', () => slideInterval = setInterval(nextSlide, 5000));
+            forwardButton.addEventListener('mouseleave', () => slideInterval = setInterval(nextSlide, 5000));
+        });
+    </script>
+</body>
+</html>

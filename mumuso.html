@@ -99,13 +99,13 @@
         .video-container {
             position: relative;
             width: 100%;
-            padding-bottom: 177.78%; /* 9:16 Aspect Ratio */
-            height: 0;
+            max-width: 300px; /* Maintain max-width */
+            max-height: 540px; /* Add max-height to limit vertical stretching */
+            aspect-ratio: 9 / 16; /* Use aspect-ratio property for better control */
             overflow: hidden;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-            max-width: 300px;
             margin: 0 auto;
         }
 
@@ -178,44 +178,11 @@
         <div class="right-align">
             <div class="window">
                 <div class="title-bar">
-                    <span class="title">Reels</span>
+                    <span class="title">Mumuso</span>
                     <button class="close-button" onclick="window.location.href='index.html'" aria-label="Close window">×</button>
                 </div>
             </div>
             <div class="video-grid">
-                <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/3Xkhmkpkgxg" title="Reel 1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
-                    <div class="video-title">Reel 1</div>
-                </div>
-                <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/OM6LmPrAXyQ" title="Reel 2" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
-                    <div class="video-title">Reel 2</div>
-                </div>
-                <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/7DN05qqWSvo" title="Reel 3" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
-                    <div class="video-title">Reel 3</div>
-                </div>
-                <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/TipTg_6ODIw" title="Reel 4" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
-                    <div class="video-title">Reel 4</div>
-                </div>
-                <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/Kv3bTvaUQJE" title="Reel 5" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
-                    <div class="video-title">Reel 5</div>
-                </div>
-                <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/XI5eCglem3o" title="Reel 6" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
-                    <div class="video-title">Reel 6</div>
-                </div>
-                <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/h10JM4QkF5w" title="Reel 7" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
-                    <div class="video-title">Reel 7</div>
-                </div>
-                <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/GtxUGHRSlYI" title="Reel 8" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
-                    <div class="video-title">Reel 8</div>
-                </div>
-               
                 <div class="video-container">
                     <iframe src="https://www.youtube.com/embed/LSJQhoILbIQ" title="Mumuso x Jessica" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" frameborder="0" allowfullscreen loading="lazy"></iframe>
                     <div>

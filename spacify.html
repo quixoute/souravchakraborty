@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project 1 - Sourav Chakraborty</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap">
+    <link rel="stylesheet" href="security.css">   
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .dotted-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 5000px;
+            height: 5000px;
+            background-color: #e0e0e0;
+            background-image: radial-gradient(#a0a0a0 15%, transparent 16%);
+            background-size: 20px 20px;
+            z-index: 1;
+            animation: ripple 3s infinite linear;
+        }
+
+        @keyframes ripple {
+            0% {
+                background-position: 0 0;
+            }
+            100% {
+                background-position: 20px 20px;
+            }
+        }
+
+        .main-container {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .right-align {
+            width: 100%;
+            max-width: 1200px;
+            padding: 20px;
+        }
+
+        .window {
+            background: #ffffff; /* Changed for contrast with dotted canvas */
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .title-bar {
+            color: rgb(27, 27, 27);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        .close-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: rgb(27, 27, 27);
+            font-size: 1.2rem;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .close-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            justify-items: center;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 177.78%; /* 9:16 Aspect Ratio */
+            height: 0;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .video-container:hover, .video-container:focus-within {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .video-title {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+            color: white;
+            padding: 10px;
+            font-size: 0.9rem;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            aria-hidden: true;
+        }
+
+        .video-container:hover .video-title, .video-container:focus-within .video-title {
+            opacity: 1;
+            aria-hidden: false;
+        }
+
+        .video-container:last-child:nth-child(3n+1) {
+            grid-column: span 3; /* Center last video in row for odd counts */
+        }
+
+        @media (max-width: 1024px) {
+            .video-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .video-container:last-child:nth-child(3n+1) {
+                grid-column: auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .video-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .video-container {
+                max-width: 250px;
+            }
+
+            .video-container:last-child:nth-child(3n+1) {
+                grid-column: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dotted-canvas"></div>
+    <div class="main-container">
+        <div class="right-align">
+            <div class="window">
+                <div class="title-bar">
+                    <span class="title">Spacify</span>
+                    <button class="close-button" onclick="window.location.href='index.html'" aria-label="Close window">×</button>
+                </div>
+            </div>
+            <div class="video-grid">
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/3Xkhmkpkgxg" title="Reel 1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
+                    <div class="video-title">Reel 1</div>
+                </div>
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/OM6LmPrAXyQ" title="Reel 2" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
+                    <div class="video-title">Reel 2</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="security.js"></script>
+</body>
+</html>

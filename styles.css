@@ -85,42 +85,6 @@
     transition: none !important; /* Prevent transitions */
 }
 
-.wmp-preview {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    background-color: black;
-}
-
-/* Title bar */
-.wmp-preview::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 20px;
-    background: linear-gradient(to right, #000080, #1084d0);
-    z-index: 1;
-}
-
-/* Windows logo */
-.wmp-preview::after {
-    content: "";
-    position: absolute;
-    width: 100px;
-    height: 100px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) perspective(500px) rotateY(30deg);
-    background: 
-        linear-gradient(45deg, transparent 0%, transparent 40%, #FF0000 40%, #FF0000 60%, transparent 60%, transparent 100%),
-        linear-gradient(-45deg, transparent 0%, transparent 40%, #00FF00 40%, #00FF00 60%, transparent 60%, transparent 100%),
-        linear-gradient(135deg, transparent 0%, transparent 40%, #0000FF 40%, #0000FF 60%, transparent 60%, transparent 100%),
-        linear-gradient(-135deg, transparent 0%, transparent 40%, #FFFF00 40%, #FFFF00 60%, transparent 60%, transparent 100%);
-    filter: blur(1px);
-    z-index: 2;
-}
 
 
 /* Update mobile styling */
@@ -154,21 +118,6 @@
     z-index: 4;
 }
 
-/* Main window responsiveness */
-.window {
-    width: 80%;
-    max-width: 800px;
-    margin: auto;
-    border: 2px solid #000000;
-    background-color: #ffffff;
-    box-shadow: 2px 2px 0px #808080, 4px 4px 0px #ffffff;
-    position: fixed;
-    z-index: 10;
-    cursor: move;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-}
 
 /* Responsive adjustments for vertical screens */
 @media (max-width: 768px) {
@@ -187,36 +136,12 @@
         object-fit: cover;
     }
 
-    /* Adjust the main window for smaller screens */
-    .window {
-        width: 100%;
-        max-width: 400px;
-        margin: 10px auto;
-        transform: translate(0, 0); /* Reset the initial translate for smaller screens */
-    }
-
-    /* Thumbnail and text scaling */
-    .thumbnail {
-        width: 80%;
-        height: auto;
-        margin: 0 auto;
-        display: block;
-    }
 
     h1, h2 {
         font-size: 1.2em;
         text-align: center;
     }
 
-    .description-box p {
-        font-size: 0.9em;
-        text-align: center;
-    }
-
-    .bottom-section button {
-        font-size: 0.8em;
-        padding: 8px;
-    }
 }
 
 /* Basic reset */
@@ -268,42 +193,6 @@ body {
     }
 }
 
-/* Title bar styling */
-.title-bar {
-    background-color: #000080;
-    color: #ffffff;
-    padding: 5px;
-    font-size: 14px;
-    font-weight: bold;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.title-bar .title {
-    padding-left: 5px;
-}
-
-/* Close button */
-.title-bar button {
-    width: 16px;
-    height: 16px;
-    background-color: #c3c7cb;
-    border: 1px solid #ffffff;
-    color: #000;
-    font-weight: bold;
-    cursor: pointer;
-    text-align: center;
-    font-size: 12px;
-    margin-right: 5px;
-}
-
-.title-bar button:active {
-    border: 1px solid #808080;
-    color: #ffffff;
-    background-color: #000080;
-}
-
 .image-1 {
     position: fixed; /* Fixed positioning relative to viewport */
     top: 84%; /* Upper-left area */
@@ -340,6 +229,31 @@ body {
     object-fit: cover; /* Ensure image fills container */
 }
 
+.image-4 {
+    position: fixed; /* Fixed positioning relative to viewport */
+    top: 32%; /* Upper-left area */
+    left: 42%;
+    transform: translate(-50%, -50%) rotate(-15deg) ; /* Center image at position */
+    width: 600px; /* Fixed width */
+    height: 300px; /* Fixed height */
+    z-index: 6; /* Stacking order */
+    pointer-events: auto; /* Prevent interaction */
+    object-fit: cover; /* Ensure image fills container */
+    cursor: pointer;
+}
+
+.intro {
+    position: fixed; /* Fixed positioning relative to viewport */
+    top: 36%; /* Upper-left area */
+    left: 42%;
+    transform: translate(-50%, -50%); /* Center image at position */
+    width: 550px; /* Fixed width */
+    height: 300px; /* Fixed height */
+    z-index: 7; /* Stacking order */
+    pointer-events: none; /* Prevent interaction */
+    object-fit: cover; /
+}
+
 /* Content area styling */
 .content {
     padding: 10px;
@@ -365,66 +279,19 @@ body {
 
 /* Thumbnail styling */
 .thumbnail {
-    width: 100px;
-    height: 100px;
+    position: fixed;
+    top: 30%;
+    left: 34%;
+    width: 1000px;
+    height: 1000px;
     object-fit: cover;
-    border: 2px solid #000080;
-    margin-bottom: 10px;
-}
-
-/* Description box styling */
-.description-box {
-    width: 100%;
-    border: 2px inset #c3c7cb;
-    padding: 10px;
-    background-color: #ffffff;
-    margin-top: 10px;
-    text-align: left;
-    font-size: 14px;
-}
-
-/* Bottom section styling */
-.bottom-section {
-    margin-top: 20px;
-    width: 100%;
-    background-color: #c3c7cb;
-    padding: 10px;
-    border: 2px solid #808080;
-    text-align: center;
-    font-size: 14px;
-    font-weight: bold;
-    color: #000080;
-    display: flex;
-    justify-content: center;
-    gap: 10px; /* Adds space between buttons */
-}
-
-/* Button styling with 3D effect */
-.bottom-section button {
-    padding: 4px 8px;
-    background-color: #c3c7cb;
-    border: none;
-    color: #000;
-    font-weight: bold;
-    cursor: pointer;
-    font-size: 12px;
-    text-align: center;
-    min-width: 80px;
-    box-shadow: inset 1px 1px #ffffff, inset -1px -1px #808080, 2px 2px #000; /* Bevel + Shadow */
-    border: 1px solid #c3c7cb;
-}
-
-/* Active (clicked) button effect */
-.bottom-section button:active {
-    box-shadow: inset -1px -1px #ffffff, inset 1px 1px #808080; /* Inverted bevel for pressed look */
-    background-color: #000080;
-    color: #ffffff;
+    z-index: 10;
 }
 
 .social-icons {
     position: fixed;
-    bottom: 250px;
-    left: 50%;
+    bottom: 1150px;
+    left: 80%;
     transform: translateX(-50%);
     display: flex;
     gap: 20px;
@@ -432,8 +299,8 @@ body {
 }
 
 .social-icon {
-    width: 32px;
-    height: 32px;
+    width: 42px;
+    height: 42px;
     border-radius: 50%;
     background-color: #c3c7cb;
     display: flex;
@@ -459,8 +326,8 @@ body {
 }
 
 .pixel-icon {
-    width: 26px;
-    height: 26px;
+    width: 34px;
+    height: 34px;
     image-rendering: pixelated;
     background-size: contain;
     background-repeat: no-repeat;
@@ -486,22 +353,4 @@ body {
 
 .window:active ~ .social-icons {
     transform: translate(-50%, -30px);
-}
-
-/* Mobile responsiveness */
-@media (max-width: 768px) {
-    .social-icons {
-        bottom: 20px;
-        gap: 15px;
-    }
-
-    .social-icon {
-        width: 24px;
-        height: 24px;
-    }
-
-    .pixel-icon {
-        width: 12px;
-        height: 12px;
-    }
 }

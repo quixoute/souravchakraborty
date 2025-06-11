@@ -214,7 +214,7 @@ body {
     width: 600px; /* Fixed width */
     height: 300px; /* Fixed height */
     z-index: 6; /* Stacking order */
-    pointer-events: auto; /* Prevent interaction */
+    pointer-events: none; /* Prevent interaction */
     object-fit: cover; /* Ensure image fills container */
     cursor: pointer;
 }

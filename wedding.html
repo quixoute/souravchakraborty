@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project 1 - Sourav Chakraborty</title>
+    <title>Sourav Chakraborty</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap">
     <link rel="stylesheet" href="security.css">   
     <style>
@@ -54,38 +54,6 @@
             padding: 20px;
         }
 
-        .window {
-            background: #ffffff; /* Solid white for contrast */
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-
-        .title-bar {
-            color: rgb(27, 27, 27);
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: 600;
-            font-size: 1.2rem;
-        }
-
-        .close-button {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: rgb(27, 27, 27);
-            font-size: 1.2rem;
-            padding: 8px 12px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-
-        .close-button:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
 
         .video-grid {
             display: grid;
@@ -154,10 +122,6 @@
             .video-container:last-child:nth-child(odd) {
                 grid-column: auto; /* Reset for single-column layout */
             }
-
-            .title-bar {
-                font-size: 1rem;
-            }
         }
     </style>
 </head>
@@ -165,12 +129,7 @@
     <div class="dotted-canvas"></div>
     <div class="main-container">
         <div class="right-align">
-            <div class="window">
-                <div class="title-bar">
-                    <span class="title">Wedding Videos</span>
-                    <button class="close-button" onclick="window.location.href='index.html'" aria-label="Close window">×</button>
-                </div>
-            </div>
+           
             <div class="video-grid">
                 <div class="video-container">
                     <iframe src="https://www.youtube.com/embed/j6KxpiUJJ1Y" title="Sukanya and Sayak's Wedding Teaser" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>

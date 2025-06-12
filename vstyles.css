@@ -18,7 +18,13 @@ html, body {
     /* Smooth scrolling */
     scroll-behavior: smooth;
     /* Add transition for smoother scrolling */
-    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.3s cubic-bezier(0.33, 1, 0.68, 1);
+    /* Hardware acceleration */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000;
+    will-change: transform;
 }
 
 #canvasContainer, #canvasContainer2, #canvasContainer3 {
@@ -32,7 +38,13 @@ html, body {
     /* Add touch feedback */
     -webkit-tap-highlight-color: transparent;
     /* Add transition for smoother movement */
-    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.3s cubic-bezier(0.33, 1, 0.68, 1);
+    /* Hardware acceleration */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000;
+    will-change: transform;
 }
 
 #canvasWrapper, #canvasWrapper2, #canvasWrapper3 {
@@ -43,6 +55,12 @@ html, body {
     position: relative;
     margin: 20px auto; /* Add some spacing between canvases */
     background-color: rgba(255, 255, 255, 0.1); /* Slight background to see the area */
+    /* Hardware acceleration */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000;
+    will-change: transform;
 }
 
 #myCanvas, #myCanvas2, #myCanvas3 {

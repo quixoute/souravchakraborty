@@ -366,9 +366,15 @@ window.addEventListener('scroll', () => {
     setTimeout(resizeCanvas, 100); // Debounce for Safari quirks
 });
 
-// Add smooth scroll behavior
+// Add smooth scroll behavior with improved performance
+let isScrolling = false;
+let scrollTimeout;
+const SCROLL_DURATION = 300; // Match CSS transition duration
+
 document.addEventListener('wheel', (e) => {
     e.preventDefault();
+    if (isScrolling) return;
+    
     const scrollContainer = document.getElementById('scrollContainer');
     const scrollAmount = e.deltaY;
     const currentScroll = scrollContainer.scrollTop;
@@ -384,49 +390,59 @@ document.addEventListener('wheel', (e) => {
         targetScroll = Math.floor(currentScroll / windowHeight) * windowHeight;
     }
     
+    // Prevent scrolling if already at the target
+    if (targetScroll === currentScroll) return;
+    
+    isScrolling = true;
+    
     // Smooth scroll to target with easing
     scrollContainer.scrollTo({
         top: targetScroll,
         behavior: 'smooth'
     });
+    
+    // Reset scrolling flag after animation
+    setTimeout(() => {
+        isScrolling = false;
+    }, SCROLL_DURATION);
 }, { passive: false });
 
-// Touch event handling with improved easing
+// Touch event handling with improved performance
 let touchStartY = 0;
 let touchStartX = 0;
 let touchEndY = 0;
 let touchEndX = 0;
-let isScrolling = false;
 let lastTouchTime = 0;
 const TOUCH_THRESHOLD = 50; // Minimum distance for swipe
 const TOUCH_TIMEOUT = 300; // Maximum time for swipe (ms)
 
 function handleTouchStart(e) {
+    if (isScrolling) return;
     touchStartY = e.touches[0].clientY;
     touchStartX = e.touches[0].clientX;
     lastTouchTime = Date.now();
-    isScrolling = false;
 }
 
 function handleTouchMove(e) {
-    if (!isScrolling) {
-        const touchY = e.touches[0].clientY;
-        const touchX = e.touches[0].clientX;
-        const deltaY = Math.abs(touchY - touchStartY);
-        const deltaX = Math.abs(touchX - touchStartX);
-        
-        // Determine if this is a vertical scroll
-        if (deltaY > deltaX && deltaY > 10) {
-            isScrolling = true;
-        }
+    if (isScrolling) {
+        e.preventDefault();
+        return;
     }
     
-    if (isScrolling) {
+    const touchY = e.touches[0].clientY;
+    const touchX = e.touches[0].clientX;
+    const deltaY = Math.abs(touchY - touchStartY);
+    const deltaX = Math.abs(touchX - touchStartX);
+    
+    // Determine if this is a vertical scroll
+    if (deltaY > deltaX && deltaY > 10) {
         e.preventDefault();
     }
 }
 
 function handleTouchEnd(e) {
+    if (isScrolling) return;
+    
     touchEndY = e.changedTouches[0].clientY;
     touchEndX = e.changedTouches[0].clientX;
     const deltaY = touchEndY - touchStartY;
@@ -449,11 +465,21 @@ function handleTouchEnd(e) {
             targetScroll = Math.ceil(currentScroll / windowHeight) * windowHeight;
         }
         
+        // Prevent scrolling if already at the target
+        if (targetScroll === currentScroll) return;
+        
+        isScrolling = true;
+        
         // Smooth scroll to target with easing
         scrollContainer.scrollTo({
             top: targetScroll,
             behavior: 'smooth'
         });
+        
+        // Reset scrolling flag after animation
+        setTimeout(() => {
+            isScrolling = false;
+        }, SCROLL_DURATION);
     }
 }
 
@@ -495,14 +521,14 @@ document.querySelectorAll('.social-icon').forEach(icon => {
     }, { passive: true });
 });
 
-// Optimize scroll performance
-let scrollTimeout;
+// Optimize scroll performance with RAF
+let ticking = false;
 document.getElementById('scrollContainer').addEventListener('scroll', function() {
-    if (!scrollTimeout) {
-        scrollTimeout = setTimeout(function() {
-            scrollTimeout = null;
-            // Update canvas positions after scroll
+    if (!ticking) {
+        window.requestAnimationFrame(() => {
             resizeCanvas();
-        }, 100);
+            ticking = false;
+        });
+        ticking = true;
     }
 }, { passive: true });

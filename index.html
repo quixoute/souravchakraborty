@@ -5,25 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Landing Page</title>
     <script>
-        // Function to detect if the user is on a mobile device
-        function isMobileDevice() {
-            // Check user agent for mobile devices
-            const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
-            const isMobileUA = mobileRegex.test(navigator.userAgent);
-
-            // Check screen width (optional, as a fallback or additional check)
-            const isMobileWidth = window.innerWidth <= 768; // Common mobile width threshold
-
-            // Return true if either condition suggests a mobile device
-            return isMobileUA || isMobileWidth;
+        // Function to detect device type based on screen size
+        function detectDeviceType() {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            
+            // Mobile devices (width <= 393px)
+            if (width <= 393) {
+                return 'mobile';
+            }
+            // Laptop devices (width <= 1512px and height <= 982px)
+            else if (width <= 1512) {
+                return 'laptop';
+            }
+            // Desktop devices (larger than laptop)
+            else {
+                return 'desktop';
+            }
         }
 
         // Redirect based on device type
         window.onload = function() {
-            if (isMobileDevice()) {
-                window.location.href = 'mobile.html'; // Mobile-friendly page
-            } else {
-                window.location.href = 'pc.html'; // PC page
+            const deviceType = detectDeviceType();
+            
+            switch(deviceType) {
+                case 'mobile':
+                    window.location.href = 'mobile.html';
+                    break;
+                case 'laptop':
+                    window.location.href = 'laptop.html';
+                    break;
+                case 'desktop':
+                    window.location.href = 'pc.html';
+                    break;
             }
         };
     </script>

@@ -13,6 +13,10 @@ html, body {
     overflow-x: hidden;
     scroll-snap-type: y mandatory;
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    /* Add momentum scrolling */
+    overscroll-behavior-y: contain;
+    /* Smooth scrolling */
+    scroll-behavior: smooth;
 }
 
 #canvasContainer, #canvasContainer2, #canvasContainer3 {
@@ -23,6 +27,8 @@ html, body {
     height: 100vh;
     overflow: hidden;
     scroll-snap-align: start;
+    /* Add touch feedback */
+    -webkit-tap-highlight-color: transparent;
 }
 
 #canvasWrapper, #canvasWrapper2, #canvasWrapper3 {
@@ -72,6 +78,13 @@ html, body {
     cursor: pointer;
     box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.2);
     overflow: hidden;
+    /* Add touch-friendly padding */
+    padding: 15px;
+    /* Increase touch target size */
+    min-width: 44px;
+    min-height: 44px;
+    /* Add touch feedback */
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
 }
 
 #container2 {
@@ -238,6 +251,8 @@ body {
     z-index: 5; /* Stacking order */
     pointer-events: none; /* Prevent interaction */
     object-fit: cover; /* Ensure image fills container */
+    /* Add touch feedback */
+    -webkit-tap-highlight-color: transparent;
 }
 
 .image-2 {
@@ -250,6 +265,8 @@ body {
     z-index: 7; /* Stacking order */
     pointer-events: none; /* Prevent interaction */
     object-fit: cover; /* Ensure image fills container */
+    /* Add touch feedback */
+    -webkit-tap-highlight-color: transparent;
 }
 
 .image-3 {
@@ -262,6 +279,8 @@ body {
     z-index: 7; /* Stacking order */
     pointer-events: none; /* Prevent interaction */
     object-fit: cover; /* Ensure image fills container */
+    /* Add touch feedback */
+    -webkit-tap-highlight-color: transparent;
 }
 
 .image-4 {
@@ -275,6 +294,8 @@ body {
     pointer-events: none; /* Prevent interaction */
     object-fit: cover; /* Ensure image fills container */
     cursor: pointer;
+    /* Add touch feedback */
+    -webkit-tap-highlight-color: transparent;
 }
 
 .intro {
@@ -286,7 +307,9 @@ body {
     height: 250px; /* Fixed height */
     z-index: 7; /* Stacking order */
     pointer-events: none; /* Prevent interaction */
-    object-fit: cover; /
+    object-fit: cover; /* Ensure image fills container */
+    /* Add touch feedback */
+    -webkit-tap-highlight-color: transparent;
 }
 
 /* Content area styling */
@@ -335,8 +358,8 @@ body {
 }
 
 .social-icon {
-    width: 42px;
-    height: 42px;
+    width: 44px; /* Minimum touch target size */
+    height: 44px;
     border-radius: 50%;
     background-color: #c3c7cb;
     display: flex;
@@ -348,6 +371,8 @@ body {
         inset -1px -1px #808080,
         2px 2px 4px rgba(0, 0, 0, 0.2);
     transition: transform 0.2s ease;
+    /* Add touch feedback */
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
 }
 
 .social-icon:hover {
@@ -355,10 +380,10 @@ body {
 }
 
 .social-icon:active {
+    transform: scale(0.95);
     box-shadow: 
         inset -1px -1px #ffffff,
         inset 1px 1px #808080;
-    transform: scale(0.95);
 }
 
 .pixel-icon {
@@ -389,4 +414,22 @@ body {
 
 .window:active ~ .social-icons {
     transform: translate(-50%, -30px);
+}
+
+/* Add touch feedback states */
+.project-container:active {
+    transform: scale(0.95);
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Optimize touch scrolling for iOS */
+@supports (-webkit-touch-callout: none) {
+    #scrollContainer {
+        /* Prevent overscroll bounce on iOS */
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
 }

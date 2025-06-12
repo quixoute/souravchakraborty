@@ -377,23 +377,118 @@ document.addEventListener('wheel', (e) => {
     });
 }, { passive: false });
 
-// Add touch scroll behavior
+// Touch event handling
 let touchStartY = 0;
+let touchStartX = 0;
 let touchEndY = 0;
+let touchEndX = 0;
+let isScrolling = false;
+let lastTouchTime = 0;
+const TOUCH_THRESHOLD = 50; // Minimum distance for swipe
+const TOUCH_TIMEOUT = 300; // Maximum time for swipe (ms)
 
-document.addEventListener('touchstart', (e) => {
+// Add touch event listeners
+document.addEventListener('touchstart', handleTouchStart, { passive: true });
+document.addEventListener('touchmove', handleTouchMove, { passive: false });
+document.addEventListener('touchend', handleTouchEnd, { passive: true });
+
+function handleTouchStart(e) {
     touchStartY = e.touches[0].clientY;
-}, { passive: true });
+    touchStartX = e.touches[0].clientX;
+    lastTouchTime = Date.now();
+    isScrolling = false;
+}
 
-document.addEventListener('touchend', (e) => {
-    touchEndY = e.changedTouches[0].clientY;
-    const scrollContainer = document.getElementById('scrollContainer');
-    const scrollAmount = touchEndY - touchStartY;
+function handleTouchMove(e) {
+    if (!isScrolling) {
+        const touchY = e.touches[0].clientY;
+        const touchX = e.touches[0].clientX;
+        const deltaY = Math.abs(touchY - touchStartY);
+        const deltaX = Math.abs(touchX - touchStartX);
+        
+        // Determine if this is a vertical scroll
+        if (deltaY > deltaX && deltaY > 10) {
+            isScrolling = true;
+        }
+    }
     
-    if (Math.abs(scrollAmount) > 50) { // Only scroll if the swipe is significant
-        scrollContainer.scrollBy({
-            top: scrollAmount,
+    if (isScrolling) {
+        e.preventDefault();
+    }
+}
+
+function handleTouchEnd(e) {
+    touchEndY = e.changedTouches[0].clientY;
+    touchEndX = e.changedTouches[0].clientX;
+    const deltaY = touchEndY - touchStartY;
+    const deltaX = touchEndX - touchStartX;
+    const timeElapsed = Date.now() - lastTouchTime;
+    
+    // Only handle swipe if it's a quick gesture and significant movement
+    if (timeElapsed < TOUCH_TIMEOUT && Math.abs(deltaY) > TOUCH_THRESHOLD) {
+        const scrollContainer = document.getElementById('scrollContainer');
+        const currentScroll = scrollContainer.scrollTop;
+        const windowHeight = window.innerHeight;
+        
+        // Calculate target scroll position
+        let targetScroll;
+        if (deltaY > 0) {
+            // Swipe down - scroll up
+            targetScroll = Math.max(0, currentScroll - windowHeight);
+        } else {
+            // Swipe up - scroll down
+            targetScroll = currentScroll + windowHeight;
+        }
+        
+        // Smooth scroll to target
+        scrollContainer.scrollTo({
+            top: targetScroll,
             behavior: 'smooth'
         });
+    }
+}
+
+// Add touch feedback for project containers
+document.querySelectorAll('.project-container').forEach(container => {
+    container.addEventListener('touchstart', function() {
+        this.style.transform = 'scale(0.95)';
+        this.style.backgroundColor = 'rgba(0, 0, 0, 0.05)';
+    }, { passive: true });
+    
+    container.addEventListener('touchend', function() {
+        this.style.transform = '';
+        this.style.backgroundColor = '';
+    }, { passive: true });
+    
+    container.addEventListener('touchcancel', function() {
+        this.style.transform = '';
+        this.style.backgroundColor = '';
+    }, { passive: true });
+});
+
+// Add touch feedback for social icons
+document.querySelectorAll('.social-icon').forEach(icon => {
+    icon.addEventListener('touchstart', function() {
+        this.style.transform = 'scale(0.95)';
+    }, { passive: true });
+    
+    icon.addEventListener('touchend', function() {
+        this.style.transform = '';
+    }, { passive: true });
+    
+    icon.addEventListener('touchcancel', function() {
+        this.style.transform = '';
+    }, { passive: true });
+});
+
+// Optimize scroll performance
+let scrollTimeout;
+document.getElementById('scrollContainer').addEventListener('scroll', function() {
+    if (!scrollTimeout) {
+        scrollTimeout = setTimeout(function() {
+            scrollTimeout = null;
+            // Update canvas positions after scroll
+            resizeCanvas();
+        }, 100);
     }
 }, { passive: true });

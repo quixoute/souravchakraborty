@@ -11,11 +11,11 @@
             const height = window.innerHeight;
             
             // Mobile devices (width <= 393px)
-            if (width <= 393) {
+            if (width <= 440) {
                 return 'mobile';
             }
             // Laptop devices (width <= 1512px and height <= 982px)
-            else if (width <= 1512) {
+            else if (width <= 1512 && width > 440) {
                 return 'laptop';
             }
             // Desktop devices (larger than laptop)

@@ -36,29 +36,22 @@ function loadImages() {
 let animationFrame = 0;
 let lastTimestamp = 0;
 
-// Draw dotted background with animation
+// Draw dotted background
 function drawDottedBackground(ctx, width, height) {
-    // Clear the entire canvas first
-    ctx.clearRect(0, 0, width, height);
+    const dotSize = 20;
+    const dotColor = '#a0a0a0';
+    const bgColor = '#e0e0e0';
     
-    // Fill the background
-    ctx.fillStyle = '#e0e0e0';
+    // Fill background
+    ctx.fillStyle = bgColor;
     ctx.fillRect(0, 0, width, height);
     
-    // Calculate offset based on animation frame with reduced movement
-    const offsetX = (animationFrame % 40) * 1; // Slower movement
-    const offsetY = (animationFrame % 40) * 1; // Slower movement
-    
     // Draw dots
-    ctx.fillStyle = '#a0a0a0';
-    const dotSpacing = 20;
-    const dotRadius = 1.5;
-    
-    // Only draw dots within the canvas bounds
-    for (let x = -offsetX % dotSpacing; x < width; x += dotSpacing) {
-        for (let y = -offsetY % dotSpacing; y < height; y += dotSpacing) {
+    ctx.fillStyle = dotColor;
+    for (let x = 0; x < width; x += dotSize) {
+        for (let y = 0; y < height; y += dotSize) {
             ctx.beginPath();
-            ctx.arc(x, y, dotRadius, 0, Math.PI * 2);
+            ctx.arc(x + dotSize/2, y + dotSize/2, dotSize * 0.15, 0, Math.PI * 2);
             ctx.fill();
         }
     }

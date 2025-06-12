@@ -148,8 +148,8 @@ body {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 1512px; /* Match canvas width */
+    height: 982px; /* Match canvas height */
     background-color: #e0e0e0;
     background-image: radial-gradient(
         #a0a0a0 15%,
@@ -278,17 +278,29 @@ body {
     #canvasWrapper {
         max-width: 1366px;
     }
+    .dotted-canvas {
+        width: 1366px;
+        height: 886px;
+    }
 }
 
 @media (max-width: 1440px) {
     #canvasWrapper {
         max-width: 1280px;
     }
+    .dotted-canvas {
+        width: 1280px;
+        height: 831px;
+    }
 }
 
 @media (max-width: 1280px) {
     #canvasWrapper {
         max-width: 1024px;
+    }
+    .dotted-canvas {
+        width: 1024px;
+        height: 665px;
     }
 }
 

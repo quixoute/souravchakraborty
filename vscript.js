@@ -369,20 +369,25 @@ window.addEventListener('scroll', () => {
 // Add smooth scroll behavior with improved performance
 let isScrolling = false;
 let scrollTimeout;
-const SCROLL_DURATION = 300; // Match CSS transition duration
+const SCROLL_DURATION = 200; // Faster scroll duration
+const SCROLL_THRESHOLD = 30; // Minimum scroll amount to trigger page change
+let lastScrollTime = 0;
+const SCROLL_COOLDOWN = 100; // Minimum time between scrolls
 
-document.addEventListener('wheel', (e) => {
-    e.preventDefault();
+// Improved scroll handling
+function handleScroll(direction) {
     if (isScrolling) return;
     
+    const now = Date.now();
+    if (now - lastScrollTime < SCROLL_COOLDOWN) return;
+    
     const scrollContainer = document.getElementById('scrollContainer');
-    const scrollAmount = e.deltaY;
     const currentScroll = scrollContainer.scrollTop;
     const windowHeight = window.innerHeight;
     
     // Calculate target scroll position with easing
     let targetScroll;
-    if (scrollAmount > 0) {
+    if (direction > 0) {
         // Scrolling down
         targetScroll = Math.ceil(currentScroll / windowHeight) * windowHeight;
     } else {
@@ -394,6 +399,7 @@ document.addEventListener('wheel', (e) => {
     if (targetScroll === currentScroll) return;
     
     isScrolling = true;
+    lastScrollTime = now;
     
     // Smooth scroll to target with easing
     scrollContainer.scrollTo({
@@ -405,6 +411,13 @@ document.addEventListener('wheel', (e) => {
     setTimeout(() => {
         isScrolling = false;
     }, SCROLL_DURATION);
+}
+
+// Wheel event handler
+document.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    if (Math.abs(e.deltaY) < SCROLL_THRESHOLD) return;
+    handleScroll(e.deltaY);
 }, { passive: false });
 
 // Touch event handling with improved performance
@@ -413,14 +426,20 @@ let touchStartX = 0;
 let touchEndY = 0;
 let touchEndX = 0;
 let lastTouchTime = 0;
-const TOUCH_THRESHOLD = 50; // Minimum distance for swipe
-const TOUCH_TIMEOUT = 300; // Maximum time for swipe (ms)
+const TOUCH_THRESHOLD = 40; // Reduced threshold for more responsive touch
+const TOUCH_TIMEOUT = 200; // Reduced timeout for snappier response
+let touchVelocity = 0;
+let lastTouchY = 0;
+let touchStartTime = 0;
 
 function handleTouchStart(e) {
     if (isScrolling) return;
     touchStartY = e.touches[0].clientY;
     touchStartX = e.touches[0].clientX;
-    lastTouchTime = Date.now();
+    lastTouchY = touchStartY;
+    touchStartTime = Date.now();
+    lastTouchTime = touchStartTime;
+    touchVelocity = 0;
 }
 
 function handleTouchMove(e) {
@@ -434,6 +453,15 @@ function handleTouchMove(e) {
     const deltaY = Math.abs(touchY - touchStartY);
     const deltaX = Math.abs(touchX - touchStartX);
     
+    // Calculate touch velocity
+    const now = Date.now();
+    const timeDelta = now - lastTouchTime;
+    if (timeDelta > 0) {
+        touchVelocity = (touchY - lastTouchY) / timeDelta;
+        lastTouchY = touchY;
+        lastTouchTime = now;
+    }
+    
     // Determine if this is a vertical scroll
     if (deltaY > deltaX && deltaY > 10) {
         e.preventDefault();
@@ -446,40 +474,15 @@ function handleTouchEnd(e) {
     touchEndY = e.changedTouches[0].clientY;
     touchEndX = e.changedTouches[0].clientX;
     const deltaY = touchEndY - touchStartY;
-    const deltaX = touchEndX - touchStartX;
-    const timeElapsed = Date.now() - lastTouchTime;
+    const timeElapsed = Date.now() - touchStartTime;
     
-    // Only handle swipe if it's a quick gesture and significant movement
-    if (timeElapsed < TOUCH_TIMEOUT && Math.abs(deltaY) > TOUCH_THRESHOLD) {
-        const scrollContainer = document.getElementById('scrollContainer');
-        const currentScroll = scrollContainer.scrollTop;
-        const windowHeight = window.innerHeight;
-        
-        // Calculate target scroll position with easing
-        let targetScroll;
-        if (deltaY > 0) {
-            // Swipe down - scroll up
-            targetScroll = Math.floor(currentScroll / windowHeight) * windowHeight;
-        } else {
-            // Swipe up - scroll down
-            targetScroll = Math.ceil(currentScroll / windowHeight) * windowHeight;
-        }
-        
-        // Prevent scrolling if already at the target
-        if (targetScroll === currentScroll) return;
-        
-        isScrolling = true;
-        
-        // Smooth scroll to target with easing
-        scrollContainer.scrollTo({
-            top: targetScroll,
-            behavior: 'smooth'
-        });
-        
-        // Reset scrolling flag after animation
-        setTimeout(() => {
-            isScrolling = false;
-        }, SCROLL_DURATION);
+    // Use velocity for more natural scrolling
+    const velocityThreshold = 0.3;
+    const shouldScroll = Math.abs(touchVelocity) > velocityThreshold || 
+                        (timeElapsed < TOUCH_TIMEOUT && Math.abs(deltaY) > TOUCH_THRESHOLD);
+    
+    if (shouldScroll) {
+        handleScroll(touchVelocity > 0 ? -1 : 1);
     }
 }
 

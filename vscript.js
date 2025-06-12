@@ -371,13 +371,27 @@ document.addEventListener('wheel', (e) => {
     e.preventDefault();
     const scrollContainer = document.getElementById('scrollContainer');
     const scrollAmount = e.deltaY;
-    scrollContainer.scrollBy({
-        top: scrollAmount,
+    const currentScroll = scrollContainer.scrollTop;
+    const windowHeight = window.innerHeight;
+    
+    // Calculate target scroll position with easing
+    let targetScroll;
+    if (scrollAmount > 0) {
+        // Scrolling down
+        targetScroll = Math.ceil(currentScroll / windowHeight) * windowHeight;
+    } else {
+        // Scrolling up
+        targetScroll = Math.floor(currentScroll / windowHeight) * windowHeight;
+    }
+    
+    // Smooth scroll to target with easing
+    scrollContainer.scrollTo({
+        top: targetScroll,
         behavior: 'smooth'
     });
 }, { passive: false });
 
-// Touch event handling
+// Touch event handling with improved easing
 let touchStartY = 0;
 let touchStartX = 0;
 let touchEndY = 0;
@@ -386,11 +400,6 @@ let isScrolling = false;
 let lastTouchTime = 0;
 const TOUCH_THRESHOLD = 50; // Minimum distance for swipe
 const TOUCH_TIMEOUT = 300; // Maximum time for swipe (ms)
-
-// Add touch event listeners
-document.addEventListener('touchstart', handleTouchStart, { passive: true });
-document.addEventListener('touchmove', handleTouchMove, { passive: false });
-document.addEventListener('touchend', handleTouchEnd, { passive: true });
 
 function handleTouchStart(e) {
     touchStartY = e.touches[0].clientY;
@@ -430,23 +439,28 @@ function handleTouchEnd(e) {
         const currentScroll = scrollContainer.scrollTop;
         const windowHeight = window.innerHeight;
         
-        // Calculate target scroll position
+        // Calculate target scroll position with easing
         let targetScroll;
         if (deltaY > 0) {
             // Swipe down - scroll up
-            targetScroll = Math.max(0, currentScroll - windowHeight);
+            targetScroll = Math.floor(currentScroll / windowHeight) * windowHeight;
         } else {
             // Swipe up - scroll down
-            targetScroll = currentScroll + windowHeight;
+            targetScroll = Math.ceil(currentScroll / windowHeight) * windowHeight;
         }
         
-        // Smooth scroll to target
+        // Smooth scroll to target with easing
         scrollContainer.scrollTo({
             top: targetScroll,
             behavior: 'smooth'
         });
     }
 }
+
+// Add touch event listeners
+document.addEventListener('touchstart', handleTouchStart, { passive: true });
+document.addEventListener('touchmove', handleTouchMove, { passive: false });
+document.addEventListener('touchend', handleTouchEnd, { passive: true });
 
 // Add touch feedback for project containers
 document.querySelectorAll('.project-container').forEach(container => {

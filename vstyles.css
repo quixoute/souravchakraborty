@@ -17,6 +17,8 @@ html, body {
     overscroll-behavior-y: contain;
     /* Smooth scrolling */
     scroll-behavior: smooth;
+    /* Add transition for smoother scrolling */
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 #canvasContainer, #canvasContainer2, #canvasContainer3 {
@@ -29,6 +31,8 @@ html, body {
     scroll-snap-align: start;
     /* Add touch feedback */
     -webkit-tap-highlight-color: transparent;
+    /* Add transition for smoother movement */
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 #canvasWrapper, #canvasWrapper2, #canvasWrapper3 {

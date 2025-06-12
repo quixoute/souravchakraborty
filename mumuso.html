@@ -45,20 +45,18 @@
             align-items: center;
             position: relative;
             z-index: 2;
+            padding: 40px 20px;
         }
 
         .right-align {
             width: 100%;
             max-width: 1200px;
-            padding: 20px;
         }
-
 
         .video-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            padding: 20px;
+            gap: 30px;
             max-width: 1200px;
             margin: 0 auto;
             justify-items: center;
@@ -67,14 +65,13 @@
         .video-container {
             position: relative;
             width: 100%;
-            max-width: 300px; /* Maintain max-width */
-            max-height: 540px; /* Add max-height to limit vertical stretching */
-            aspect-ratio: 9 / 16; /* Use aspect-ratio property for better control */
+            max-width: 360px;
+            aspect-ratio: 9 / 16;
             overflow: hidden;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-            margin: 0 auto;
+            background: #000;
         }
 
         .video-container:hover, .video-container:focus-within {
@@ -89,6 +86,7 @@
             width: 100%;
             height: 100%;
             border: none;
+            object-fit: cover;
         }
 
         .video-title {
@@ -98,44 +96,36 @@
             right: 0;
             background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
             color: white;
-            padding: 10px;
+            padding: 15px;
             font-size: 0.9rem;
             text-align: center;
             opacity: 0;
             transition: opacity 0.3s ease;
-            aria-hidden: true;
         }
 
         .video-container:hover .video-title, .video-container:focus-within .video-title {
             opacity: 1;
-            aria-hidden: false;
-        }
-
-        .video-container:last-child:nth-child(3n+1) {
-            grid-column: span 3; /* Center last video in row for odd counts */
         }
 
         @media (max-width: 1024px) {
             .video-grid {
                 grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
             }
-
-            .video-container:last-child:nth-child(3n+1) {
-                grid-column: auto;
+            
+            .video-container {
+                max-width: 320px;
             }
         }
 
         @media (max-width: 768px) {
             .video-grid {
                 grid-template-columns: 1fr;
+                gap: 20px;
             }
             
             .video-container {
-                max-width: 250px;
-            }
-
-            .video-container:last-child:nth-child(3n+1) {
-                grid-column: auto;
+                max-width: 300px;
             }
         }
     </style>
@@ -144,11 +134,19 @@
     <div class="dotted-canvas"></div>
     <div class="main-container">
         <div class="right-align">
-            </div>
             <div class="video-grid">
                 <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/LSJQhoILbIQ" title="Mumuso x Jessica" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" frameborder="0" allowfullscreen loading="lazy"></iframe>
-                    <div>
+                    <iframe 
+                        src="https://www.youtube.com/embed/LSJQhoILbIQ" 
+                        title="Mumuso x Jessica" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        referrerpolicy="strict-origin-when-cross-origin" 
+                        frameborder="0" 
+                        allowfullscreen 
+                        loading="lazy">
+                    </iframe>
+                    <div class="video-title">Mumuso x Jessica</div>
+                </div>
             </div>
         </div>
     </div>

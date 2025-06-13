@@ -190,7 +190,7 @@ document.addEventListener('mousemove', (e) => {
         [
             { x: 0.35, y: 0.45, width: 260, height: 250, id: 'container4', page: 'wedding.html', image: images.project4 },
             { x: 0.60, y: 0.20, width: 300, height: 220, id: 'container6', page: 'Prewedding.html', image: images.project6 },
-            { x: 0.65, y: 0.80, width: 250, height: 250, id: 'container7', page: 'r.html', image: images.project7 }
+            { x: 0.8, y: 0.80, width: 220, height: 220, id: 'container7', page: 'r.html', image: images.project7 }
         ] :
         [
             { x: 0.25, y: 0.15, width: 250, height: 240, id: 'container1', page: 'Tri.html', image: images.project1 },
@@ -230,7 +230,7 @@ document.addEventListener('click', (e) => {
         [
             { x: 0.35, y: 0.45, width: 260, height: 250, id: 'container4', page: 'wedding.html', image: images.project4 },
             { x: 0.60, y: 0.20, width: 300, height: 220, id: 'container6', page: 'Prewedding.html', image: images.project6 },
-            { x: 0.65, y: 0.80, width: 250, height: 250, id: 'container7', page: 'r.html', image: images.project7 }
+            { x: 0.8, y: 0.80, width: 220, height: 220, id: 'container7', page: 'r.html', image: images.project7 }
         ] :
         [
             { x: 0.25, y: 0.15, width: 250, height: 240, id: 'container1', page: 'Tri.html', image: images.project1 },

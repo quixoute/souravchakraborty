@@ -226,19 +226,26 @@ document.addEventListener('click', (e) => {
     const clickX = e.clientX - rect.left;
     const clickY = e.clientY - rect.top;
     
-    const projectPositions = canvas.id === 'myCanvas2' ? 
-        [
-            { x: 0.35, y: 0.45, width: 260, height: 250, id: 'container4', page: 'wedding.html', image: images.project4 },
-            { x: 0.60, y: 0.20, width: 300, height: 220, id: 'container6', page: 'Prewedding.html', image: images.project6 },
-            { x: 0.8, y: 0.80, width: 220, height: 220, id: 'container7', page: 'r.html', image: images.project7 }
-        ] :
-        [
-            { x: 0.25, y: 0.15, width: 250, height: 240, id: 'container1', page: 'Tri.html', image: images.project1 },
-            { x: 0.25, y: 0.4, width: 260, height: 220, id: 'container10', page: 'project3.html', image: images.project10 },
-            { x: 0.62, y: 0.55, width: 250, height: 300, id: 'container2', page: 'project2.html', image: images.project2 },
-            { x: 0.35, y: 0.79, width: 250, height: 200, id: 'container3', page: 'project5.html', image: images.project3 },
-            { x: 0.78, y: 0.25, width: 250, height: 200, id: 'container5', page: 'project10.html', image: images.project5 }
-        ];
+    // Define project positions for both canvases
+    const mainCanvasPositions = [
+        { x: 0.15, y: 0.75, width: 170, height: 165, id: 'container4', page: 'wedding.html', image: images.project4 },
+        { x: 0.15, y: 0.30, width: 250, height: 170, id: 'container6', page: 'Prewedding.html', image: images.project6 },
+        { x: 0.8, y: 0.80, width: 220, height: 220, id: 'container7', page: 'r.html', image: images.project7 },
+        { x: 0.36, y: 0.19, width: 200, height: 190, id: 'container1', page: 'Tri.html', image: images.project1 },
+        { x: 0.22, y: 0.5, width: 200, height: 160, id: 'container10', page: 'project3.html', image: images.project10 },
+        { x: 0.72, y: 0.30, width: 200, height: 300, id: 'container2', page: 'project2.html', image: images.project2 },
+        { x: 0.36, y: 0.85, width: 220, height: 160, id: 'container3', page: 'project5.html', image: images.project3 },
+        { x: 0.89, y: 0.45, width: 150, height: 100, id: 'container5', page: 'project10.html', image: images.project5 }
+    ];
+    
+    const canvas2Positions = [
+        { x: 0.35, y: 0.45, width: 260, height: 250, id: 'container4', page: 'wedding.html', image: images.project4 },
+        { x: 0.60, y: 0.20, width: 300, height: 220, id: 'container6', page: 'Prewedding.html', image: images.project6 },
+        { x: 0.8, y: 0.80, width: 220, height: 220, id: 'container7', page: 'r.html', image: images.project7 }
+    ];
+    
+    // Use the appropriate positions based on canvas ID
+    const projectPositions = canvas.id === 'myCanvas2' ? canvas2Positions : mainCanvasPositions;
     
     projectPositions.forEach(container => {
         if (isPointInContainer(clickX, clickY, container, rect.width, rect.height)) {

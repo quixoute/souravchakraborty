@@ -14,28 +14,34 @@
             color: #333;
             position: relative;
             overflow-x: hidden;
+            background: #181818;
         }
 
-        .dotted-canvas {
+        .background-video-container {
             position: fixed;
             top: 0;
             left: 0;
-            width: 5000px;
-            height: 5000px;
-            background-color: #e0e0e0;
-            background-image: radial-gradient(#a0a0a0 15%, transparent 16%);
-            background-size: 20px 20px;
+            width: 100vw;
+            height: 100vh;
             z-index: 1;
-            animation: ripple 3s infinite linear;
+            overflow: hidden;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        @keyframes ripple {
-            0% {
-                background-position: 0 0;
-            }
-            100% {
-                background-position: 20px 20px;
-            }
+        .background-video-container video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: cover;
+            object-position: center;
         }
 
         .main-container {
@@ -47,47 +53,68 @@
             z-index: 2;
         }
 
-        .right-align {
-            width: 100%;
-            max-width: 1200px;
+        .carousel-container {
+            position: fixed;
+            top: 80%;
+            left: 50%;
+            transform: translateX(-50%);
+            height: 281px;
+            overflow: visible;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+            background: rgba(0, 0, 0, 0);
             padding: 20px;
+            width: 100%;
+            box-sizing: border-box;
         }
 
-    
-
-        .video-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
+        .carousel-track {
+            position: relative;
+            display: flex;
             gap: 20px;
-            padding: 20px;
-            max-width: 1200px;
+            will-change: transform;
+            justify-content: center;
+            flex-wrap: nowrap;
+            width: fit-content;
             margin: 0 auto;
-            justify-items: center;
         }
 
         .video-container {
             position: relative;
-            width: 100%;
-            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
-            height: 0;
-            overflow: hidden;
             border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+                       0 2px 8px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            width: 400px;
+            height: 240px;
+            flex-shrink: 0;
+            background: rgba(0, 0, 0, 0.384);
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .video-container:hover, .video-container:focus-within {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        .video-container:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4),
+                       0 4px 12px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
             width: 100%;
             height: 100%;
             border: none;
+            border-radius: 12px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .video-container iframe.loaded {
+            opacity: 1;
         }
 
         .video-title {
@@ -102,56 +129,202 @@
             text-align: center;
             opacity: 0;
             transition: opacity 0.3s ease;
-            aria-hidden: true;
         }
 
-        .video-container:hover .video-title, .video-container:focus-within .video-title {
+        .video-container:hover .video-title {
             opacity: 1;
-            aria-hidden: false;
         }
 
-        .video-container:last-child:nth-child(odd) {
-            grid-column: span 2;
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #181818;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
         @media (max-width: 768px) {
-            .video-grid {
-                grid-template-columns: 1fr;
+            .carousel-container {
+                padding: 10px;
+                height: auto;
+            }
+            
+            .video-container {
+                width: 300px;
+                height: 180px;
             }
 
-            .video-container:last-child:nth-child(odd) {
-                grid-column: auto;
+            .carousel-track {
+                gap: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .carousel-container {
+                padding: 5px;
+            }
+            
+            .video-container {
+                width: 280px;
+                height: 168px;
             }
 
-           
+            .carousel-track {
+                gap: 8px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="dotted-canvas"></div>
+    <div class="loading-overlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <div class="background-video-container">
+        <iframe 
+            src="https://www.youtube.com/embed/zztWIlzzVQ0?autoplay=1&mute=1&loop=1&playlist=zztWIlzzVQ0&controls=0&showinfo=0&rel=0&enablejsapi=1" 
+            title="Background Video"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen
+            style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100vw; height: 100vh; pointer-events: none;"
+            id="background-video"
+        ></iframe>
+    </div>
+
     <div class="main-container">
-        <div class="right-align">
-           
-            <div class="video-grid">
+        <div class="carousel-container">
+            <div class="carousel-track">
                 <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/zztWIlzzVQ0?rel=0&modestbranding=1" title="Sayantani and Debarshi's Pre-Wedding Teaser" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
+                    <iframe 
+                        data-src="https://www.youtube.com/embed/zztWIlzzVQ0?rel=0&modestbranding=1" 
+                        title="Sayantani and Debarshi's Pre-Wedding Teaser" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        referrerpolicy="strict-origin-when-cross-origin" 
+                        allowfullscreen 
+                        loading="lazy"
+                    ></iframe>
                     <div class="video-title">Sayantani and Debarshi's Pre-Wedding Teaser</div>
                 </div>
                 <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/D82sTEf8Yag?rel=0&modestbranding=1" title="Suhena and Abhishek's Pre-Wedding Teaser" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
+                    <iframe 
+                        data-src="https://www.youtube.com/embed/D82sTEf8Yag?rel=0&modestbranding=1" 
+                        title="Suhena and Abhishek's Pre-Wedding Teaser" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        referrerpolicy="strict-origin-when-cross-origin" 
+                        allowfullscreen 
+                        loading="lazy"
+                    ></iframe>
                     <div class="video-title">Suhena and Abhishek's Pre-Wedding Teaser</div>
                 </div>
                 <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/jWXZ7Knp0EI?rel=0&modestbranding=1" title="Pawan and Shivani's Pre-Wedding Teaser" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
+                    <iframe 
+                        data-src="https://www.youtube.com/embed/jWXZ7Knp0EI?rel=0&modestbranding=1" 
+                        title="Pawan and Shivani's Pre-Wedding Teaser" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        referrerpolicy="strict-origin-when-cross-origin" 
+                        allowfullscreen 
+                        loading="lazy"
+                    ></iframe>
                     <div class="video-title">Pawan and Shivani's Pre-Wedding Teaser</div>
                 </div>
                 <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/0bxzEQHPqH8?rel=0&modestbranding=1" title="Priyanka and Puneet's Pre-Wedding Teaser" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
+                    <iframe 
+                        data-src="https://www.youtube.com/embed/0bxzEQHPqH8?rel=0&modestbranding=1" 
+                        title="Priyanka and Puneet's Pre-Wedding Teaser" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        referrerpolicy="strict-origin-when-cross-origin" 
+                        allowfullscreen 
+                        loading="lazy"
+                    ></iframe>
                     <div class="video-title">Priyanka and Puneet's Pre-Wedding Teaser</div>
                 </div>
             </div>
         </div>
     </div>
+
+    <script>
+        // Load YouTube API
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        // Initialize YouTube player
+        var player;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('background-video', {
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        function onPlayerReady(event) {
+            event.target.playVideo();
+            document.querySelector('.loading-overlay').classList.add('hidden');
+        }
+
+        function onPlayerStateChange(event) {
+            if (event.data === YT.PlayerState.ENDED) {
+                event.target.playVideo();
+            }
+        }
+
+        // Lazy loading implementation
+        const lazyLoadObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const iframe = entry.target;
+                    if (iframe.dataset.src) {
+                        iframe.src = iframe.dataset.src;
+                        iframe.onload = () => {
+                            iframe.classList.add('loaded');
+                        };
+                        observer.unobserve(iframe);
+                    }
+                }
+            });
+        }, {
+            rootMargin: '50px 0px',
+            threshold: 0.1
+        });
+
+        // Initialize lazy loading
+        document.querySelectorAll('iframe[data-src]').forEach(iframe => {
+            lazyLoadObserver.observe(iframe);
+        });
+    </script>
     <script src="security.js"></script>
 </body>
 </html>

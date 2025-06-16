@@ -5,25 +5,87 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sourav Chakraborty</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap">
-    <link rel="stylesheet" href="security.css">   
+    <meta http-equiv="Cache-Control" content="max-age=31536000">
+    <meta name="theme-color" content="#181818">
     <style>
         body {
             font-family: 'Poppins', sans-serif;
             margin: 0;
             padding: 0;
-            background: #e0e0e0;
+            background: #181818;
             overflow-x: hidden;
         }
 
-        .video-container {
+        .background-video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .background-video-container iframe {
             position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+        }
+
+        .carousel-container {
+            position: fixed;
+            bottom: 50px;
+            left: 0;
+            right: 0;
+            height: 281px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+            background: rgba(0, 0, 0, 0);
+            
+            padding: 20px 0;
+        }
+
+        .carousel-track {
+            position: relative;
+            display: flex;
+            gap: 20px;
+            will-change: transform;
+            animation: carouselMove 30s linear infinite;
+        }
+
+        @keyframes carouselMove {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(calc(-520px * 5));
+            }
+        }
+
+        .video-container {
+            position: relative;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            cursor: pointer;
+            width: 500px;
+            height: 281px;
+            flex-shrink: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
             transition: transform 0.3s ease;
         }
 
         .video-container:hover {
-            transform: scale(1.02);
+            transform: scale(1.05);
+            z-index: 2;
         }
 
         .video-container iframe {
@@ -31,6 +93,12 @@
             height: 100%;
             border: none;
             border-radius: 12px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .video-container iframe.loaded {
+            opacity: 1;
         }
 
         .video-title {
@@ -50,33 +118,241 @@
         .video-container:hover .video-title {
             opacity: 1;
         }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #181818;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
-    <div class="video-container" style="left: 50px; top: 50px; width: 500px; height: 281px;">
-        <iframe src="https://www.youtube.com/embed/j6KxpiUJJ1Y" title="Sukanya and Sayak's Wedding Teaser" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
-        <div class="video-title">Sukanya and Sayak's Wedding Teaser</div>
+    <div class="loading-overlay">
+        <div class="loading-spinner"></div>
     </div>
 
-    <div class="video-container" style="left: 700px; top: 50px; width: 500px; height: 281px;">
-        <iframe src="https://www.youtube.com/embed/Zy1IGA-aFNI" title="Sayantani and Debarshi's Wedding Teaser" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
-        <div class="video-title">Sayantani and Debarshi's Wedding Teaser</div>
+    <div class="background-video-container">
+        <iframe 
+            src="https://www.youtube.com/embed/j6KxpiUJJ1Y?autoplay=1&mute=1&loop=1&playlist=j6KxpiUJJ1Y&controls=0&showinfo=0&rel=0&enablejsapi=1" 
+            title="Background Video"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen
+            style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100vw; height: 100vh; pointer-events: none;"
+            id="background-video"
+        ></iframe>
     </div>
 
-    <div class="video-container" style="left: 50px; top: 450px; width: 500px; height: 281px;">
-        <iframe src="https://www.youtube.com/embed/lZ8vpZghhG8" title="Shivani and Pawan's Wedding Teaser" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
-        <div class="video-title">Shivani and Pawan's Wedding Teaser</div>
+    <div class="carousel-container">
+        <div class="carousel-track">
+            <div class="video-container" data-video-id="j6KxpiUJJ1Y">
+                <iframe 
+                    data-src="https://www.youtube.com/embed/j6KxpiUJJ1Y" 
+                    title="Sukanya and Sayak's Wedding Teaser" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                    referrerpolicy="strict-origin-when-cross-origin" 
+                    allowfullscreen 
+                    loading="lazy"
+                ></iframe>
+                <div class="video-title">Sukanya and Sayak's Wedding Teaser</div>
+            </div>
+
+            <div class="video-container" data-video-id="Zy1IGA-aFNI">
+                <iframe 
+                    data-src="https://www.youtube.com/embed/Zy1IGA-aFNI" 
+                    title="Sayantani and Debarshi's Wedding Teaser" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                    referrerpolicy="strict-origin-when-cross-origin" 
+                    allowfullscreen 
+                    loading="lazy"
+                ></iframe>
+                <div class="video-title">Sayantani and Debarshi's Wedding Teaser</div>
+            </div>
+
+            <div class="video-container" data-video-id="lZ8vpZghhG8">
+                <iframe 
+                    data-src="https://www.youtube.com/embed/lZ8vpZghhG8" 
+                    title="Shivani and Pawan's Wedding Teaser" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                    referrerpolicy="strict-origin-when-cross-origin" 
+                    allowfullscreen 
+                    loading="lazy"
+                ></iframe>
+                <div class="video-title">Shivani and Pawan's Wedding Teaser</div>
+            </div>
+
+            <div class="video-container" data-video-id="VjV4iJC-rBc">
+                <iframe 
+                    data-src="https://www.youtube.com/embed/VjV4iJC-rBc" 
+                    title="Rhea and Craig's Wedding Teaser" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                    referrerpolicy="strict-origin-when-cross-origin" 
+                    allowfullscreen 
+                    loading="lazy"
+                ></iframe>
+                <div class="video-title">Rhea and Craig's Wedding Teaser</div>
+            </div>
+
+            <div class="video-container" data-video-id="lFbrmG26eos">
+                <iframe 
+                    data-src="https://www.youtube.com/embed/lFbrmG26eos" 
+                    title="Upasana and Akash's Wedding Teaser" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                    referrerpolicy="strict-origin-when-cross-origin" 
+                    allowfullscreen 
+                    loading="lazy"
+                ></iframe>
+                <div class="video-title">Upasana and Akash's Wedding Teaser</div>
+            </div>
+        </div>
     </div>
 
-    <div class="video-container" style="left: 700px; top: 400px; width: 500px; height: 281px;">
-        <iframe src="https://www.youtube.com/embed/VjV4iJC-rBc" title="Rhea and Craig's Wedding Teaser" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
-        <div class="video-title">Rhea and Craig's Wedding Teaser</div>
-    </div>
+    <script>
+        // Load YouTube API
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-    <div class="video-container" style="left: 50px; top: 850px; width: 500px; height: 281px;">
-        <iframe src="https://www.youtube.com/embed/lFbrmG26eos" title="Upasana and Akash's Wedding Teaser" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
-        <div class="video-title">Upasana and Akash's Wedding Teaser</div>
-    </div>
-    <script src="security.js"></script>
+        // Initialize YouTube player
+        var player;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('background-video', {
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        function onPlayerReady(event) {
+            event.target.playVideo();
+            document.querySelector('.loading-overlay').classList.add('hidden');
+        }
+
+        function onPlayerStateChange(event) {
+            if (event.data === YT.PlayerState.ENDED) {
+                event.target.playVideo();
+            }
+        }
+
+        // Cache management
+        const CACHE_KEY = 'wedding_page_cache';
+        const CACHE_VERSION = '1.0';
+        const CACHE_DURATION = 7 * 24 * 60 * 60 * 1000; // 7 days
+
+        // Cookie management
+        function setCookie(name, value, days) {
+            const date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/`;
+        }
+
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        }
+
+        // Lazy loading implementation
+        const lazyLoadObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const iframe = entry.target;
+                    if (iframe.dataset.src) {
+                        iframe.src = iframe.dataset.src;
+                        iframe.onload = () => {
+                            iframe.classList.add('loaded');
+                        };
+                        observer.unobserve(iframe);
+                    }
+                }
+            });
+        }, {
+            rootMargin: '50px 0px',
+            threshold: 0.1
+        });
+
+        // Initialize lazy loading
+        document.querySelectorAll('iframe[data-src]').forEach(iframe => {
+            lazyLoadObserver.observe(iframe);
+        });
+
+        // Carousel setup
+        const track = document.querySelector('.carousel-track');
+        const containers = document.querySelectorAll('.video-container');
+
+        // Clone first set of items for seamless loop
+        containers.forEach(container => {
+            const clone = container.cloneNode(true);
+            track.appendChild(clone);
+            // Observe cloned iframes for lazy loading
+            const clonedIframe = clone.querySelector('iframe');
+            if (clonedIframe) {
+                lazyLoadObserver.observe(clonedIframe);
+            }
+        });
+
+        // Pause animation on hover
+        track.addEventListener('mouseenter', () => {
+            track.style.animationPlayState = 'paused';
+        });
+
+        track.addEventListener('mouseleave', () => {
+            track.style.animationPlayState = 'running';
+        });
+
+        // Cache management
+        function updateCache() {
+            const cacheData = {
+                version: CACHE_VERSION,
+                timestamp: Date.now(),
+                lastVisit: getCookie('lastVisit') || Date.now()
+            };
+            localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
+            setCookie('lastVisit', Date.now(), 7);
+        }
+
+        // Check cache on load
+        window.addEventListener('load', () => {
+            const cachedData = localStorage.getItem(CACHE_KEY);
+            if (cachedData) {
+                const data = JSON.parse(cachedData);
+                if (Date.now() - data.timestamp < CACHE_DURATION) {
+                    // Use cached data
+                    console.log('Using cached data');
+                }
+            }
+            updateCache();
+        });
+    </script>
 </body>
 </html>

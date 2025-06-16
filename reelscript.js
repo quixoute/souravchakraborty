@@ -96,18 +96,9 @@ function drawContainers(width, height) {
     if (!ctx) return;
     
     containers.forEach(container => {
-        const containerElement = document.getElementById(container.id);
-        if (!containerElement) {
-            console.error(`Container element not found: ${container.id}`);
-            return;
-        }
+        const x = container.x + offsetX;
+        const y = container.y + offsetY;
         
-        const img = containerElement.querySelector('img');
-        if (!img) {
-            console.error(`Image not found in container: ${container.id}`);
-            return;
-        }
-
         // Use preloaded image if available
         const imagePath = imagePaths[container.image];
         const preloadedImg = preloadedImages[imagePath];
@@ -116,9 +107,6 @@ function drawContainers(width, height) {
             console.log(`Preloaded image not available for container: ${container.id}`);
             return;
         }
-        
-        const x = container.x + offsetX;
-        const y = container.y + offsetY;
         
         ctx.save();
         ctx.globalAlpha = 1.0;
@@ -173,6 +161,34 @@ function handleMouseMove(event) {
         const deltaY = event.clientY - startY;
         offsetX = initialX + deltaX;
         offsetY = initialY + deltaY;
+        return;
+    }
+
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = event.clientX - rect.left;
+    const mouseY = event.clientY - rect.top;
+    
+    let foundHover = false;
+    
+    containers.forEach(container => {
+        const x = container.x + offsetX;
+        const y = container.y + offsetY;
+        
+        if (
+            mouseX >= x - container.width/2 &&
+            mouseX <= x + container.width/2 &&
+            mouseY >= y - container.height/2 &&
+            mouseY <= y + container.height/2
+        ) {
+            hoveredContainer = container.id;
+            foundHover = true;
+            canvas.style.cursor = 'pointer';
+        }
+    });
+    
+    if (!foundHover) {
+        hoveredContainer = null;
+        canvas.style.cursor = 'default';
     }
 }
 
@@ -186,6 +202,29 @@ function handleMouseDown(event) {
 
 function handleMouseUp() {
     isDragging = false;
+}
+
+// Add click detection
+function handleClick(event) {
+    const rect = canvas.getBoundingClientRect();
+    const clickX = event.clientX - rect.left;
+    const clickY = event.clientY - rect.top;
+    
+    containers.forEach(container => {
+        const x = container.x + offsetX;
+        const y = container.y + offsetY;
+        
+        // Check if click is within container bounds
+        if (
+            clickX >= x - container.width/2 &&
+            clickX <= x + container.width/2 &&
+            clickY >= y - container.height/2 &&
+            clickY <= y + container.height/2
+        ) {
+            console.log(`Container clicked: ${container.id}, redirecting to ${container.page}`);
+            window.location.href = container.page;
+        }
+    });
 }
 
 // Initialize
@@ -235,6 +274,7 @@ async function init() {
     // Add event listeners
     canvas.addEventListener('mousemove', handleMouseMove);
     canvas.addEventListener('mousedown', handleMouseDown);
+    canvas.addEventListener('click', handleClick);
     window.addEventListener('mouseup', handleMouseUp);
 
     // Preload all images

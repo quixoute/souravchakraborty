@@ -6,4 +6,26 @@ body {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+    width: 1920px;
+    height: 1080px;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    position: fixed;
+}
+
+/* Ensure gallery container maintains fixed size */
+.background-gallery {
+    width: 1920px;
+    height: 1080px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Prevent any responsive scaling */
+img {
+    max-width: none !important;
+    max-height: none !important;
+    width: auto !important;
+    height: auto !important;
 }

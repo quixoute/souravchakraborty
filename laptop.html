@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Laptop Interface - 1512 x 982</title>
     <link rel="stylesheet" href="lstyles.css">
+    <script>
+        // Get zoom parameter from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const zoom = urlParams.get('zoom') || '1';
+        
+        // Apply zoom to the body
+        document.body.style.zoom = zoom;
+        document.body.style.transform = `scale(${zoom})`;
+        document.body.style.transformOrigin = 'top left';
+    </script>
 </head>
 <body>
     <div id="scrollContainer">
@@ -14,6 +24,7 @@
             </div>
         </div>
     </div>
+   
     <script src="lscript.js"></script>
 </body>
 </html> 

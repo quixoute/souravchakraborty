@@ -11,83 +11,26 @@
             font-family: 'Poppins', sans-serif;
             margin: 0;
             padding: 0;
-            color: #333;
-            position: relative;
-            overflow-x: hidden; /* Prevent horizontal scroll from large canvas */
-        }
-
-        /* Dotted canvas styling */
-        .dotted-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 5000px;
-            height: 5000px;
-            background-color: #e0e0e0;
-            background-image: radial-gradient(#a0a0a0 15%, transparent 16%);
-            background-size: 20px 20px;
-            z-index: 1;
-            animation: ripple 3s infinite linear;
-        }
-
-        @keyframes ripple {
-            0% {
-                background-position: 0 0;
-            }
-            100% {
-                background-position: 20px 20px;
-            }
-        }
-
-        .main-container {
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            z-index: 2; /* Ensure content is above dotted canvas */
-        }
-
-        .right-align {
-            width: 100%;
-            max-width: 1200px;
-            padding: 20px;
-        }
-
-
-        .video-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            padding: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-            justify-items: center; /* Center grid items */
+            background: #e0e0e0;
+            overflow-x: hidden;
         }
 
         .video-container {
-            position: relative;
-            width: 100%;
-            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
-            height: 0;
-            overflow: hidden;
+            position: absolute;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: transform 0.3s ease;
         }
 
-        .video-container:hover, .video-container:focus-within {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        .video-container:hover {
+            transform: scale(1.02);
         }
 
         .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
             width: 100%;
             height: 100%;
             border: none;
+            border-radius: 12px;
         }
 
         .video-title {
@@ -102,57 +45,37 @@
             text-align: center;
             opacity: 0;
             transition: opacity 0.3s ease;
-            aria-hidden: true;
         }
 
-        .video-container:hover .video-title, .video-container:focus-within .video-title {
+        .video-container:hover .video-title {
             opacity: 1;
-            aria-hidden: false;
-        }
-
-        .video-container:last-child:nth-child(odd) {
-            grid-column: span 2; /* Center the last video if odd */
-        }
-
-        @media (max-width: 768px) {
-            .video-grid {
-                grid-template-columns: 1fr; /* Single column on mobile */
-            }
-
-            .video-container:last-child:nth-child(odd) {
-                grid-column: auto; /* Reset for single-column layout */
-            }
         }
     </style>
 </head>
 <body>
-    <div class="dotted-canvas"></div>
-    <div class="main-container">
-        <div class="right-align">
-           
-            <div class="video-grid">
-                <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/j6KxpiUJJ1Y" title="Sukanya and Sayak's Wedding Teaser" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
-                    <div class="video-title">Sukanya and Sayak's Wedding Teaser</div>
-                </div>
-                <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/Zy1IGA-aFNI" title="Sayantani and Debarshi's Wedding Teaser" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
-                    <div class="video-title">Sayantani and Debarshi's Wedding Teaser</div>
-                </div>
-                <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/lZ8vpZghhG8" title="Shivani and Pawan's Wedding Teaser" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
-                    <div class="video-title">Shivani and Pawan's Wedding Teaser</div>
-                </div>
-                <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/VjV4iJC-rBc" title="Rhea and Craig's Wedding Teaser" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
-                    <div class="video-title">Rhea and Craig's Wedding Teaser</div>
-                </div>
-                <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/lFbrmG26eos" title="Upasana and Akash's Wedding Teaser" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
-                    <div class="video-title">Upasana and Akash's Wedding Teaser</div>
-                </div>
-            </div>
-        </div>
+    <div class="video-container" style="left: 50px; top: 50px; width: 500px; height: 281px;">
+        <iframe src="https://www.youtube.com/embed/j6KxpiUJJ1Y" title="Sukanya and Sayak's Wedding Teaser" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
+        <div class="video-title">Sukanya and Sayak's Wedding Teaser</div>
+    </div>
+
+    <div class="video-container" style="left: 700px; top: 50px; width: 500px; height: 281px;">
+        <iframe src="https://www.youtube.com/embed/Zy1IGA-aFNI" title="Sayantani and Debarshi's Wedding Teaser" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
+        <div class="video-title">Sayantani and Debarshi's Wedding Teaser</div>
+    </div>
+
+    <div class="video-container" style="left: 50px; top: 450px; width: 500px; height: 281px;">
+        <iframe src="https://www.youtube.com/embed/lZ8vpZghhG8" title="Shivani and Pawan's Wedding Teaser" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
+        <div class="video-title">Shivani and Pawan's Wedding Teaser</div>
+    </div>
+
+    <div class="video-container" style="left: 700px; top: 400px; width: 500px; height: 281px;">
+        <iframe src="https://www.youtube.com/embed/VjV4iJC-rBc" title="Rhea and Craig's Wedding Teaser" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
+        <div class="video-title">Rhea and Craig's Wedding Teaser</div>
+    </div>
+
+    <div class="video-container" style="left: 50px; top: 850px; width: 500px; height: 281px;">
+        <iframe src="https://www.youtube.com/embed/lFbrmG26eos" title="Upasana and Akash's Wedding Teaser" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
+        <div class="video-title">Upasana and Akash's Wedding Teaser</div>
     </div>
     <script src="security.js"></script>
 </body>

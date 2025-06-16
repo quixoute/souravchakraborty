@@ -1,7 +1,27 @@
-/* Floating project containers styling */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #e0e0e0;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.main-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
 .project-container {
-    width: 200px;
-    height: 100px;
+    position: absolute;
+    width: 210px;
+    height: 210px;
     background-color: transparent;
     border: none;
     display: flex;
@@ -9,479 +29,45 @@
     justify-content: center;
     font-size: 14px;
     color: #000080;
-    position: fixed;
     transition: transform 0.2s ease;
-    z-index: 6;
     cursor: pointer;
-    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.2);
     overflow: hidden;
-}
-#container1 {
-    width: 300px;
-    height: 300px; /* Increased height to match vertical image dimensions */
-}
-
-#container2 {
-    width: 300px;
-    height: 300px; /* Increased height to match vertical image dimensions */
-}
-
-#container3 {
-    width: 300px;
-    height: 300px; /* Maintaining the current height */
-}
-
-#container4 {
-    width: 300px;
-    height: 300px; /* Increased height to match vertical image dimensions */
-}
-
-#container5 {
-    width: 300px;
-    height: 300px;
-}
-
-.image-1 {
-    position: fixed; /* Fixed positioning relative to viewport */
-    top: 22%; /* Upper-left area */
-    left: 34%;
-    transform: translate(-50%, -50%); /* Center image at position */
-    width: 550px; /* Fixed width */
-    height: 300px; /* Fixed height */
-    z-index: 5; /* Stacking order */
-    pointer-events: none; /* Prevent interaction */
-    object-fit: cover; /* Ensure image fills container */
-}
-
-.image-2 {
-    position: fixed;
-    top: 25%; /* Lower-right area */
-    left: 65%;
-    transform: translate(-50%, -50%) rotate(15deg);
-    width: 550px;
-    height: 300px;
-    z-index: 5;
-    pointer-events: none;
-    object-fit: cover;
-}
-
-.image-3 {
-    position: fixed;
-    top: 81%; /* Middle vertically */
-    left: 60%; /* Center horizontally */
-    transform: translate(-50%, -50%);
-    width: 550px;
-    height: 300px;
-    z-index: 6; /* Higher to appear above others */
-    pointer-events: none;
-    object-fit: cover;
-}
-
-.image-4 {
-    position: fixed;
-    top: 70%; /* Middle vertically */
-    left: 20%; /* Center horizontally */
-    transform: translate(-50%, -50%);
-    width: 550px;
-    height: 300px;
-    z-index: 6; /* Higher to appear above others */
-    pointer-events: none;
-    object-fit: cover;
-}
-
-.image-5 {
-    position: fixed;
-    top: 55%; /* Middle vertically */
-    left: 78%; /* Center horizontally */
-    transform: translate(-50%, -50%);
-    width: 550px;
-    height: 300px;
-    z-index: 8; /* Higher to appear above others */
-    pointer-events: none;
-    object-fit: cover;
-}
-
-.wmp-preview {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    background-color: black;
-}
-
-/* Title bar */
-.wmp-preview::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 20px;
-    background: linear-gradient(to right, #000080, #1084d0);
-    z-index: 1;
-}
-
-/* Windows logo */
-.wmp-preview::after {
-    content: "";
-    position: absolute;
-    width: 100px;
-    height: 100px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) perspective(500px) rotateY(30deg);
-    background: 
-        linear-gradient(45deg, transparent 0%, transparent 40%, #FF0000 40%, #FF0000 60%, transparent 60%, transparent 100%),
-        linear-gradient(-45deg, transparent 0%, transparent 40%, #00FF00 40%, #00FF00 60%, transparent 60%, transparent 100%),
-        linear-gradient(135deg, transparent 0%, transparent 40%, #0000FF 40%, #0000FF 60%, transparent 60%, transparent 100%),
-        linear-gradient(-135deg, transparent 0%, transparent 40%, #FFFF00 40%, #FFFF00 60%, transparent 60%, transparent 100%);
-    filter: blur(1px);
     z-index: 2;
 }
 
-
-/* Update mobile styling */
-@media (max-width: 768px) {
-    .project-container {
-        width: 120px;
-        height: 90px;
-        position: fixed;
-        transform: scale(0.7);
-    }
-
-    /* Specific mobile sizes for containers 1 and 2 */
-    #container1, #container2 {
-        width: 180px;
-        height: 240px; /* Maintain aspect ratio for mobile */
-    }
-
-    /* Container 10 mobile size */
-    #container10 {
-        width: 180px;
-        height: 120px;
-    }
+.project-container:hover {
+    transform: scale(1.05);
 }
-
 
 .project-container img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    position: relative;
-    z-index: 4;
+    border-radius: 8px;
+    opacity: 1;
 }
 
-/* Main window responsiveness */
-.window {
-    width: 80%;
-    max-width: 800px;
-    margin: auto;
-    border: 2px solid #000000;
-    background-color: #ffffff;
-    box-shadow: 2px 2px 0px #808080, 4px 4px 0px #ffffff;
-    position: fixed;
-    z-index: 10;
-    cursor: move;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+.background-icon {
+    position: absolute;
+    opacity: 1;
+    z-index: 3;
+    pointer-events: none;
 }
 
-/* Responsive adjustments for vertical screens */
-@media (max-width: 768px) {
-    /* Resize project containers for smaller screens */
-    .project-container {
-        width: 200px;
-        height: 200px;
-        position: relative; /* Adjusts for better stacking */
-        margin: 10px auto;
-        display: inline-block; /* Allows containers to wrap and avoid overlap */
-    }
-
-    .project-container img {
-        width: 150%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    /* Adjust the main window for smaller screens */
-    .window {
-        width: 100%;
-        max-width: 400px;
-        margin: 10px auto;
-        transform: translate(0, 0); /* Reset the initial translate for smaller screens */
-    }
-
-    /* Thumbnail and text scaling */
-    .thumbnail {
-        width: 80%;
-        height: auto;
-        margin: 0 auto;
-        display: block;
-    }
-
-    h1, h2 {
-        font-size: 1.2em;
-        text-align: center;
-    }
-
-    .description-box p {
-        font-size: 0.9em;
-        text-align: center;
-    }
-
-    .bottom-section button {
-        font-size: 0.8em;
-        padding: 8px;
-    }
+/* Hide original images since we're using canvas */
+img:not(.background-icon) {
+    display: none;
 }
 
-/* Basic reset */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "MS Sans Serif", Arial, sans-serif;
+/* Specific container styles */
+#container1 {
+    z-index: 2;
+    width: 210px;
+    height: 210px;
 }
 
-/* Body style to emulate Windows 98 background */
-body {
-    background-color: #c3c7cb;
-    color: #000000;
-    min-height: 100vh;
-    width: 100vw;
-    overflow: hidden;
-    margin: 0;
-    padding: 0;
-}
-
-/* Add dotted canvas styling */
-.dotted-canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 5000px;
-    height: 5000px;
-    background-color: #e0e0e0;
-    background-image: radial-gradient(
-        #a0a0a0 15%,
-        transparent 16%
-    );
-    background-size: 20px 20px;
-    z-index: 1;
-    animation: ripple 3s infinite linear; /* Added animation */
-}
-
-/* Keyframes for ripple animation */
-@keyframes ripple {
-    0% {
-        background-position: 0 0;
-    }
-    50% {
-        background-position: 10px 10px;
-    }
-    100% {
-        background-position: 20px 20px;
-    }
-}
-
-/* Title bar styling */
-.title-bar {
-    background-color: #000080;
-    color: #ffffff;
-    padding: 5px;
-    font-size: 14px;
-    font-weight: bold;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.title-bar .title {
-    padding-left: 5px;
-}
-
-/* Close button */
-.title-bar button {
-    width: 16px;
-    height: 16px;
-    background-color: #c3c7cb;
-    border: 1px solid #ffffff;
-    color: #000;
-    font-weight: bold;
-    cursor: pointer;
-    text-align: center;
-    font-size: 12px;
-    margin-right: 5px;
-}
-
-.title-bar button:active {
-    border: 1px solid #808080;
-    color: #ffffff00;
-    background-color: #000080;
-}
-
-/* Content area styling */
-.content {
-    padding: 10px;
-    border: 2px solid #808080;
-    border-top: none;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-/* Header styling */
-.content h1 {
-    font-size: 24px;
-    color: #000080;
-    margin: 10px 0;
-}
-
-.content h2 {
-    font-size: 16px;
-    color: #000080;
-    margin-bottom: 20px;
-}
-
-/* Thumbnail styling */
-.thumbnail {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-    border: 2px solid #000080;
-    margin-bottom: 10px;
-}
-
-/* Description box styling */
-.description-box {
-    width: 100%;
-    border: 2px inset #c3c7cb;
-    padding: 10px;
-    background-color: #ffffff;
-    margin-top: 10px;
-    text-align: left;
-    font-size: 14px;
-}
-
-/* Bottom section styling */
-.bottom-section {
-    margin-top: 20px;
-    width: 100%;
-    background-color: #c3c7cb;
-    padding: 10px;
-    border: 2px solid #808080;
-    text-align: center;
-    font-size: 14px;
-    font-weight: bold;
-    color: #000080;
-    display: flex;
-    justify-content: center;
-    gap: 10px; /* Adds space between buttons */
-}
-
-/* Button styling with 3D effect */
-.bottom-section button {
-    padding: 4px 8px;
-    background-color: #c3c7cb;
-    border: none;
-    color: #000;
-    font-weight: bold;
-    cursor: pointer;
-    font-size: 12px;
-    text-align: center;
-    min-width: 80px;
-    box-shadow: inset 1px 1px #ffffff, inset -1px -1px #808080, 2px 2px #000; /* Bevel + Shadow */
-    border: 1px solid #c3c7cb;
-}
-
-/* Active (clicked) button effect */
-.bottom-section button:active {
-    box-shadow: inset -1px -1px #ffffff, inset 1px 1px #808080; /* Inverted bevel for pressed look */
-    background-color: #000080;
-    color: #ffffff;
-}
-
-.social-icons {
-    position: fixed;
-    bottom: 250px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 20px;
-    z-index: 5;
-}
-
-.social-icon {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background-color: #c3c7cb;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    box-shadow: 
-        inset 1px 1px #ffffff,
-        inset -1px -1px #808080,
-        2px 2px 4px rgba(0, 0, 0, 0.2);
-    transition: transform 0.2s ease;
-}
-
-.social-icon:hover {
-    transform: scale(1.1);
-}
-
-.social-icon:active {
-    box-shadow: 
-        inset -1px -1px #ffffff,
-        inset 1px 1px #808080;
-    transform: scale(0.95);
-}
-
-.pixel-icon {
-    width: 26px;
-    height: 26px;
-    image-rendering: pixelated;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.github-icon {
-    background-image: url('logo/25231.png');
-}
-
-.linkedin-icon {
-    background-image: url('logo/circle-linkedin-512.webp');
-}
-
-.instagram-icon {
-    background-image: url('logo/Instagram_icon.png.webp');
-}
-
-/* Make icons interact with main window */
-.window:hover ~ .social-icons {
-    transform: translate(-50%, -20px);
-}
-
-.window:active ~ .social-icons {
-    transform: translate(-50%, -30px);
-}
-
-/* Mobile responsiveness */
-@media (max-width: 768px) {
-    .social-icons {
-        bottom: 20px;
-        gap: 15px;
-    }
-
-    .social-icon {
-        width: 24px;
-        height: 24px;
-    }
-
-    .pixel-icon {
-        width: 12px;
-        height: 12px;
-    }
-}
+#container1 img {
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    opacity: 1;
+} 

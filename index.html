@@ -3,46 +3,291 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Landing Page</title>
-    <script>
-        // Function to detect device type based on screen size
-        function detectDeviceType() {
-            const width = window.innerWidth;
-            const height = window.innerHeight;
-            
-            // Mobile devices (width <= 393px)
-            if (width <= 440) {
-                return 'mobile';
-            }
-            // Laptop devices (width <= 1512px and height <= 982px)
-            else if (width <= 1512 && width > 440) {
-                return 'laptop';
-            }
-            // Desktop devices (larger than laptop)
-            else {
-                return 'desktop';
-            }
-        }
-
-        // Redirect based on device type
-        window.onload = function() {
-            const deviceType = detectDeviceType();
-            
-            switch(deviceType) {
-                case 'mobile':
-                    window.location.href = 'mobile.html';
-                    break;
-                case 'laptop':
-                    window.location.href = 'laptop.html';
-                    break;
-                case 'desktop':
-                    window.location.href = 'pc.html';
-                    break;
-            }
-        };
-    </script>
+    <title>Sourav Chakraborty</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; }
+    </style>
 </head>
 <body>
-    <p>Loading...</p>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Scene setup
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0xffffff); // White background
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
+        scene.add(ambientLight);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
+        directionalLight.position.set(0, 1, 1);
+        scene.add(directionalLight);
+
+        // Texture loader with error handling
+        const textureLoader = new THREE.TextureLoader();
+        const loadTexture = (path) => {
+            return new Promise((resolve, reject) => {
+                textureLoader.load(
+                    path,
+                    (texture) => {
+                        // Enable alpha channel for PNG textures
+                        if (path.endsWith('.png')) {
+                            texture.format = THREE.RGBAFormat;
+                        }
+                        resolve(texture);
+                    },
+                    undefined,
+                    (error) => {
+                        console.error(`Error loading texture ${path}:`, error);
+                        reject(error);
+                    }
+                );
+            });
+        };
+
+        // Create materials for images and containers
+        const createMaterials = async () => {
+            try {
+                const materials = {
+                    image1: new THREE.MeshBasicMaterial({ 
+                        map: await loadTexture('/31.jpg'),
+                        transparent: false
+                    }),
+                    image2: new THREE.MeshBasicMaterial({ 
+                        map: await loadTexture('/IMG_6799.png'),
+                        transparent: true,
+                        alphaTest: 0.5
+                    }),
+                    image3: new THREE.MeshBasicMaterial({ 
+                        map: await loadTexture('/intro.png'),
+                        transparent: true,
+                        alphaTest: 0.5
+                    }),
+                    image4: new THREE.MeshBasicMaterial({ 
+                        map: await loadTexture('/1.4.png'),
+                        transparent: true,
+                        alphaTest: 0.5
+                    })
+                };
+
+                const projectMaterials = {
+                    project1: new THREE.MeshBasicMaterial({ 
+                        map: await loadTexture('/26.jpg'),
+                        transparent: false
+                    }),
+                    project2: new THREE.MeshBasicMaterial({ 
+                        map: await loadTexture('/30.jpg'),
+                        transparent: false
+                    }),
+                    project3: new THREE.MeshBasicMaterial({ 
+                        map: await loadTexture('/38.jpg'),
+                        transparent: false
+                    }),
+                    project4: new THREE.MeshBasicMaterial({ 
+                        map: await loadTexture('/40.jpg'),
+                        transparent: false
+                    }),
+                    project5: new THREE.MeshBasicMaterial({ 
+                        map: await loadTexture('/37.jpg'),
+                        transparent: false
+                    }),
+                    project6: new THREE.MeshBasicMaterial({ 
+                        map: await loadTexture('/44.jpg'),
+                        transparent: false
+                    }),
+                    project7: new THREE.MeshBasicMaterial({ 
+                        map: await loadTexture('/39.jpg'),
+                        transparent: false
+                    }),
+                    project8: new THREE.MeshBasicMaterial({ 
+                        map: await loadTexture('/28.jpg'),
+                        transparent: false
+                    }),
+                    project9: new THREE.MeshBasicMaterial({ 
+                        map: await loadTexture('/33.jpg'),
+                        transparent: false
+                    })
+                };
+
+                return { materials, projectMaterials };
+            } catch (error) {
+                console.error('Error creating materials:', error);
+                return null;
+            }
+        };
+
+        // Create image planes
+        const createImagePlane = (material, width, height, x, y, z) => {
+            const geometry = new THREE.PlaneGeometry(width, height);
+            const plane = new THREE.Mesh(geometry, material);
+            plane.position.set(x, y, z);
+            return plane;
+        };
+
+        // Initialize scene
+        async function init() {
+            const { materials, projectMaterials } = await createMaterials();
+            if (!materials || !projectMaterials) return;
+
+            // ===== CONFIGURABLE POSITIONS AND DIMENSIONS FOR IMAGES =====
+            const imageConfig = {
+                image1: { x: 0, y: 0, z: 0, width: 5, height: 5 },   // Top-left
+                image2: { x: 0, y: 0, z: -10, width: 3.5, height: 4 },    // Top-right
+                image3: { x: 4, y: 0, z: -12, width: 4.5, height: 2.5 }, // Bottom-left
+                image4: { x: 4, y: 0, z: -13, width: 4.5, height: 4.5 } // Bottom-right
+            };
+
+            // Add image planes to scene
+            const images = [
+                { material: materials.image1, ...imageConfig.image1 },
+                { material: materials.image2, ...imageConfig.image2 },
+                { material: materials.image3, ...imageConfig.image3 },
+                { material: materials.image4, ...imageConfig.image4 }
+            ];
+
+            images.forEach(img => {
+                const plane = createImagePlane(img.material, img.width, img.height, img.x, img.y, img.z);
+                scene.add(plane);
+            });
+
+            // ===== CONFIGURABLE POSITIONS AND DIMENSIONS FOR CONTAINERS =====
+            const containerConfig = {
+                project1: { x: -4, y: 2, z: -25, width: 2, height: 1.9 },      // Tri.html
+                project2: { x: 4, y: 2, z: -30, width: 2, height: 3 },          // project2.html
+                project3: { x: -4, y: -2, z: -35, width: 2.2, height: 1.6 },    // project5.html
+                project4: { x: 0, y: 0, z: -40, width: 2, height: 2 },          // wedding.html
+                project5: { x: 4, y: -2, z: -45, width: 1.5, height: 1 },       // project10.html
+                project6: { x: -4, y: 0, z: -50, width: 1.7, height: 1.7 },     // Prewedding.html
+                project7: { x: 4, y: 0, z: -55, width: 2.2, height: 2.2 },      // r.html
+                project8: { x: 0, y: 2, z: -60, width: 2, height: 1.6 },        // project3.html
+                project9: { x: 0, y: -2, z: -65, width: 2, height: 2 }          // project4.html
+            };
+
+            // Create project containers
+            const containers = [];
+            const containerPages = {
+                project1: 'Tri.html',
+                project2: 'project2.html',
+                project3: 'project5.html',
+                project4: 'wedding.html',
+                project5: 'project10.html',
+                project6: 'Prewedding.html',
+                project7: 'r.html',
+                project8: 'project3.html',
+                project9: 'project4.html'
+            };
+
+            // Make materials transparent for hover effect
+            Object.entries(projectMaterials).forEach(([key, material]) => {
+                material.transparent = true;
+                material.opacity = 1.0;
+            });
+
+            Object.entries(projectMaterials).forEach(([key, material]) => {
+                const config = containerConfig[key];
+                const container = createImagePlane(material, config.width, config.height, config.x, config.y, config.z);
+                
+                // Add click handler
+                container.userData.page = containerPages[key];
+                container.userData.isClickable = true;
+                
+                containers.push(container);
+                scene.add(container);
+            });
+
+            // Add click handling
+            const raycaster = new THREE.Raycaster();
+            const mouse = new THREE.Vector2();
+
+            window.addEventListener('click', (event) => {
+                // Calculate mouse position in normalized device coordinates
+                mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+                mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+                // Update the picking ray with the camera and mouse position
+                raycaster.setFromCamera(mouse, camera);
+
+                // Calculate objects intersecting the picking ray
+                const intersects = raycaster.intersectObjects(containers);
+
+                if (intersects.length > 0) {
+                    const clickedObject = intersects[0].object;
+                    if (clickedObject.userData.isClickable && clickedObject.userData.page) {
+                        window.location.href = clickedObject.userData.page;
+                    }
+                }
+            });
+
+            // Add hover effect
+            window.addEventListener('mousemove', (event) => {
+                mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+                mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+                raycaster.setFromCamera(mouse, camera);
+                const intersects = raycaster.intersectObjects(containers);
+
+                // Reset all containers
+                containers.forEach(container => {
+                    container.material.opacity = 1.0;
+                });
+
+                // Highlight hovered container
+                if (intersects.length > 0) {
+                    const hoveredObject = intersects[0].object;
+                    if (hoveredObject.userData.isClickable) {
+                        hoveredObject.material.opacity = 0.8;
+                        document.body.style.cursor = 'pointer';
+                    }
+                } else {
+                    document.body.style.cursor = 'default';
+                }
+            });
+
+            // Set initial camera position to show first image properly
+            camera.position.z = 8;
+            targetZ = camera.position.z;
+
+            // Update scroll limits
+            const minZ = -70; // Adjusted for all objects (deepest Z is -65)
+            const maxZ = 8;   // Starting position
+        }
+
+        // Mouse scroll handling
+        let targetZ = 8; // Initial target Z position
+        const scrollSpeed = 0.05; // Reduced for smoother scrolling
+        const minZ = -70;
+        const maxZ = 8;
+
+        window.addEventListener('wheel', (event) => {
+            targetZ += event.deltaY * scrollSpeed;
+            targetZ = Math.max(minZ, Math.min(maxZ, targetZ));
+        });
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            // Smoother camera movement
+            camera.position.z += (targetZ - camera.position.z) * 0.05;
+            
+            renderer.render(scene, camera);
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Start the scene
+        init().then(() => {
+            animate();
+        });
+    </script>
 </body>
 </html>

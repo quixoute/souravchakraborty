@@ -135,26 +135,15 @@ function drawSecondCanvas(ctx, width, height) {
     // Draw wedding1
     ctx.save();
     ctx.translate(width * 0.2, height * 0.84);
-    ctx.drawImage(images.wedding1, -165, -331, 490, 250);
+    ctx.drawImage(images.wedding1, -131, -351, 322, 194);
     ctx.restore();
 
-    // Draw prewedding
-    ctx.save();
-    ctx.translate(width * 0.14, height * 0.53);
-    ctx.rotate(8 * Math.PI / 180);
-    ctx.drawImage(images.prewedding, -175, -500, 490, 250);
-    ctx.restore();
-
-    // Draw reels
-    ctx.save();
-    ctx.translate(width * 0.92, height * 0.86);
-    ctx.drawImage(images.reels, -490, -150, 490, 250);
-    ctx.restore();
+    
     
     const projectPositions = [
-        { x: 0.35, y: 0.45, width: 160, height: 150, id: 'container4', page: 'wedding.html', image: images.project4 },
-        { x: 0.60, y: 0.20, width: 200, height: 120, id: 'container6', page: 'Prewedding.html', image: images.project6 },
-        { x: 0.65, y: 0.80, width: 150, height: 150, id: 'container7', page: 'r.html', image: images.project7 }
+        { x: 0.65, y: 0.48, width: 169, height: 169, id: 'container4', page: 'wedding.html', image: images.project4 },
+        { x: 0.35, y: 0.25, width: 160, height: 155, id: 'container6', page: 'Prewedding.html', image: images.project6 },
+        { x: 0.40, y: 0.70, width: 157, height: 157, id: 'container7', page: 'r.html', image: images.project7 }
     ];
     
     projectPositions.forEach(pos => {
@@ -172,6 +161,18 @@ function drawSecondCanvas(ctx, width, height) {
         
         ctx.restore();
     });
+    // Draw prewedding
+    ctx.save();
+    ctx.translate(width * 0.14, height * 0.53);
+    ctx.rotate(8 * Math.PI / 180);
+    ctx.drawImage(images.prewedding, 7.5, -380, 322, 194);
+    ctx.restore();
+
+    // Draw reels
+    ctx.save();
+    ctx.translate(width * 0.92, height * 0.86);
+    ctx.drawImage(images.reels, -280, -170, 322, 194);
+    ctx.restore();
 }
 
 // Draw Third canvas content
@@ -183,11 +184,11 @@ function drawThirdCanvas(ctx, width, height) {
     drawDottedBackground(ctx, width, height);
 
     const projectPositions = [
-        { x: 0.25, y: 0.15, width: 150, height: 140, id: 'container1', page: 'Tri.html', image: images.project1 },
-        { x: 0.25, y: 0.4, width: 160, height: 120, id: 'container10', page: 'project3.html', image: images.project10 },
-        { x: 0.62, y: 0.55, width: 150, height: 200, id: 'container2', page: 'project2.html', image: images.project2 },
-        { x: 0.35, y: 0.79, width: 150, height: 100, id: 'container3', page: 'project5.html', image: images.project3 },
-        { x: 0.78, y: 0.25, width: 150, height: 100, id: 'container5', page: 'project10.html', image: images.project5 }
+        { x: 0.25, y: 0.4, width: 144, height: 144, id: 'container1', page: 'Tri.html', image: images.project1 },
+        { x: 0.25, y: 0.69, width: 128, height: 129, id: 'container10', page: 'project3.html', image: images.project10 },
+        { x: 0.68, y: 0.35, width: 140, height: 198, id: 'container2', page: 'project2.html', image: images.project2 },
+        { x: 0.68, y: 0.59, width: 189, height: 126, id: 'container3', page: 'project5.html', image: images.project3 },
+     
     ];
 
     projectPositions.forEach(pos => {
@@ -239,20 +240,41 @@ document.addEventListener('mousemove', (e) => {
     mouseX = e.clientX - rect.left;
     mouseY = e.clientY - rect.top;
     
-    // Get the canvas-specific project positions
-    const projectPositions = canvas.id === 'myCanvas2' ? 
-        [
-            { x: 0.35, y: 0.45, width: 160, height: 150, id: 'container4', page: 'wedding.html', image: images.project4 },
-            { x: 0.60, y: 0.20, width: 200, height: 120, id: 'container6', page: 'Prewedding.html', image: images.project6 },
-            { x: 0.65, y: 0.80, width: 150, height: 150, id: 'container7', page: 'r.html', image: images.project7 }
-        ] :
-        [
-            { x: 0.25, y: 0.15, width: 150, height: 140, id: 'container1', page: 'Tri.html', image: images.project1 },
-            { x: 0.25, y: 0.4, width: 160, height: 120, id: 'container10', page: 'project3.html', image: images.project10 },
-            { x: 0.62, y: 0.55, width: 150, height: 200, id: 'container2', page: 'project2.html', image: images.project2 },
-            { x: 0.35, y: 0.79, width: 150, height: 100, id: 'container3', page: 'project5.html', image: images.project3 },
-            { x: 0.78, y: 0.25, width: 150, height: 100, id: 'container5', page: 'project10.html', image: images.project5 }
-        ];
+    // Define positions for each canvas
+    const canvas1Positions = [
+        { x: 0.49, y: 0.45, width: 450, height: 550, id: 'container4', page: 'wedding.html', image: images.project4 },
+        { x: 0.42, y: 0.45, width: 425, height: 250, id: 'container6', page: 'Prewedding.html', image: images.project6 },
+        { x: 0.75, y: 0.45, width: 150, height: 140, id: 'container9', page: 'project9.html', image: images.project9 }
+    ];
+    
+    const canvas2Positions = [
+        { x: 0.65, y: 0.48, width: 169, height: 169, id: 'container4', page: 'wedding.html', image: images.project4 },
+        { x: 0.35, y: 0.25, width: 160, height: 155, id: 'container6', page: 'Prewedding.html', image: images.project6 },
+        { x: 0.40, y: 0.70, width: 157, height: 157, id: 'container7', page: 'r.html', image: images.project7 }
+    ];
+    
+    const canvas3Positions = [
+        { x: 0.25, y: 0.4, width: 144, height: 144, id: 'container1', page: 'Tri.html', image: images.project1 },
+        { x: 0.25, y: 0.69, width: 128, height: 129, id: 'container10', page: 'project3.html', image: images.project10 },
+        { x: 0.68, y: 0.35, width: 140, height: 198, id: 'container2', page: 'project2.html', image: images.project2 },
+        { x: 0.68, y: 0.59, width: 189, height: 126, id: 'container3', page: 'project5.html', image: images.project3 }
+    ];
+    
+    // Select the appropriate positions based on canvas ID
+    let projectPositions;
+    switch(canvas.id) {
+        case 'myCanvas':
+            projectPositions = canvas1Positions;
+            break;
+        case 'myCanvas2':
+            projectPositions = canvas2Positions;
+            break;
+        case 'myCanvas3':
+            projectPositions = canvas3Positions;
+            break;
+        default:
+            return;
+    }
     
     // Check which container is being hovered
     let foundHover = false;
@@ -282,20 +304,41 @@ document.addEventListener('click', (e) => {
     const clickX = e.clientX - rect.left;
     const clickY = e.clientY - rect.top;
     
-    // Get the canvas-specific project positions
-    const projectPositions = canvas.id === 'myCanvas2' ? 
-        [
-            { x: 0.35, y: 0.45, width: 160, height: 150, id: 'container4', page: 'wedding.html', image: images.project4 },
-            { x: 0.60, y: 0.20, width: 200, height: 120, id: 'container6', page: 'Prewedding.html', image: images.project6 },
-            { x: 0.65, y: 0.80, width: 150, height: 150, id: 'container7', page: 'r.html', image: images.project7 }
-        ] :
-        [
-            { x: 0.25, y: 0.15, width: 150, height: 140, id: 'container1', page: 'Tri.html', image: images.project1 },
-            { x: 0.25, y: 0.4, width: 160, height: 120, id: 'container10', page: 'project3.html', image: images.project10 },
-            { x: 0.62, y: 0.55, width: 150, height: 200, id: 'container2', page: 'project2.html', image: images.project2 },
-            { x: 0.35, y: 0.79, width: 150, height: 100, id: 'container3', page: 'project5.html', image: images.project3 },
-            { x: 0.78, y: 0.25, width: 150, height: 100, id: 'container5', page: 'project10.html', image: images.project5 }
-        ];
+    // Define positions for each canvas
+    const canvas1Positions = [
+        { x: 0.49, y: 0.45, width: 450, height: 550, id: 'container4', page: 'wedding.html', image: images.project4 },
+        { x: 0.42, y: 0.45, width: 425, height: 250, id: 'container6', page: 'Prewedding.html', image: images.project6 },
+        { x: 0.75, y: 0.45, width: 150, height: 140, id: 'container9', page: 'project9.html', image: images.project9 }
+    ];
+    
+    const canvas2Positions = [
+        { x: 0.65, y: 0.48, width: 169, height: 169, id: 'container4', page: 'wedding.html', image: images.project4 },
+        { x: 0.35, y: 0.25, width: 160, height: 155, id: 'container6', page: 'Prewedding.html', image: images.project6 },
+        { x: 0.40, y: 0.70, width: 157, height: 157, id: 'container7', page: 'r.html', image: images.project7 }
+    ];
+    
+    const canvas3Positions = [
+        { x: 0.25, y: 0.4, width: 144, height: 144, id: 'container1', page: 'Tri.html', image: images.project1 },
+        { x: 0.25, y: 0.69, width: 128, height: 129, id: 'container10', page: 'project3.html', image: images.project10 },
+        { x: 0.68, y: 0.35, width: 140, height: 198, id: 'container2', page: 'project2.html', image: images.project2 },
+        { x: 0.68, y: 0.59, width: 189, height: 126, id: 'container3', page: 'project5.html', image: images.project3 }
+    ];
+    
+    // Select the appropriate positions based on canvas ID
+    let projectPositions;
+    switch(canvas.id) {
+        case 'myCanvas':
+            projectPositions = canvas1Positions;
+            break;
+        case 'myCanvas2':
+            projectPositions = canvas2Positions;
+            break;
+        case 'myCanvas3':
+            projectPositions = canvas3Positions;
+            break;
+        default:
+            return;
+    }
     
     // Check which container was clicked
     projectPositions.forEach(container => {

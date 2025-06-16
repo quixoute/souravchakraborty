@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Landing Page</title>
+    <script>
+        // Function to detect device type based on screen size
+        function detectDeviceType() {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            
+            // Mobile devices (width <= 393px)
+            if (width <= 440) {
+                return 'mobile';
+            }
+            // Laptop devices (width <= 1512px and height <= 982px)
+            else if (width <= 1512 && width > 440) {
+                return 'laptop';
+            }
+            // Desktop devices (larger than laptop)
+            else {
+                return 'desktop';
+            }
+        }
+
+        // Redirect based on device type
+        window.onload = function() {
+            const deviceType = detectDeviceType();
+            
+            switch(deviceType) {
+                case 'mobile':
+                    window.location.href = 'mobile.html';
+                    break;
+                case 'laptop':
+                    window.location.href = 'laptop.html';
+                    break;
+                case 'desktop':
+                    // For desktop, use laptop.html with 1.5x zoom
+                    window.location.href = 'laptop.html?zoom=1.5';
+                    break;
+            }
+        };
+    </script>
+</head>
+<body>
+    <p>Loading...</p>
+</body>
+</html>

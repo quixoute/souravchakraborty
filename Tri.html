@@ -4,109 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sourav Chakraborty</title>
-    <link rel="stylesheet" href="substyles.css">
-    <link rel="stylesheet" href="security.css">   
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: 
+                radial-gradient(circle at center, #000 1px, transparent 1px),
+                linear-gradient(45deg, #ffffff 0%, #f0f0f0 50%, #e0e0e0 100%);
+            background-size: 30px 30px, 100% 100%;
+            background-position: center center;
+        }
+        .background-gallery {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        .background-gallery img {
+            position: absolute;
+            object-fit: cover;
+            transition: all 0.3s ease;
+        }
+        .horizontal {
+            width: 300px;
+            height: 200px;
+        }
+        .background-gallery img:not(.horizontal) {
+            width: 200px;
+            height: 300px;
+        }
+    </style>
 </head>
 <body>
-
     <!-- Background gallery -->
     <div class="background-gallery">
-        <img src="Tri/4.webp" alt="Image 1" class="horizontal">
-        <img src="Tri/2.webp" alt="Image 2">
-        <img src="Tri/3.webp" alt="Image 3">
-        <img src="Tri/1.webp" alt="Image 4">
-        <img src="Tri/5.webp" alt="Image 5">
-        <img src="Tri/6.webp" alt="Image 6">
-        <img src="Tri/8.webp" alt="Image 7" class="horizontal">
-        <img src="Tri/7.webp" alt="Image 8">
-        <img src="Tri/9.webp" alt="Image 9">
-        <img src="Tri/10.webp" alt="Image 10">
-        <img src="Tri/11.webp" alt="Image 11">
-        <img src="Tri/12.webp" alt="Image 12">
-        <img src="Tri/13.webp" alt="Image 13" class="horizontal">
+        <img src="Tri/4.webp" alt="Image 1" class="horizontal" style="left: 100px; top: 150px; transform: rotate(5deg) scale(1.2);">
+        <img src="Tri/2.webp" alt="Image 2" style="left: 400px; top: 100px; transform: rotate(-8deg);">
+        <img src="Tri/3.webp" alt="Image 3" style="left: 700px; top: 200px; transform: rotate(12deg);">
+        <img src="Tri/1.webp" alt="Image 4" style="left: 1000px; top: 150px; transform: rotate(-5deg);">
+        <img src="Tri/5.webp" alt="Image 5" style="left: 200px; top: 400px; transform: rotate(15deg);">
+        <img src="Tri/6.webp" alt="Image 6" style="left: 500px; top: 450px; transform: rotate(-10deg);">
+        <img src="Tri/8.webp" alt="Image 7" class="horizontal" style="left: 800px; top: 400px; transform: rotate(8deg);">
+        <img src="Tri/7.webp" alt="Image 8" style="left: 1100px; top: 450px; transform: rotate(-12deg);">
+        <img src="Tri/9.webp" alt="Image 9" style="left: 150px; top: 700px; transform: rotate(10deg);">
+        <img src="Tri/10.webp" alt="Image 10" style="left: 450px; top: 750px; transform: rotate(-15deg);">
+        <img src="Tri/11.webp" alt="Image 11" style="left: 750px; top: 700px; transform: rotate(7deg);">
+        <img src="Tri/12.webp" alt="Image 12" style="left: 1050px; top: 750px; transform: rotate(-8deg);">
+        <img src="Tri/13.webp" alt="Image 13" class="horizontal" style="left: 600px; top: 900px; transform: rotate(5deg);">
     </div>
-
-    <!-- Main container with slideshow -->
-    <div class="main-container">
-        <div class="right-align">
-            <div class="window">
-                <div class="title-bar">
-                    <span class="title">Tri Fashion</span>
-                    <button class="close-button" onclick="window.location.href='index.html'">x</button>
-                </div>
-                
-                <div class="slideshow">
-                    <button class="nav-button" id="back">Back</button>
-                    <img id="slideImage" src="Tri\_MG_1408.webp" alt="Slideshow Image">
-                    <button class="nav-button" id="forward">Forward</button>
-                </div>
-            </div>
-    
-            <div id="videoContainer">
-                <iframe src="https://www.youtube.com/embed/4au7BSmbQgc" title="tri di" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-            </div>
-        </div>
-    </div>
-    <script src="security.js"></script>
-    <script>
-        // Wait for the DOM to be fully loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            const images = [
-                "Tri/4.webp", "Tri/2.webp", "Tri/1.webp", "Tri/3.webp",
-                "Tri/13.webp", "Tri/5.webp", "Tri/6.webp", "Tri/7.webp",
-                "Tri/8.webp", "Tri/9.webp", "Tri/10.webp", "Tri/11.webp", 
-                "Tri/12.webp"
-            ];
-
-            let currentIndex = 0;
-            const slideImage = document.getElementById('slideImage');
-            const backButton = document.getElementById('back');
-            const forwardButton = document.getElementById('forward');
-
-            // Function to handle image loading
-            function showSlide(index) {
-                // Create a new image object to preload
-                const img = new Image();
-                img.onload = function() {
-                    slideImage.src = this.src;
-                    slideImage.style.opacity = 1;
-                };
-                img.onerror = function() {
-                    console.error('Error loading image:', images[index]);
-                };
-                slideImage.style.opacity = 0;
-                img.src = images[index];
-            }
-
-            function nextSlide() {
-                currentIndex = (currentIndex + 1) % images.length;
-                showSlide(currentIndex);
-            }
-
-            function prevSlide() {
-                currentIndex = (currentIndex - 1 + images.length) % images.length;
-                showSlide(currentIndex);
-            }
-
-            // Add event listeners to buttons
-            backButton.addEventListener('click', prevSlide);
-            forwardButton.addEventListener('click', nextSlide);
-
-            // Initialize first slide
-            showSlide(currentIndex);
-
-            // Auto-play slideshow every 5 seconds
-            let slideInterval = setInterval(nextSlide, 5000);
-
-            // Pause auto-play when user interacts with navigation
-            backButton.addEventListener('mouseenter', () => clearInterval(slideInterval));
-            forwardButton.addEventListener('mouseenter', () => clearInterval(slideInterval));
-
-            // Resume auto-play when user stops interacting
-            backButton.addEventListener('mouseleave', () => slideInterval = setInterval(nextSlide, 5000));
-            forwardButton.addEventListener('mouseleave', () => slideInterval = setInterval(nextSlide, 5000));
-            
-        });
-    </script>
 </body>
 </html>

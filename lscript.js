@@ -36,27 +36,6 @@ function loadImages() {
 let animationFrame = 0;
 let lastTimestamp = 0;
 
-// Draw dotted background
-function drawDottedBackground(ctx, width, height) {
-    const dotSize = 20;
-    const dotColor = '#a0a0a0';
-    const bgColor = '#e0e0e0';
-    
-    // Fill background
-    ctx.fillStyle = bgColor;
-    ctx.fillRect(0, 0, width, height);
-    
-    // Draw dots
-    ctx.fillStyle = dotColor;
-    for (let x = 0; x < width; x += dotSize) {
-        for (let y = 0; y < height; y += dotSize) {
-            ctx.beginPath();
-            ctx.arc(x + dotSize/2, y + dotSize/2, dotSize * 0.15, 0, Math.PI * 2);
-            ctx.fill();
-        }
-    }
-}
-
 // Animation loop
 function animate(timestamp) {
     if (!lastTimestamp) lastTimestamp = timestamp;
@@ -67,84 +46,86 @@ function animate(timestamp) {
         lastTimestamp = timestamp;
     }
     
-    resizeCanvas();
+    drawFirstCanvas();
     requestAnimationFrame(animate);
 }
 
 // Draw first canvas content
-function drawFirstCanvas(ctx, width, height) {
+function drawFirstCanvas() {
+    const canvas = document.getElementById('myCanvas');
+    const ctx = canvas.getContext('2d');
+    const width = 1512;
+    const height = 982;
+
     ctx.clearRect(0, 0, width, height);
-    drawDottedBackground(ctx, width, height);
+    ctx.fillStyle = '#e0e0e0';
+    ctx.fillRect(0, 0, width, height);
 
     // Draw image4
     ctx.save();
-    ctx.translate(width * 0.49, height * 0.45);
+    ctx.translate(741, 442);
     ctx.rotate(-15 * Math.PI / 180);
     ctx.drawImage(images.image4, -300, -385, 500, 650);
     ctx.restore();
 
     // Draw intro
     ctx.save();
-    ctx.translate(width * 0.42, height * 0.45);
+    ctx.translate(635, 442);
     ctx.rotate(-6 * Math.PI / 180);
     ctx.drawImage(images.intro, -190, -185, 525, 350);
     ctx.restore();
 
     // Draw project9
     ctx.save();
-    ctx.translate(width * 0.75, height * 0.45);
-    
+    ctx.translate(1134, 442);
     ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
     ctx.shadowBlur = 15;
     ctx.shadowOffsetX = 5;
     ctx.shadowOffsetY = 5;
-    
     ctx.drawImage(images.project9, -50, 10, 180, 170);
-    
     ctx.shadowColor = 'transparent';
     ctx.restore();
 
     // Draw thumbnail
     ctx.save();
-    ctx.translate(width * 0.42, height * 0.45);
+    ctx.translate(635, 442);
     ctx.rotate(-2 * Math.PI / 180);
     ctx.drawImage(images.thumbnail, -50, -50, 550, 630);
     ctx.restore();
 
     // Draw wedding1
     ctx.save();
-    ctx.translate(width * 0.2, height * 0.84);
+    ctx.translate(302, 825);
     ctx.drawImage(images.wedding1, -305, -85, 590, 250);
     ctx.restore();
 
     // Draw prewedding
     ctx.save();
-    ctx.translate(width * 0.14, height * 0.53);
+    ctx.translate(211, 520);
     ctx.rotate(8 * Math.PI / 180);
     ctx.drawImage(images.prewedding, -305, -465, 490, 250);
     ctx.restore();
     
     // Draw reels
     ctx.save();
-    ctx.translate(width * 0.92, height * 0.86);
+    ctx.translate(1391, 844);
     ctx.drawImage(images.reels, -300, -150, 590, 250);
     ctx.restore();
     
     const projectPositions = [
-        { x: 0.15, y: 0.75, width: 170, height: 165, id: 'container4', page: 'wedding.html', image: images.project4 },
-        { x: 0.15, y: 0.30, width: 250, height: 170, id: 'container6', page: 'Prewedding.html', image: images.project6 },
-        { x: 0.8, y: 0.80, width: 220, height: 220, id: 'container7', page: 'r.html', image: images.project7 },
-        { x: 0.36, y: 0.19, width: 200, height: 190, id: 'container1', page: 'Tri.html', image: images.project1 },
-        { x: 0.22, y: 0.5, width: 200, height: 160, id: 'container10', page: 'project3.html', image: images.project10 },
-        { x: 0.72, y: 0.30, width: 200, height: 300, id: 'container2', page: 'project2.html', image: images.project2 },
-        { x: 0.36, y: 0.85, width: 220, height: 160, id: 'container3', page: 'project5.html', image: images.project3 },
-        { x: 0.89, y: 0.45, width: 150, height: 100, id: 'container5', page: 'project10.html', image: images.project5 }
+        { x: 227, y: 736, width: 170, height: 165, id: 'container4', page: 'wedding.html', image: images.project4 },
+        { x: 227, y: 295, width: 170, height: 170, id: 'container6', page: 'Prewedding.html', image: images.project6 },
+        { x: 1210, y: 786, width: 220, height: 220, id: 'container7', page: 'r.html', image: images.project7 },
+        { x: 544, y: 186, width: 200, height: 190, id: 'container1', page: 'Tri.html', image: images.project1 },
+        { x: 333, y: 491, width: 200, height: 160, id: 'container10', page: 'project3.html', image: images.project10 },
+        { x: 1089, y: 295, width: 200, height: 300, id: 'container2', page: 'project2.html', image: images.project2 },
+        { x: 544, y: 835, width: 220, height: 160, id: 'container3', page: 'project5.html', image: images.project3 },
+        { x: 1346, y: 442, width: 150, height: 100, id: 'container5', page: 'project10.html', image: images.project5 }
     ];
     
     projectPositions.forEach(pos => {
         ctx.save();
-        ctx.translate(width * pos.x, height * pos.y);
-        
+        ctx.translate(pos.x, pos.y);
         ctx.drawImage(pos.image, -pos.width/2, -pos.height/2, pos.width, pos.height);
         
         if (isHovering(pos.id)) {
@@ -165,44 +146,40 @@ function isHovering(containerId) {
     return hoveredContainer === containerId;
 }
 
-function isPointInContainer(x, y, container, canvasWidth, canvasHeight) {
-    const containerX = canvasWidth * container.x;
-    const containerY = canvasHeight * container.y;
+function isPointInContainer(x, y, container) {
     const halfWidth = container.width / 2;
     const halfHeight = container.height / 2;
     
-    return x >= containerX - halfWidth && 
-           x <= containerX + halfWidth && 
-           y >= containerY - halfHeight && 
-           y <= containerY + halfHeight;
+    return x >= container.x - halfWidth && 
+           x <= container.x + halfWidth && 
+           y >= container.y - halfHeight && 
+           y <= container.y + halfHeight;
 }
 
 // Mouse event listeners
 document.addEventListener('mousemove', (e) => {
-    const canvas = e.target.closest('canvas');
-    if (!canvas) return;
-    
+    const canvas = document.getElementById('myCanvas');
     const rect = canvas.getBoundingClientRect();
-    mouseX = e.clientX - rect.left;
-    mouseY = e.clientY - rect.top;
+    const scaleX = 1512 / rect.width;
+    const scaleY = 982 / rect.height;
     
-    const projectPositions = canvas.id === 'myCanvas2' ? 
-        [
-            { x: 0.35, y: 0.45, width: 260, height: 250, id: 'container4', page: 'wedding.html', image: images.project4 },
-            { x: 0.60, y: 0.20, width: 300, height: 220, id: 'container6', page: 'Prewedding.html', image: images.project6 },
-            { x: 0.8, y: 0.80, width: 220, height: 220, id: 'container7', page: 'r.html', image: images.project7 }
-        ] :
-        [
-            { x: 0.25, y: 0.15, width: 250, height: 240, id: 'container1', page: 'Tri.html', image: images.project1 },
-            { x: 0.25, y: 0.4, width: 260, height: 220, id: 'container10', page: 'project3.html', image: images.project10 },
-            { x: 0.62, y: 0.55, width: 250, height: 300, id: 'container2', page: 'project2.html', image: images.project2 },
-            { x: 0.35, y: 0.79, width: 250, height: 200, id: 'container3', page: 'project5.html', image: images.project3 },
-            { x: 0.78, y: 0.25, width: 250, height: 200, id: 'container5', page: 'project10.html', image: images.project5 }
-        ];
+    mouseX = (e.clientX - rect.left) * scaleX;
+    mouseY = (e.clientY - rect.top) * scaleY;
+    
+    const projectPositions = [
+        { x: 227, y: 736, width: 170, height: 165, id: 'container4', page: 'wedding.html', image: images.project4 },
+        { x: 227, y: 295, width: 250, height: 250, id: 'container6', page: 'Prewedding.html', image: images.project6 },
+        { x: 1210, y: 786, width: 220, height: 220, id: 'container7', page: 'r.html', image: images.project7 },
+        { x: 544, y: 186, width: 200, height: 190, id: 'container1', page: 'Tri.html', image: images.project1 },
+        { x: 333, y: 491, width: 200, height: 160, id: 'container10', page: 'project3.html', image: images.project10 },
+        { x: 1089, y: 295, width: 200, height: 300, id: 'container2', page: 'project2.html', image: images.project2 },
+        { x: 544, y: 835, width: 220, height: 160, id: 'container3', page: 'project5.html', image: images.project3 },
+        { x: 1346, y: 442, width: 150, height: 100, id: 'container5', page: 'project10.html', image: images.project5 }
+    ];
     
     let foundHover = false;
     projectPositions.forEach(container => {
-        if (isPointInContainer(mouseX, mouseY, container, rect.width, rect.height)) {
+        if (isPointInContainer(mouseX, mouseY, container)) {
             hoveredContainer = container.id;
             foundHover = true;
             canvas.style.cursor = 'pointer';
@@ -214,82 +191,62 @@ document.addEventListener('mousemove', (e) => {
         canvas.style.cursor = 'default';
     }
     
-    resizeCanvas();
+    drawFirstCanvas();
 });
 
 // Click event listener
 document.addEventListener('click', (e) => {
-    const canvas = e.target.closest('canvas');
-    if (!canvas) return;
-    
+    const canvas = document.getElementById('myCanvas');
     const rect = canvas.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    const clickY = e.clientY - rect.top;
+    const scaleX = 1512 / rect.width;
+    const scaleY = 982 / rect.height;
     
-    // Define project positions for both canvases
-    const mainCanvasPositions = [
-        { x: 0.15, y: 0.75, width: 170, height: 165, id: 'container4', page: 'wedding.html', image: images.project4 },
-        { x: 0.15, y: 0.30, width: 250, height: 170, id: 'container6', page: 'Prewedding.html', image: images.project6 },
-        { x: 0.8, y: 0.80, width: 220, height: 220, id: 'container7', page: 'r.html', image: images.project7 },
-        { x: 0.36, y: 0.19, width: 200, height: 190, id: 'container1', page: 'Tri.html', image: images.project1 },
-        { x: 0.22, y: 0.5, width: 200, height: 160, id: 'container10', page: 'project3.html', image: images.project10 },
-        { x: 0.72, y: 0.30, width: 200, height: 300, id: 'container2', page: 'project2.html', image: images.project2 },
-        { x: 0.36, y: 0.85, width: 220, height: 160, id: 'container3', page: 'project5.html', image: images.project3 },
-        { x: 0.89, y: 0.45, width: 150, height: 100, id: 'container5', page: 'project10.html', image: images.project5 }
+    const clickX = (e.clientX - rect.left) * scaleX;
+    const clickY = (e.clientY - rect.top) * scaleY;
+    
+    const projectPositions = [
+        { x: 227, y: 736, width: 170, height: 165, id: 'container4', page: 'wedding.html', image: images.project4 },
+        { x: 227, y: 295, width: 250, height: 250, id: 'container6', page: 'Prewedding.html', image: images.project6 },
+        { x: 1210, y: 786, width: 220, height: 220, id: 'container7', page: 'r.html', image: images.project7 },
+        { x: 544, y: 186, width: 200, height: 190, id: 'container1', page: 'Tri.html', image: images.project1 },
+        { x: 333, y: 491, width: 200, height: 160, id: 'container10', page: 'project3.html', image: images.project10 },
+        { x: 1089, y: 295, width: 200, height: 300, id: 'container2', page: 'project2.html', image: images.project2 },
+        { x: 544, y: 835, width: 220, height: 160, id: 'container3', page: 'project5.html', image: images.project3 },
+        { x: 1346, y: 442, width: 150, height: 100, id: 'container5', page: 'project10.html', image: images.project5 }
     ];
-    
-    const canvas2Positions = [
-        { x: 0.35, y: 0.45, width: 260, height: 250, id: 'container4', page: 'wedding.html', image: images.project4 },
-        { x: 0.60, y: 0.20, width: 300, height: 220, id: 'container6', page: 'Prewedding.html', image: images.project6 },
-        { x: 0.8, y: 0.80, width: 220, height: 220, id: 'container7', page: 'r.html', image: images.project7 }
-    ];
-    
-    // Use the appropriate positions based on canvas ID
-    const projectPositions = canvas.id === 'myCanvas2' ? canvas2Positions : mainCanvasPositions;
     
     projectPositions.forEach(container => {
-        if (isPointInContainer(clickX, clickY, container, rect.width, rect.height)) {
+        if (isPointInContainer(clickX, clickY, container)) {
             window.location.href = container.page;
         }
     });
 });
 
-function resizeCanvas() {
-    const canvas = document.getElementById('myCanvas');
-    const wrapper = document.getElementById('canvasWrapper');
-    const ctx = canvas.getContext('2d');
-
-    // Get actual wrapper dimensions (constrained by CSS)
-    const wrapperWidth = wrapper.offsetWidth;
-    const wrapperHeight = wrapper.offsetHeight;
-
-    // Set canvas CSS size to match wrapper
-    canvas.style.width = `${wrapperWidth}px`;
-    canvas.style.height = `${wrapperHeight}px`;
-
-    // Set canvas drawing buffer size (account for DPR)
-    const dpr = window.devicePixelRatio || 1;
-    canvas.width = wrapperWidth * dpr;
-    canvas.height = wrapperHeight * dpr;
-
-    // Scale context to account for DPR
-    ctx.scale(dpr, dpr);
-
-    // Draw canvas content
-    drawFirstCanvas(ctx, wrapperWidth, wrapperHeight);
-}
-
 // Initial setup
 loadImages().then(() => {
-    resizeCanvas();
+    const canvas = document.getElementById('myCanvas');
+    canvas.width = 1512;
+    canvas.height = 982;
+    
+    // Create dotted canvas background
+    const canvasWrapper = document.getElementById('canvasWrapper');
+    const dottedCanvas = document.createElement('div');
+    dottedCanvas.className = 'dotted-canvas';
+    canvasWrapper.insertBefore(dottedCanvas, canvas);
+    
+    drawFirstCanvas();
     requestAnimationFrame(animate);
 }).catch(error => {
     console.error('Error loading images:', error);
 });
 
 // Event listeners
-window.addEventListener('resize', resizeCanvas);
-window.addEventListener('orientationchange', resizeCanvas);
+window.addEventListener('resize', () => {
+    const canvas = document.getElementById('myCanvas');
+    canvas.width = 1512;
+    canvas.height = 982;
+    drawFirstCanvas();
+});
 
 // Smooth scroll behavior
 document.addEventListener('wheel', (e) => {

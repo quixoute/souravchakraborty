@@ -1,0 +1,37 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #e0e0e0;
+    overflow: hidden;
+    min-width: 1920px;
+    min-height: 1080px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.galleryConfig {
+    position: relative;
+    width: 1920px;
+    height: 1080px;
+    background-color: #e0e0e0;
+    transform-origin: center center;
+}
+
+.galleryConfig img {
+    position: absolute;
+    object-fit: cover;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    pointer-events: auto;
+}
+
+.galleryConfig img:hover {
+    cursor: pointer;
+    transform: scale(1.05);
+}
+
+/* Specific image classes */
+.galleryConfig img.horizontal {
+    z-index: 1;
+} 

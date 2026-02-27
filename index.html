@@ -1,15 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sourav Chakraborty</title>
     <style>
-        body { margin: 0; overflow: hidden; }
-        canvas { display: block; }
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        /* Scroll indicator styles */
+        #scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            color: #000;
+            /* Assuming white background */
+            font-family: 'Inter', 'Roboto', sans-serif;
+            pointer-events: none;
+            /* So it doesn't block clicks */
+            transition: opacity 0.5s ease;
+            z-index: 10;
+        }
+
+        .scroll-text {
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            opacity: 0.8;
+        }
+
+        .mouse {
+            width: 24px;
+            height: 38px;
+            border: 2px solid rgba(0, 0, 0, 0.8);
+            border-radius: 14px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .wheel {
+            width: 2px;
+            height: 6px;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 2px;
+            position: absolute;
+            /* Animation for moving up */
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: scrollUp 1.5s infinite;
+        }
+
+        @keyframes scrollUp {
+            0% {
+                top: 20px;
+                opacity: 0;
+            }
+
+            20% {
+                top: 20px;
+                opacity: 1;
+            }
+
+            80% {
+                top: 6px;
+                opacity: 1;
+            }
+
+            100% {
+                top: 6px;
+                opacity: 0;
+            }
+        }
     </style>
 </head>
+
 <body>
+    <div id="scroll-indicator">
+        <div class="scroll-text">Scroll up to continue</div>
+        <div class="mouse">
+            <div class="wheel"></div>
+        </div>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
         // Scene setup
@@ -53,21 +137,21 @@
         const createMaterials = async () => {
             try {
                 const materials = {
-                    image1: new THREE.MeshBasicMaterial({ 
+                    image1: new THREE.MeshBasicMaterial({
                         map: await loadTexture('/31.jpg'),
                         transparent: false
                     }),
-                    image2: new THREE.MeshBasicMaterial({ 
+                    image2: new THREE.MeshBasicMaterial({
                         map: await loadTexture('/IMG_6799.png'),
                         transparent: true,
                         alphaTest: 0.5
                     }),
-                    image3: new THREE.MeshBasicMaterial({ 
+                    image3: new THREE.MeshBasicMaterial({
                         map: await loadTexture('/intro.png'),
                         transparent: true,
                         alphaTest: 0.5
                     }),
-                    image4: new THREE.MeshBasicMaterial({ 
+                    image4: new THREE.MeshBasicMaterial({
                         map: await loadTexture('/1.4.png'),
                         transparent: true,
                         alphaTest: 0.5
@@ -75,39 +159,39 @@
                 };
 
                 const projectMaterials = {
-                    project1: new THREE.MeshBasicMaterial({ 
+                    project1: new THREE.MeshBasicMaterial({
                         map: await loadTexture('/26.jpg'),
                         transparent: false
                     }),
-                    project2: new THREE.MeshBasicMaterial({ 
+                    project2: new THREE.MeshBasicMaterial({
                         map: await loadTexture('/30.jpg'),
                         transparent: false
                     }),
-                    project3: new THREE.MeshBasicMaterial({ 
+                    project3: new THREE.MeshBasicMaterial({
                         map: await loadTexture('/38.jpg'),
                         transparent: false
                     }),
-                    project4: new THREE.MeshBasicMaterial({ 
+                    project4: new THREE.MeshBasicMaterial({
                         map: await loadTexture('/40.jpg'),
                         transparent: false
                     }),
-                    project5: new THREE.MeshBasicMaterial({ 
+                    project5: new THREE.MeshBasicMaterial({
                         map: await loadTexture('/37.jpg'),
                         transparent: false
                     }),
-                    project6: new THREE.MeshBasicMaterial({ 
+                    project6: new THREE.MeshBasicMaterial({
                         map: await loadTexture('/44.jpg'),
                         transparent: false
                     }),
-                    project7: new THREE.MeshBasicMaterial({ 
+                    project7: new THREE.MeshBasicMaterial({
                         map: await loadTexture('/39.jpg'),
                         transparent: false
                     }),
-                    project8: new THREE.MeshBasicMaterial({ 
+                    project8: new THREE.MeshBasicMaterial({
                         map: await loadTexture('/28.jpg'),
                         transparent: false
                     }),
-                    project9: new THREE.MeshBasicMaterial({ 
+                    project9: new THREE.MeshBasicMaterial({
                         map: await loadTexture('/33.jpg'),
                         transparent: false
                     })
@@ -190,11 +274,11 @@
             Object.entries(projectMaterials).forEach(([key, material]) => {
                 const config = containerConfig[key];
                 const container = createImagePlane(material, config.width, config.height, config.x, config.y, config.z);
-                
+
                 // Add click handler
                 container.userData.page = containerPages[key];
                 container.userData.isClickable = true;
-                
+
                 containers.push(container);
                 scene.add(container);
             });
@@ -265,15 +349,25 @@
         window.addEventListener('wheel', (event) => {
             targetZ += event.deltaY * scrollSpeed;
             targetZ = Math.max(minZ, Math.min(maxZ, targetZ));
+
+            // Fade out the indicator when the user scrolls deeper into the scene
+            const indicator = document.getElementById('scroll-indicator');
+            if (indicator) {
+                if (targetZ < maxZ - 2) {
+                    indicator.style.opacity = '0';
+                } else {
+                    indicator.style.opacity = '1';
+                }
+            }
         });
 
         // Animation loop
         function animate() {
             requestAnimationFrame(animate);
-            
+
             // Smoother camera movement
             camera.position.z += (targetZ - camera.position.z) * 0.05;
-            
+
             renderer.render(scene, camera);
         }
 
@@ -290,4 +384,5 @@
         });
     </script>
 </body>
+
 </html>

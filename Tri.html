@@ -1,56 +1,254 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sourav Chakraborty</title>
+    <title>Sourav Chakraborty - Tri</title>
     <style>
         body {
             margin: 0;
-            padding: 0;
             overflow: hidden;
-            background: 
-                radial-gradient(circle at center, #000 1px, transparent 1px),
-                linear-gradient(45deg, #ffffff 0%, #f0f0f0 50%, #e0e0e0 100%);
-            background-size: 30px 30px, 100% 100%;
-            background-position: center center;
         }
-        .background-gallery {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
+
+        canvas {
+            display: block;
         }
-        .background-gallery img {
+
+        /* Scroll indicator styles */
+        #scroll-indicator {
             position: absolute;
-            object-fit: cover;
-            transition: all 0.3s ease;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            color: #000;
+            font-family: 'Inter', 'Roboto', sans-serif;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+            z-index: 10;
         }
-        .horizontal {
-            width: 300px;
-            height: 200px;
+
+        .scroll-text {
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            opacity: 0.8;
         }
-        .background-gallery img:not(.horizontal) {
-            width: 200px;
-            height: 300px;
+
+        .mouse {
+            width: 24px;
+            height: 38px;
+            border: 2px solid rgba(0, 0, 0, 0.8);
+            border-radius: 14px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .wheel {
+            width: 2px;
+            height: 6px;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 2px;
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: scrollUp 1.5s infinite;
+        }
+
+        @keyframes scrollUp {
+            0% {
+                top: 20px;
+                opacity: 0;
+            }
+
+            20% {
+                top: 20px;
+                opacity: 1;
+            }
+
+            80% {
+                top: 6px;
+                opacity: 1;
+            }
+
+            100% {
+                top: 6px;
+                opacity: 0;
+            }
+        }
+
+        /* Back button */
+        #back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            text-decoration: none;
+            font-family: 'Inter', sans-serif;
+            border-radius: 5px;
+            z-index: 10;
+            transition: background 0.3s;
+        }
+
+        #back-btn:hover {
+            background: rgba(0, 0, 0, 1);
         }
     </style>
 </head>
+
 <body>
-    <!-- Background gallery -->
-    <div class="background-gallery">
-        <img src="Tri/4.webp" alt="Image 1" class="horizontal" style="left: 100px; top: 150px; transform: rotate(5deg) scale(1.2);">
-        <img src="Tri/2.webp" alt="Image 2" style="left: 400px; top: 100px; transform: rotate(-8deg);">
-        <img src="Tri/3.webp" alt="Image 3" style="left: 700px; top: 200px; transform: rotate(12deg);">
-        <img src="Tri/1.webp" alt="Image 4" style="left: 1000px; top: 150px; transform: rotate(-5deg);">
-        <img src="Tri/5.webp" alt="Image 5" style="left: 200px; top: 400px; transform: rotate(15deg);">
-        <img src="Tri/6.webp" alt="Image 6" style="left: 500px; top: 450px; transform: rotate(-10deg);">
-        <img src="Tri/8.webp" alt="Image 7" class="horizontal" style="left: 800px; top: 400px; transform: rotate(8deg);">
-        <img src="Tri/7.webp" alt="Image 8" style="left: 1100px; top: 450px; transform: rotate(-12deg);">
-        <img src="Tri/9.webp" alt="Image 9" style="left: 150px; top: 700px; transform: rotate(10deg);">
-        <img src="Tri/10.webp" alt="Image 10" style="left: 450px; top: 750px; transform: rotate(-15deg);">
-        <img src="Tri/11.webp" alt="Image 11" style="left: 750px; top: 700px; transform: rotate(7deg);">
-        <img src="Tri/12.webp" alt="Image 12" style="left: 1050px; top: 750px; transform: rotate(-8deg);">
-        <img src="Tri/13.webp" alt="Image 13" class="horizontal" style="left: 600px; top: 900px; transform: rotate(5deg);">
+    <a href="index.html" id="back-btn">← Back to Gallery</a>
+
+    <div id="scroll-indicator">
+        <div class="scroll-text">Scroll up to explore</div>
+        <div class="mouse">
+            <div class="wheel"></div>
+        </div>
     </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Scene setup
+        const scene = new THREE.Scene();
+        // Light grey background for the sub-gallery to differentiate slightly
+        scene.background = new THREE.Color(0xf5f5f5);
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
+        scene.add(ambientLight);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
+        directionalLight.position.set(0, 1, 1);
+        scene.add(directionalLight);
+
+        // Texture loader
+        const textureLoader = new THREE.TextureLoader();
+        const loadTexture = (path) => {
+            return new Promise((resolve, reject) => {
+                textureLoader.load(
+                    path,
+                    (texture) => resolve(texture),
+                    undefined,
+                    (error) => {
+                        console.error(`Error loading texture ${path}:`, error);
+                        reject(error);
+                    }
+                );
+            });
+        };
+
+        // Create image plane
+        const createImagePlane = (material, width, height, x, y, z) => {
+            const geometry = new THREE.PlaneGeometry(width, height);
+            const plane = new THREE.Mesh(geometry, material);
+            plane.position.set(x, y, z);
+            return plane;
+        };
+
+        // Initialize scene
+        async function init() {
+            // Define the 14 images we found in the directory
+            const imagePaths = Array.from({ length: 14 }, (_, i) => `Tri/${i + 1}.webp`);
+
+            try {
+                // Load all textures
+                const textures = await Promise.all(imagePaths.map(path => loadTexture(path).catch(e => null)));
+
+                // Track highest Z depth we place an image at to set scrolling bounds
+                let maxDepth = 0;
+
+                textures.forEach((texture, index) => {
+                    if (!texture) return; // Skip failed loads
+
+                    // Approximate aspect ratio (most are vertical, some horizontal)
+                    // We'll use a standard size and adjust slightly for variety
+                    const isHorizontal = index === 3 || index === 7 || index === 12; // Images 4, 8, 13 were horizontal in original css
+
+                    const width = isHorizontal ? 4 : 2.5;
+                    const height = isHorizontal ? 2.5 : 3.5;
+
+                    const material = new THREE.MeshBasicMaterial({
+                        map: texture,
+                        transparent: true
+                    });
+
+                    // Distribute images along the Z axis (depth)
+                    // Stagger X and Y for a dynamic floating feel
+                    const z = -(index * 7); // Spread them out by 7 units each
+                    const x = (index % 2 === 0 ? 1 : -1) * (2 + Math.random() * 2);
+                    const y = (Math.random() * 4) - 2;
+
+                    if (z < maxDepth) maxDepth = z;
+
+                    const plane = createImagePlane(material, width, height, x, y, z);
+
+                    // Add slight rotation for artistic effect
+                    plane.rotation.z = (Math.random() - 0.5) * 0.2;
+                    plane.rotation.y = (x > 0 ? -1 : 1) * (Math.random() * 0.2);
+
+                    scene.add(plane);
+                });
+
+                // Set initial camera
+                camera.position.z = 8;
+                targetZ = 8;
+
+                // Update global minZ based on how many images we loaded
+                window.minZ = maxDepth - 10;
+                window.maxZ = 8;
+
+            } catch (error) {
+                console.error("Error setting up scene:", error);
+            }
+        }
+
+        // Mouse scroll handling
+        let targetZ = 8;
+        const scrollSpeed = 0.08;
+        window.minZ = -100; // Updated dynamically in init()
+        window.maxZ = 8;
+
+        window.addEventListener('wheel', (event) => {
+            targetZ += event.deltaY * scrollSpeed;
+            targetZ = Math.max(window.minZ, Math.min(window.maxZ, targetZ));
+
+            // Fade scroll indicator
+            const indicator = document.getElementById('scroll-indicator');
+            if (indicator) {
+                if (targetZ < window.maxZ - 2) {
+                    indicator.style.opacity = '0';
+                } else {
+                    indicator.style.opacity = '1';
+                }
+            }
+        });
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            // Smooth camera movement
+            camera.position.z += (targetZ - camera.position.z) * 0.05;
+            renderer.render(scene, camera);
+        }
+
+        // Handle resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        init().then(() => animate());
+    </script>
 </body>
+
 </html>

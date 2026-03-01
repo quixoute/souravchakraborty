@@ -1,51 +1,299 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sourav Chakraborty</title>
+    <title>Sourav Chakraborty - Uber Eats</title>
     <style>
         body {
             margin: 0;
-            padding: 0;
             overflow: hidden;
             background: #ffffff;
         }
-        .background-gallery {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
+
+        canvas {
+            display: block;
         }
-        .background-gallery img {
+
+        /* Scroll indicator styles */
+        #scroll-indicator {
             position: absolute;
-            object-fit: cover;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            color: #000;
+            font-family: 'Inter', 'Roboto', sans-serif;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+            z-index: 10;
+        }
+
+        .scroll-text {
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            opacity: 0.8;
+        }
+
+        .mouse {
+            width: 24px;
+            height: 38px;
+            border: 2px solid rgba(0, 0, 0, 0.8);
+            border-radius: 14px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .wheel {
+            width: 2px;
+            height: 6px;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 2px;
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: scrollUp 1.5s infinite;
+        }
+
+        @keyframes scrollUp {
+            0% {
+                top: 20px;
+                opacity: 0;
+            }
+
+            20% {
+                top: 20px;
+                opacity: 1;
+            }
+
+            80% {
+                top: 6px;
+                opacity: 1;
+            }
+
+            100% {
+                top: 6px;
+                opacity: 0;
+            }
+        }
+
+        /* Back button */
+        .back-btn {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            color: #000;
+            font-family: 'Inter', 'Roboto', sans-serif;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            z-index: 10;
+            padding: 10px 15px;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
             transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(5px);
         }
-        .horizontal {
-            width: 400px;
-            height: 300px;
-        }
-        .background-gallery img:not(.horizontal) {
-            width: 300px;
-            height: 400px;
+
+        .back-btn:hover {
+            background: #000;
+            color: #fff;
+            border-color: #000;
         }
     </style>
 </head>
+
 <body>
-    <!-- Background gallery -->
-    <div class="background-gallery">
-        <img src="ubereats\1.webp" alt="Image 1" style="left: 50px; top: 100px; transform: rotate(-5deg);">
-        <img src="ubereats\2.webp" alt="Image 2" class="horizontal" style="left: 400px; top: 80px; transform: rotate(8deg);">
-        <img src="ubereats\3.webp" alt="Image 3" class="horizontal" style="left: 850px; top: 120px; transform: rotate(-12deg);">
-        <img src="ubereats\4.webp" alt="Image 4" class="horizontal" style="left: 150px; top: 450px; transform: rotate(15deg);">
-        <img src="ubereats\5.webp" alt="Image 5" class="horizontal" style="left: 600px; top: 400px; transform: rotate(-8deg);">
-        <img src="ubereats\6.webp" alt="Image 6" class="horizontal" style="left: 1050px; top: 450px; transform: rotate(10deg);">
-        <img src="ubereats\7.webp" alt="Image 7" class="horizontal" style="left: 200px; top: 800px; transform: rotate(-15deg);">
-        <img src="ubereats\8.webp" alt="Image 8" class="horizontal" style="left: 650px; top: 750px; transform: rotate(7deg);">
-        <img src="ubereats\9.webp" alt="Image 9" class="horizontal" style="left: 1100px; top: 800px; transform: rotate(-10deg);">
-        <img src="ubereats\10.webp" alt="Image 10" class="horizontal" style="left: 300px; top: 1150px; transform: rotate(12deg);">
-        <img src="ubereats\11.webp" alt="Image 11" class="horizontal" style="left: 750px; top: 1100px; transform: rotate(-8deg);">
-        <img src="ubereats\12.webp" alt="Image 12" class="horizontal" style="left: 1200px; top: 1150px; transform: rotate(5deg);">
-    </div>   
+    <a href="index.html" class="back-btn">Back</a>
+    <div id="scroll-indicator">
+        <div class="scroll-text">Scroll to explore</div>
+        <div class="mouse">
+            <div class="wheel"></div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Scene setup
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0xffffff);
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Texture loader with error handling
+        const textureLoader = new THREE.TextureLoader();
+        const loadTexture = (path) => {
+            return new Promise((resolve, reject) => {
+                textureLoader.load(
+                    path,
+                    (texture) => {
+                        texture.minFilter = THREE.LinearFilter;
+                        resolve(texture);
+                    },
+                    undefined,
+                    (error) => {
+                        console.error(`Error loading texture ${path}:`, error);
+                        reject(error);
+                    }
+                );
+            });
+        };
+
+        // Create materials
+        const createMaterials = async () => {
+            try {
+                const materials = {};
+                for (let i = 1; i <= 12; i++) {
+                    materials[`img${i}`] = new THREE.MeshBasicMaterial({
+                        map: await loadTexture(`ubereats/${i}.webp`),
+                        transparent: true
+                    });
+                }
+                return materials;
+            } catch (error) {
+                console.error('Error creating materials:', error);
+                return null;
+            }
+        };
+
+        // Create image plane
+        const createImagePlane = (material, width, height, x, y, z, rotationZ = 0) => {
+            const geometry = new THREE.PlaneGeometry(width, height);
+            const plane = new THREE.Mesh(geometry, material);
+            plane.position.set(x, y, z);
+            // Convert degrees to radians for proper Three.js rotation
+            plane.rotation.z = rotationZ * (Math.PI / 180);
+            return plane;
+        };
+
+        // Initialize scene
+        async function init() {
+            const materials = await createMaterials();
+            if (!materials) return;
+
+            // ===== CONFIGURABLE POSITIONS AND DIMENSIONS =====
+            // Create a scrolling gallery sequence spread out in Z space
+            const zSpacing = -8;
+            const startZ = 0;
+
+            const imageConfig = {
+                // Alternating layout down the Z-axis
+                img1: { x: -3, y: 1.5, z: startZ, width: 3, height: 4, rot: -5 },
+                img2: { x: 3.5, y: 0.5, z: startZ + zSpacing, width: 4, height: 3, rot: 8 },
+                img3: { x: -4, y: -1.0, z: startZ + zSpacing * 2, width: 4, height: 3, rot: -12 },
+                img4: { x: 2.5, y: -2.0, z: startZ + zSpacing * 3, width: 4, height: 3, rot: 15 },
+                img5: { x: -2.5, y: 2.0, z: startZ + zSpacing * 4, width: 4, height: 3, rot: -8 },
+                img6: { x: 4.0, y: 0.0, z: startZ + zSpacing * 5, width: 4, height: 3, rot: 10 },
+                img7: { x: -3.5, y: -1.5, z: startZ + zSpacing * 6, width: 4, height: 3, rot: -15 },
+                img8: { x: 3.0, y: 1.5, z: startZ + zSpacing * 7, width: 4, height: 3, rot: 7 },
+                img9: { x: -2.5, y: 0.5, z: startZ + zSpacing * 8, width: 4, height: 3, rot: -10 },
+                img10: { x: 3.5, y: -1.5, z: startZ + zSpacing * 9, width: 4, height: 3, rot: 12 },
+                img11: { x: -3.0, y: 1.0, z: startZ + zSpacing * 10, width: 4, height: 3, rot: -8 },
+                img12: { x: 2.0, y: -0.5, z: startZ + zSpacing * 11, width: 4, height: 3, rot: 5 },
+            };
+
+            // Add image planes to scene
+            for (let i = 1; i <= 12; i++) {
+                const conf = imageConfig[`img${i}`];
+                const plane = createImagePlane(materials[`img${i}`], conf.width, conf.height, conf.x, conf.y, conf.z, conf.rot);
+                scene.add(plane);
+            }
+
+            // Set initial camera position
+            camera.position.z = 8;
+            targetZ = camera.position.z;
+        }
+
+        // Mouse scroll handling
+        let targetZ = 8;
+        const scrollSpeed = 0.05;
+        // 11 elements * -8 spacing = -88. Minimum Z around -95 to allow viewing the last item.
+        const minZ = -95;
+        const maxZ = 8;
+
+        window.addEventListener('wheel', (event) => {
+            targetZ += event.deltaY * scrollSpeed;
+            targetZ = Math.max(minZ, Math.min(maxZ, targetZ));
+
+            // Fade out the indicator when the user scrolls deeper
+            const indicator = document.getElementById('scroll-indicator');
+            if (indicator) {
+                if (targetZ < maxZ - 2) {
+                    indicator.style.opacity = '0';
+                } else {
+                    indicator.style.opacity = '1';
+                }
+            }
+        });
+
+        // Touch scroll handling for mobile
+        let touchStartY = 0;
+        window.addEventListener('touchstart', e => {
+            touchStartY = e.touches[0].clientY;
+        }, { passive: true });
+
+        window.addEventListener('touchmove', e => {
+            const touchY = e.touches[0].clientY;
+            const deltaY = touchStartY - touchY;
+
+            targetZ += deltaY * 0.08; // Touch sensitivity adjustment
+            targetZ = Math.max(minZ, Math.min(maxZ, targetZ));
+
+            touchStartY = touchY;
+
+            const indicator = document.getElementById('scroll-indicator');
+            if (indicator) {
+                if (targetZ < maxZ - 2) {
+                    indicator.style.opacity = '0';
+                }
+            }
+        }, { passive: true });
+
+        // Mouse tracking for parallax effect
+        const mouse = new THREE.Vector2();
+        window.addEventListener('mousemove', (event) => {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        });
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Smoother camera movement along Z axis
+            camera.position.z += (targetZ - camera.position.z) * 0.05;
+
+            // Optional: add slight parallax/sway based on mouse position
+            if (mouse.x !== undefined) {
+                camera.position.x += (mouse.x * 0.5 - camera.position.x) * 0.02;
+                camera.position.y += (mouse.y * 0.5 - camera.position.y) * 0.02;
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Start the scene
+        init().then(() => {
+            animate();
+        });
+    </script>
 </body>
+
 </html>

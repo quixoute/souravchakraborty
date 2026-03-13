@@ -232,6 +232,31 @@
             }
         });
 
+        // Touch scroll handling for mobile
+        let touchStartY = 0;
+        window.addEventListener('touchstart', e => {
+            touchStartY = e.touches[0].clientY;
+        }, { passive: true });
+
+        window.addEventListener('touchmove', e => {
+            const touchY = e.touches[0].clientY;
+            const deltaY = touchStartY - touchY;
+
+            targetZ += deltaY * 0.08; // Touch sensitivity adjustment
+            targetZ = Math.max(window.minZ, Math.min(window.maxZ, targetZ));
+
+            touchStartY = touchY;
+
+            const indicator = document.getElementById('scroll-indicator');
+            if (indicator) {
+                if (targetZ < window.maxZ - 2) {
+                    indicator.style.opacity = '0';
+                } else {
+                    indicator.style.opacity = '1';
+                }
+            }
+        }, { passive: true });
+
         // Animation loop
         function animate() {
             requestAnimationFrame(animate);

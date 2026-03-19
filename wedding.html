@@ -3,122 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sourav Chakraborty</title>
+    <title>Sourav Chakraborty - Weddings</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap">
-    <meta http-equiv="Cache-Control" content="max-age=31536000">
-    <meta name="theme-color" content="#181818">
     <style>
+        /* Hide scrollbars since Three JS handles it */
         body {
-            font-family: 'Poppins', sans-serif;
             margin: 0;
             padding: 0;
-            background: #181818;
-            overflow-x: hidden;
+            overflow: hidden;
+            background: #ffffff;
+            font-family: 'Poppins', sans-serif;
         }
 
-        .background-video-container {
-            position: fixed;
+
+
+        /* Container for CSS3D elements (the floating videos) */
+        #css-container {
+            position: absolute;
             top: 0;
             left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 1;
-            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            pointer-events: none; /* Let the container itself ignore clicks... */
+        }
+
+        .video-card {
+            width: 480px;
+            height: 270px;
+            box-shadow: 0px 0px 20px rgba(0,0,0,0.8);
+            border-radius: 8px; /* Slight rounding looks nice */
             background: #000;
+            pointer-events: auto; /* ...but let the cards accept clicks */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            will-change: transform; /* Hardware acceleration hint for smoother scrolling */
         }
 
-        .background-video-container iframe {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 100vw;
-            height: 100vh;
-            pointer-events: none;
+        .video-card:hover {
+            transform: scale(1.05); /* Slight zoom on hover, similar to project images */
+            box-shadow: 0px 0px 30px rgba(255,255,255,0.4);
+            z-index: 10;
         }
 
-        .carousel-container {
-            position: fixed;
-            bottom: 50px;
-            left: 0;
-            right: 0;
-            height: 281px;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 2;
-            background: rgba(0, 0, 0, 0);
-            
-            padding: 20px 0;
-        }
-
-        .carousel-track {
-            position: relative;
-            display: flex;
-            gap: 20px;
-            will-change: transform;
-            animation: carouselMove 30s linear infinite;
-        }
-
-        @keyframes carouselMove {
-            0% {
-                transform: translateX(0);
-            }
-            100% {
-                transform: translateX(calc(-520px * 5));
-            }
-        }
-
-        .video-container {
-            position: relative;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-            cursor: pointer;
-            width: 500px;
-            height: 281px;
-            flex-shrink: 0;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(5px);
-            transition: transform 0.3s ease;
-        }
-
-        .video-container:hover {
-            transform: scale(1.05);
-            z-index: 2;
-        }
-
-        .video-container iframe {
+        .video-card iframe {
             width: 100%;
             height: 100%;
             border: none;
-            border-radius: 12px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            border-radius: 8px;
+            pointer-events: auto; /* Ensure iframes accept clicks */
+            transition: opacity 0.3s;
         }
 
-        .video-container iframe.loaded {
-            opacity: 1;
-        }
-
-        .video-title {
+        /* Shield to capture scroll events and prevent iframe from stealing wheel events */
+        .shield {
             position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
-            color: white;
-            padding: 10px;
-            font-size: 0.9rem;
-            text-align: center;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border-radius: 8px;
             opacity: 0;
             transition: opacity 0.3s ease;
+            cursor: pointer;
         }
 
-        .video-container:hover .video-title {
+        .video-card:hover .shield {
             opacity: 1;
         }
+        
+        /* Performance Fix: Disable pointer events heavily during scroll */
+        body.is-scrolling iframe {
+            pointer-events: none !important;
+        }
 
+        /* Loading Overlay */
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -150,209 +115,401 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        /* Back Button */
+        .back-btn {
+            position: fixed;
+            top: 30px;
+            left: 40px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #000;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            background: rgba(255, 255, 255, 1);
+        }
+
+        .back-btn svg {
+            width: 18px;
+            height: 18px;
+            transition: transform 0.3s ease;
+        }
+
+        .back-btn:hover svg {
+            transform: translateX(-4px);
+        }
+
+        /* Scroll indicator styles */
+        #scroll-indicator {
+            position: absolute;
+            bottom: 20px; /* Pushed down from 40px */
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            color: #000;
+            font-family: 'Inter', 'Roboto', sans-serif;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+            z-index: 10;
+        }
+
+        .scroll-text {
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            opacity: 0.8;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .mouse {
+            width: 24px;
+            height: 38px;
+            border: 2px solid rgba(0, 0, 0, 0.8);
+            border-radius: 14px;
+            margin: 0 auto;
+            position: relative;
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .wheel {
+            width: 2px;
+            height: 6px;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 2px;
+            position: absolute;
+            top: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: scrollDown 1.5s infinite;
+        }
+
+        @keyframes scrollDown {
+            0% {
+                top: 6px;
+                opacity: 0;
+            }
+            20% {
+                top: 6px;
+                opacity: 1;
+            }
+            80% {
+                top: 20px;
+                opacity: 1;
+            }
+            100% {
+                top: 20px;
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="loading-overlay">
+
+    <div class="loading-overlay" id="loading">
         <div class="loading-spinner"></div>
     </div>
 
-    <div class="background-video-container">
-        <iframe 
-            src="https://www.youtube.com/embed/j6KxpiUJJ1Y?autoplay=1&mute=1&loop=1&playlist=j6KxpiUJJ1Y&controls=0&showinfo=0&rel=0&enablejsapi=1" 
-            title="Background Video"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerpolicy="strict-origin-when-cross-origin"
-            allowfullscreen
-            style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100vw; height: 100vh; pointer-events: none;"
-            id="background-video"
-        ></iframe>
-    </div>
+    <!-- Go Back Button -->
+    <a href="index.html" class="back-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        Back
+    </a>
 
-    <div class="carousel-container">
-        <div class="carousel-track">
-            <div class="video-container" data-video-id="j6KxpiUJJ1Y">
-                <iframe 
-                    data-src="https://www.youtube.com/embed/j6KxpiUJJ1Y" 
-                    title="Sukanya and Sayak's Wedding Teaser" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                    referrerpolicy="strict-origin-when-cross-origin" 
-                    allowfullscreen 
-                    loading="lazy"
-                ></iframe>
-                <div class="video-title">Sukanya and Sayak's Wedding Teaser</div>
-            </div>
-
-            <div class="video-container" data-video-id="Zy1IGA-aFNI">
-                <iframe 
-                    data-src="https://www.youtube.com/embed/Zy1IGA-aFNI" 
-                    title="Sayantani and Debarshi's Wedding Teaser" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                    referrerpolicy="strict-origin-when-cross-origin" 
-                    allowfullscreen 
-                    loading="lazy"
-                ></iframe>
-                <div class="video-title">Sayantani and Debarshi's Wedding Teaser</div>
-            </div>
-
-            <div class="video-container" data-video-id="lZ8vpZghhG8">
-                <iframe 
-                    data-src="https://www.youtube.com/embed/lZ8vpZghhG8" 
-                    title="Shivani and Pawan's Wedding Teaser" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                    referrerpolicy="strict-origin-when-cross-origin" 
-                    allowfullscreen 
-                    loading="lazy"
-                ></iframe>
-                <div class="video-title">Shivani and Pawan's Wedding Teaser</div>
-            </div>
-
-            <div class="video-container" data-video-id="VjV4iJC-rBc">
-                <iframe 
-                    data-src="https://www.youtube.com/embed/VjV4iJC-rBc" 
-                    title="Rhea and Craig's Wedding Teaser" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                    referrerpolicy="strict-origin-when-cross-origin" 
-                    allowfullscreen 
-                    loading="lazy"
-                ></iframe>
-                <div class="video-title">Rhea and Craig's Wedding Teaser</div>
-            </div>
-
-            <div class="video-container" data-video-id="lFbrmG26eos">
-                <iframe 
-                    data-src="https://www.youtube.com/embed/lFbrmG26eos" 
-                    title="Upasana and Akash's Wedding Teaser" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                    referrerpolicy="strict-origin-when-cross-origin" 
-                    allowfullscreen 
-                    loading="lazy"
-                ></iframe>
-                <div class="video-title">Upasana and Akash's Wedding Teaser</div>
-            </div>
+    <div id="scroll-indicator">
+        <div class="scroll-text">Scroll down to explore</div>
+        <div class="mouse">
+            <div class="wheel"></div>
         </div>
     </div>
 
+
+    <div id="css-container"></div>
+
+    <!-- Scripts -->
+    <!-- Note: Load Three.js r128 to match index.html -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="CSS3DRenderer.js"></script>
+
     <script>
-        // Load YouTube API
-        var tag = document.createElement('script');
-        tag.src = "https://www.youtube.com/iframe_api";
-        var firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-        // Initialize YouTube player
-        var player;
-        function onYouTubeIframeAPIReady() {
-            player = new YT.Player('background-video', {
-                events: {
-                    'onReady': onPlayerReady,
-                    'onStateChange': onPlayerStateChange
-                }
-            });
-        }
-
-        function onPlayerReady(event) {
-            event.target.playVideo();
-            document.querySelector('.loading-overlay').classList.add('hidden');
-        }
-
-        function onPlayerStateChange(event) {
-            if (event.data === YT.PlayerState.ENDED) {
-                event.target.playVideo();
-            }
-        }
-
-        // Cache management
-        const CACHE_KEY = 'wedding_page_cache';
-        const CACHE_VERSION = '1.0';
-        const CACHE_DURATION = 7 * 24 * 60 * 60 * 1000; // 7 days
-
-        // Cookie management
-        function setCookie(name, value, days) {
-            const date = new Date();
-            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-            document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/`;
-        }
-
-        function getCookie(name) {
-            const value = `; ${document.cookie}`;
-            const parts = value.split(`; ${name}=`);
-            if (parts.length === 2) return parts.pop().split(';').shift();
-            return null;
-        }
-
-        // Lazy loading implementation
-        const lazyLoadObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const iframe = entry.target;
-                    if (iframe.dataset.src) {
-                        iframe.src = iframe.dataset.src;
-                        iframe.onload = () => {
-                            iframe.classList.add('loaded');
-                        };
-                        observer.unobserve(iframe);
-                    }
-                }
-            });
-        }, {
-            rootMargin: '50px 0px',
-            threshold: 0.1
-        });
-
-        // Initialize lazy loading
-        document.querySelectorAll('iframe[data-src]').forEach(iframe => {
-            lazyLoadObserver.observe(iframe);
-        });
-
-        // Carousel setup
-        const track = document.querySelector('.carousel-track');
-        const containers = document.querySelectorAll('.video-container');
-
-        // Clone first set of items for seamless loop
-        containers.forEach(container => {
-            const clone = container.cloneNode(true);
-            track.appendChild(clone);
-            // Observe cloned iframes for lazy loading
-            const clonedIframe = clone.querySelector('iframe');
-            if (clonedIframe) {
-                lazyLoadObserver.observe(clonedIframe);
-            }
-        });
-
-        // Pause animation on hover
-        track.addEventListener('mouseenter', () => {
-            track.style.animationPlayState = 'paused';
-        });
-
-        track.addEventListener('mouseleave', () => {
-            track.style.animationPlayState = 'running';
-        });
-
-        // Cache management
-        function updateCache() {
-            const cacheData = {
-                version: CACHE_VERSION,
-                timestamp: Date.now(),
-                lastVisit: getCookie('lastVisit') || Date.now()
-            };
-            localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
-            setCookie('lastVisit', Date.now(), 7);
-        }
-
-        // Check cache on load
+        // Dismiss loading overlay after a short delay
         window.addEventListener('load', () => {
-            const cachedData = localStorage.getItem(CACHE_KEY);
-            if (cachedData) {
-                const data = JSON.parse(cachedData);
-                if (Date.now() - data.timestamp < CACHE_DURATION) {
-                    // Use cached data
-                    console.log('Using cached data');
+            setTimeout(() => {
+                document.getElementById('loading').classList.add('hidden');
+            }, 1000);
+        });
+
+        const videoIds = [
+            "j6KxpiUJJ1Y", // Sukanya and Sayak's
+            "Zy1IGA-aFNI", // Sayantani and Debarshi's
+            "lZ8vpZghhG8", // Shivani and Pawan's
+            "VjV4iJC-rBc", // Rhea and Craig's
+            "lFbrmG26eos"  // Upasana and Akash's
+        ];
+
+        let camera, scene, cssRenderer, videoGroup;
+        const mouse = new THREE.Vector2();
+        
+        // Scroll variables
+        let targetZ = 1600; // Starting camera z position
+        const scrollSpeed = 1.8; // Slightly reduced for smoother feel
+        
+        // Depth logic: The last video is at z = -(5 - 1) * 600 = -2400. 
+        // Keep the camera at least 600 units away from the last video to avoid it looking too massive.
+        const minZ = -1800; 
+        const maxZ = 1600;
+
+        let scrollTimeout;
+
+        init();
+        animate();
+
+        function init() {
+            const containerCSS = document.getElementById('css-container');
+
+            // --- CAMERA ---
+            // Field of view, aspect ratio, near, far plane
+            camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 1, 5000 );
+            camera.position.z = maxZ;
+            
+            // --- SCENE ---
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xffffff);
+
+            // --- RENDERERS ---
+            // CSS3DRenderer for DOM elements
+            cssRenderer = new THREE.CSS3DRenderer();
+            cssRenderer.setSize( window.innerWidth, window.innerHeight );
+            containerCSS.appendChild( cssRenderer.domElement );
+
+            // --- CREATE VIDEO OBJECTS ---
+            videoGroup = new THREE.Group();
+            
+            // Apparent 2D grid layout from camera starting at z=1600
+            // The canvas width/height is dynamic, but these offset units work perfectly
+            const apparentPositions = [
+                { x: -300, y:  220 }, // Top Left
+                { x:  300, y:  220 }, // Top Right
+                { x: -300, y: -100 }, // Bottom Left
+                { x:  300, y: -100 }, // Bottom Right
+                { x:    0, y:   60 }  // Center
+            ];
+
+            videoIds.forEach((id, index) => {
+                const element = document.createElement( 'div' );
+                element.className = 'video-card';
+                
+                const iframe = document.createElement( 'iframe' );
+                iframe.src = `https://www.youtube.com/embed/${id}?rel=0`;
+                iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+                iframe.allowFullscreen = true;
+                
+                element.appendChild( iframe );
+
+                // Add Shield Overlay to capture scroll events and require interaction
+                const shield = document.createElement('div');
+                shield.className = 'shield';
+                shield.innerHTML = '<span>Click to Interact</span>';
+                element.appendChild(shield);
+
+                shield.addEventListener('click', () => {
+                    shield.style.pointerEvents = 'none';
+                    shield.style.opacity = '0';
+                });
+
+                element.addEventListener('mouseleave', () => {
+                    shield.style.pointerEvents = 'auto';
+                    shield.style.opacity = '';
+                });
+
+                // Create the CSS3DObject binding the element
+                const object = new THREE.CSS3DObject( element );
+                
+                // Position logic: stagger deeply in Z, but create a perfect apparent grid from starting Z
+                const pos = apparentPositions[index % apparentPositions.length];
+                const zOffset = - (index * 600);
+                
+                // Calculate scale needed so that when viewed from maxZ, it aligns with pos.x / pos.y
+                const distFromStart = maxZ - zOffset; 
+                const scale = distFromStart / 1000; 
+
+                const xOffset = pos.x * scale;
+                const yOffset = pos.y * scale;
+
+                object.position.x = xOffset;
+                object.position.y = yOffset;
+                object.position.z = zOffset;
+                
+                // Keep the videos flat, no rotation
+                object.rotation.y = 0;
+                
+                // Save base values for animation lerping natively on the object's userData
+                object.userData = {
+                    baseX: xOffset,
+                    baseY: yOffset,
+                    baseZ: zOffset
+                };
+                
+                videoGroup.add( object );
+            });
+            
+            scene.add( videoGroup );
+
+            // --- EVENT LISTENERS ---
+            window.addEventListener( 'resize', onWindowResize );
+            window.addEventListener( 'wheel', onMouseWheel, { passive: false } );
+            
+            // Touch scroll handling for mobile
+            let touchStartY = 0;
+            window.addEventListener('touchstart', e => {
+                touchStartY = e.touches[0].clientY;
+            }, { passive: true });
+
+            window.addEventListener('touchmove', e => {
+                const touchY = e.touches[0].clientY;
+                const deltaY = touchStartY - touchY;
+                
+                // Notice we subtract to match the "scroll down to explore" logic
+                targetZ -= deltaY * 0.5; 
+                targetZ = Math.max(minZ, Math.min(maxZ, targetZ));
+                touchStartY = touchY;
+
+                updateIndicator();
+                handleScrollState();
+            }, { passive: true });
+
+            // Right click navigation to head back
+            window.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                targetZ = maxZ; // zoom all the way back out
+                updateIndicator();
+            });
+        }
+
+        function onMouseWheel( event ) {
+            // Subtracting deltaY means scrolling DOWN (positive deltaY) moves camera forward (smaller z)
+            targetZ -= event.deltaY * scrollSpeed;
+            targetZ = Math.max(minZ, Math.min(maxZ, targetZ));
+            updateIndicator();
+            handleScrollState();
+        }
+
+        function handleScrollState() {
+            // Set body class to disable iframe pointer events while scrolling
+            document.body.classList.add('is-scrolling');
+            
+            // Clear the timeout if it exists
+            if (scrollTimeout) clearTimeout(scrollTimeout);
+            
+            // Re-enable pointer events after scrolling stops (150ms delay)
+            scrollTimeout = setTimeout(() => {
+                document.body.classList.remove('is-scrolling');
+            }, 150);
+        }
+
+        function updateIndicator() {
+            const indicator = document.getElementById('scroll-indicator');
+            if (indicator) {
+                // Fade out indicator when user starts scrolling inwards
+                if (targetZ < maxZ - 50) {
+                    indicator.style.opacity = '0';
+                } else {
+                    indicator.style.opacity = '1';
                 }
             }
-            updateCache();
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+
+            cssRenderer.setSize( window.innerWidth, window.innerHeight );
+        }
+
+        window.addEventListener('mousemove', (event) => {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
         });
+
+        function animate() {
+            requestAnimationFrame( animate );
+
+            // Smoothly interpolate camera position towards targetZ
+            camera.position.z += (targetZ - camera.position.z) * 0.05;
+
+            let parallaxX = 0;
+            let parallaxY = 0;
+            if (mouse.x !== undefined) {
+                // Determine a gentle parallax offset for the CSS elements
+                parallaxX = mouse.x * 50;  
+                parallaxY = mouse.y * 50;
+                
+                // Slowly move camera based on mouse
+                camera.position.x += (mouse.x * 20 - camera.position.x) * 0.05;
+                camera.position.y += (mouse.y * 20 - camera.position.y) * 0.05;
+            }
+
+            // Animate items moving to center based on distance to camera
+            if (videoGroup) {
+                videoGroup.children.forEach(plane => {
+                    // Distance calculated from camera's position pointing forward into negative Z
+                    const dist = camera.position.z - plane.userData.baseZ;
+                    
+                    let factor = 0;
+                    
+                    // Adjust distances to snap to 0 factor exactly at dist=1600
+                    if (dist >= 1600) {
+                        // At or further than starting distance: perfectly at base layout
+                        factor = 0;
+                    } else if (dist < 1600 && dist > 800) {
+                        // Scrolling in: glide into the center
+                        factor = 1.0 - ((dist - 800) / 800); 
+                    } else if (dist <= 800 && dist >= 400) {
+                        // Perfect center focus phase
+                        factor = 1.0; 
+                    } else if (dist < 400 && dist > -200) {
+                        // Pushed aside gracefully when the camera flies past
+                        factor = (dist + 200) / 600; 
+                    } else {
+                        // Out of view / passed fully
+                        factor = 0; 
+                    }
+                    
+                    // Ease-in-out curve
+                    const smoothFactor = factor * factor * (3 - 2 * factor); 
+                    
+                    // Interpolate from base towards center (0), THEN add parallax always
+                    plane.position.x = THREE.MathUtils.lerp(plane.userData.baseX, 0, smoothFactor) + parallaxX;
+                    plane.position.y = THREE.MathUtils.lerp(plane.userData.baseY, 0, smoothFactor) + parallaxY;
+                });
+            }
+
+            // Render CSS3D scene
+            cssRenderer.render( scene, camera );
+        }
     </script>
 </body>
 </html>

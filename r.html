@@ -1,24 +1,454 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>Reels</title>
-    <link rel="stylesheet" href="reelstyles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reels — Sourav Chakraborty</title>
     <link rel="stylesheet" href="security.css">
-</head>
-<body>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
-    <img src="mumuso.png" alt="Image 1" class="image-1">
-    <img src="spacify.png" alt="Image 2" class="image-2">
-    <img src="rimi.png" alt="Image 3" class="image-3">
-    <img src="wedding.png" alt="Image 4" class="image-4">
-    <img src="turtle.png" alt="Image 5" class="image-5">
-    <div class="project-container" id="container1"><a href="mumuso.html"><img src="45.jpg" alt="Project 1" loading="lazy"></a></div>
-    <div class="project-container" id="container2"><a href="spacify.html"><img src="47.jpg" alt="Project 2"></a></div>
-    <div class="project-container" id="container3"><a href="riminayak.html"><img src="46.jpg" alt="Project 3"></a></div>
-    <div class="project-container" id="container4"><a href="weddingreels.html"><img src="41.jpg" alt="Project 4"></a></div>
-    <div class="project-container" id="container5"><a href="turtle.html"><img src="39.jpg" alt="Project 5"></a></div>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #f5f5f5;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* 3D scene container */
+        #css-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        /* Each project card — image + title in one block */
+        .project-card {
+            width: 340px;
+            position: relative;
+            pointer-events: auto;
+            cursor: pointer;
+        }
+
+        .project-card .card-image {
+            width: 340px;
+            height: 340px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .project-card:hover .card-image {
+            transform: scale(1.04);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+        }
+
+        .project-card .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Title below image, same Z plane */
+        .project-card .card-title {
+            margin-top: 14px;
+            text-align: center;
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #111;
+            opacity: 0.85;
+        }
+
+        /* Back Button */
+        .back-btn {
+            position: fixed;
+            top: 30px;
+            left: 40px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #000;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            background: rgba(255, 255, 255, 1);
+        }
+
+        .back-btn svg {
+            width: 18px;
+            height: 18px;
+            transition: transform 0.3s ease;
+        }
+
+        .back-btn:hover svg {
+            transform: translateX(-4px);
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #181818;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Scroll indicator */
+        #scroll-indicator {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            color: #000;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+            z-index: 10;
+        }
+
+        .scroll-text {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            opacity: 0.7;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 2px 10px;
+            border-radius: 4px;
+        }
+
+        .mouse {
+            width: 24px;
+            height: 38px;
+            border: 2px solid rgba(0, 0, 0, 0.8);
+            border-radius: 14px;
+            margin: 0 auto;
+            position: relative;
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .wheel {
+            width: 2px;
+            height: 6px;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 2px;
+            position: absolute;
+            top: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: scrollDown 1.5s infinite;
+        }
+
+        @keyframes scrollDown {
+            0%   { top: 6px;  opacity: 0; }
+            20%  { top: 6px;  opacity: 1; }
+            80%  { top: 20px; opacity: 1; }
+            100% { top: 20px; opacity: 0; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="loading-overlay" id="loading">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Back Button -->
+    <a href="index.html" class="back-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        Back
+    </a>
+
+    <div id="scroll-indicator">
+        <div class="scroll-text">Scroll down to explore</div>
+        <div class="mouse">
+            <div class="wheel"></div>
+        </div>
+    </div>
+
+    <div id="css-container"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="CSS3DRenderer.js"></script>
     <script src="security.js"></script>
-    <script src="reelscript.js"></script>
+
+    <script>
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loading').classList.add('hidden');
+            }, 800);
+        });
+
+        // --- PROJECT DATA ---
+        const projects = [
+            { image: '45.jpg',  title: 'Mumuso',      page: 'mumuso.html'       },
+            { image: '47.jpg',  title: 'Spacify',     page: 'spacify.html'      },
+            { image: '46.jpg',  title: 'Rimi Nayak',  page: 'riminayak.html'    },
+            { image: '41.jpg',  title: 'Wedding Reels', page: 'weddingreels.html' },
+            { image: '39.jpg',  title: 'Turtle',      page: 'turtle.html'       }
+        ];
+
+        // Scattered apparent 2D positions (viewed from camera start at z=1600)
+        // Each pair is unique so depth stagger reads as 3D immediately
+        const apparentPositions = [
+            { x: -180, y:  160 },
+            { x:  200, y:   80 },
+            { x: -220, y:  -90 },
+            { x:  180, y: -160 },
+            { x:    0, y:   30 }
+        ];
+
+        const SPACING   = 700;   // z-distance between cards
+        const maxZ      = 1600;  // camera start
+
+        let camera, scene, cssRenderer, cardGroup;
+        const mouse = new THREE.Vector2();
+        let targetZ = maxZ;
+        const scrollSpeed = 1.8;
+        let scrollTimeout;
+
+        init();
+        animate();
+
+        function init() {
+            const container = document.getElementById('css-container');
+
+            camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 10000);
+            camera.position.z = maxZ;
+
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xf5f5f5);
+
+            cssRenderer = new THREE.CSS3DRenderer();
+            cssRenderer.setSize(window.innerWidth, window.innerHeight);
+            container.appendChild(cssRenderer.domElement);
+
+            cardGroup = new THREE.Group();
+
+            projects.forEach((proj, index) => {
+                // Outer wrapper (the CSS3DObject root)
+                const wrapper = document.createElement('div');
+                wrapper.className = 'project-card';
+
+                // Image block
+                const imageWrap = document.createElement('div');
+                imageWrap.className = 'card-image';
+
+                const img = document.createElement('img');
+                img.src = proj.image;
+                img.alt = proj.title;
+                img.loading = 'lazy';
+                imageWrap.appendChild(img);
+                wrapper.appendChild(imageWrap);
+
+                // Title label (same Z plane, part of same element)
+                const titleEl = document.createElement('div');
+                titleEl.className = 'card-title';
+                titleEl.textContent = proj.title;
+                wrapper.appendChild(titleEl);
+
+                // Click to navigate
+                wrapper.addEventListener('click', () => {
+                    window.location.href = proj.page;
+                });
+
+                const object = new THREE.CSS3DObject(wrapper);
+
+                const pos = apparentPositions[index % apparentPositions.length];
+                const zOffset = -(index * SPACING);
+                const distFromStart = maxZ - zOffset;
+                const scale = distFromStart / 1000;
+
+                const xOffset = pos.x * scale;
+                const yOffset = pos.y * scale;
+
+                object.position.set(xOffset, yOffset, zOffset);
+                object.rotation.y = 0;
+
+                object.userData = {
+                    baseX: xOffset,
+                    baseY: yOffset,
+                    baseZ: zOffset,
+                    element: wrapper,
+                    apparentX: pos.x,
+                    apparentY: pos.y
+                };
+
+                cardGroup.add(object);
+            });
+
+            scene.add(cardGroup);
+
+            window.addEventListener('resize', onResize);
+            window.addEventListener('wheel', onWheel, { passive: false });
+
+            // Touch scroll
+            let touchStartY = 0;
+            window.addEventListener('touchstart', e => { touchStartY = e.touches[0].clientY; }, { passive: true });
+            window.addEventListener('touchmove', e => {
+                const delta = touchStartY - e.touches[0].clientY;
+                targetZ -= delta * 0.5;
+                targetZ = Math.min(maxZ, targetZ);
+                touchStartY = e.touches[0].clientY;
+                updateIndicator();
+                handleScrollState();
+            }, { passive: true });
+
+            // Right-click to reset
+            window.addEventListener('contextmenu', e => {
+                e.preventDefault();
+                targetZ = maxZ;
+                updateIndicator();
+            });
+
+            window.addEventListener('mousemove', e => {
+                mouse.x = (e.clientX / window.innerWidth)  * 2 - 1;
+                mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+            });
+        }
+
+        function onWheel(e) {
+            e.preventDefault();
+            targetZ -= e.deltaY * scrollSpeed;
+            targetZ = Math.min(maxZ, targetZ); // Infinite forward, cap backward
+            updateIndicator();
+            handleScrollState();
+        }
+
+        function handleScrollState() {
+            document.body.classList.add('is-scrolling');
+            if (scrollTimeout) clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                document.body.classList.remove('is-scrolling');
+            }, 150);
+        }
+
+        function updateIndicator() {
+            const el = document.getElementById('scroll-indicator');
+            if (el) el.style.opacity = targetZ < maxZ - 50 ? '0' : '1';
+        }
+
+        function onResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            cssRenderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            camera.position.z += (targetZ - camera.position.z) * 0.05;
+
+            let parallaxX = 0, parallaxY = 0;
+            parallaxX = mouse.x * 50;
+            parallaxY = mouse.y * 50;
+            camera.position.x += (mouse.x * 20 - camera.position.x) * 0.05;
+            camera.position.y += (mouse.y * 20 - camera.position.y) * 0.05;
+
+            if (cardGroup) {
+                cardGroup.children.forEach(plane => {
+                    const dist = camera.position.z - plane.userData.baseZ;
+
+                    let factor = 0;
+                    if (dist >= 1600)                        factor = 0;
+                    else if (dist < 1600 && dist > 800)     factor = 1.0 - ((dist - 800) / 800);
+                    else if (dist <= 800 && dist >= 400)     factor = 1.0;
+                    else if (dist < 400 && dist > -200)      factor = (dist + 200) / 600;
+                    else                                     factor = 0;
+
+                    const smooth = factor * factor * (3 - 2 * factor);
+
+                    plane.position.x = THREE.MathUtils.lerp(plane.userData.baseX, 0, smooth) + parallaxX;
+                    plane.position.y = THREE.MathUtils.lerp(plane.userData.baseY, 0, smooth) + parallaxY;
+
+                    // Depth-of-field blur
+                    if (plane.userData.element) {
+                        const depth = Math.abs(camera.position.z - plane.userData.baseZ);
+                        const blur  = Math.max(0, (depth - 800) / 350);
+                        plane.userData.element.style.filter = blur > 0 ? `blur(${blur.toFixed(2)}px)` : '';
+                    }
+                });
+
+                // --- INFINITE LOOP RECYCLING ---
+                cardGroup.children.forEach(plane => {
+                    if (plane.userData.baseZ > camera.position.z + 50) {
+                        // Find frontmost (deepest) card
+                        let frontZ = Infinity;
+                        cardGroup.children.forEach(p => {
+                            if (p.userData.baseZ < frontZ) frontZ = p.userData.baseZ;
+                        });
+
+                        const newZ      = frontZ - SPACING;
+                        const camToNew  = camera.position.z - newZ;
+                        const scale     = camToNew / 1000;
+
+                        plane.userData.baseZ = newZ;
+                        plane.userData.baseX = plane.userData.apparentX * scale;
+                        plane.userData.baseY = plane.userData.apparentY * scale;
+
+                        plane.position.x = plane.userData.baseX + parallaxX;
+                        plane.position.y = plane.userData.baseY + parallaxY;
+                        plane.position.z = newZ;
+                    }
+                });
+            }
+
+            cssRenderer.render(scene, camera);
+        }
+    </script>
 </body>
+
 </html>

@@ -82,37 +82,57 @@
             }
         }
 
-        /* Back button */
+        /* Back Button */
         .back-btn {
-            position: absolute;
+            position: fixed;
             top: 30px;
-            left: 30px;
+            left: 40px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 10px;
             color: #000;
-            font-family: 'Inter', 'Roboto', sans-serif;
             text-decoration: none;
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 600;
             letter-spacing: 1px;
             text-transform: uppercase;
-            z-index: 10;
-            padding: 10px 15px;
-            border: 1px solid rgba(0, 0, 0, 0.2);
-            border-radius: 20px;
-            transition: all 0.3s ease;
+            padding: 10px 20px;
             background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.05);
         }
 
         .back-btn:hover {
-            background: #000;
-            color: #fff;
-            border-color: #000;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            background: rgba(255, 255, 255, 1);
+        }
+
+        .back-btn svg {
+            width: 18px;
+            height: 18px;
+            transition: transform 0.3s ease;
+        }
+
+        .back-btn:hover svg {
+            transform: translateX(-4px);
         }
     </style>
 </head>
 
 <body>
-    <a href="index.html" class="back-btn">Back</a>
+    <!-- Go Back Button -->
+    <a href="index.html" class="back-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        Back
+    </a>
     <div id="scroll-indicator">
         <div class="scroll-text">Scroll to explore</div>
         <div class="mouse">
@@ -153,12 +173,24 @@
         const createMaterials = async () => {
             try {
                 const materials = {};
-                for (let i = 1; i <= 12; i++) {
-                    materials[`img${i}`] = new THREE.MeshBasicMaterial({
-                        map: await loadTexture(`ubereats/${i}.webp`),
-                        transparent: true
-                    });
-                }
+                
+                await Promise.all(
+                    Array.from({length: 12}, (_, i) => i + 1).map(async (i) => {
+                        try {
+                            const texture = await loadTexture(`ubereats/${i}.webp`);
+                            materials[`img${i}`] = {
+                                material: new THREE.MeshBasicMaterial({
+                                    map: texture,
+                                    transparent: true
+                                }),
+                                aspectRatio: texture.image.width / texture.image.height
+                            };
+                        } catch (e) {
+                            console.error(`Skipping ubereats/${i}.webp:`, e);
+                        }
+                    })
+                );
+                
                 return materials;
             } catch (error) {
                 console.error('Error creating materials:', error);
@@ -183,43 +215,74 @@
 
             // ===== CONFIGURABLE POSITIONS AND DIMENSIONS =====
             // Create a scrolling gallery sequence spread out in Z space
-            const zSpacing = -8;
+            const zSpacing = -15; // Increased spacing for dramatic pause
             const startZ = 0;
 
             const imageConfig = {
                 // Alternating layout down the Z-axis
-                img1: { x: -3, y: 1.5, z: startZ, width: 3, height: 4, rot: -5 },
-                img2: { x: 3.5, y: 0.5, z: startZ + zSpacing, width: 4, height: 3, rot: 8 },
-                img3: { x: -4, y: -1.0, z: startZ + zSpacing * 2, width: 4, height: 3, rot: -12 },
-                img4: { x: 2.5, y: -2.0, z: startZ + zSpacing * 3, width: 4, height: 3, rot: 15 },
-                img5: { x: -2.5, y: 2.0, z: startZ + zSpacing * 4, width: 4, height: 3, rot: -8 },
-                img6: { x: 4.0, y: 0.0, z: startZ + zSpacing * 5, width: 4, height: 3, rot: 10 },
-                img7: { x: -3.5, y: -1.5, z: startZ + zSpacing * 6, width: 4, height: 3, rot: -15 },
-                img8: { x: 3.0, y: 1.5, z: startZ + zSpacing * 7, width: 4, height: 3, rot: 7 },
-                img9: { x: -2.5, y: 0.5, z: startZ + zSpacing * 8, width: 4, height: 3, rot: -10 },
-                img10: { x: 3.5, y: -1.5, z: startZ + zSpacing * 9, width: 4, height: 3, rot: 12 },
-                img11: { x: -3.0, y: 1.0, z: startZ + zSpacing * 10, width: 4, height: 3, rot: -8 },
-                img12: { x: 2.0, y: -0.5, z: startZ + zSpacing * 11, width: 4, height: 3, rot: 5 },
+                img1: { x: -4, y: 1.5, z: startZ, width: 3, height: 4, rot: -5 },
+                img2: { x: 5, y: 0.5, z: startZ + zSpacing, width: 4, height: 3, rot: 8 },
+                img3: { x: -5, y: -1.0, z: startZ + zSpacing * 2, width: 4, height: 3, rot: -12 },
+                img4: { x: 4, y: -2.0, z: startZ + zSpacing * 3, width: 4, height: 3, rot: 15 },
+                img5: { x: -6, y: 2.0, z: startZ + zSpacing * 4, width: 4, height: 3, rot: -8 },
+                img6: { x: 5, y: 0.0, z: startZ + zSpacing * 5, width: 4, height: 3, rot: 10 },
+                img7: { x: -4, y: -1.5, z: startZ + zSpacing * 6, width: 4, height: 3, rot: -15 },
+                img8: { x: 5, y: 1.5, z: startZ + zSpacing * 7, width: 4, height: 3, rot: 7 },
+                img9: { x: -5, y: 0.5, z: startZ + zSpacing * 8, width: 4, height: 3, rot: -10 },
+                img10: { x: 6, y: -1.5, z: startZ + zSpacing * 9, width: 4, height: 3, rot: 12 },
+                img11: { x: -5, y: 1.0, z: startZ + zSpacing * 10, width: 4, height: 3, rot: -8 },
+                img12: { x: 4, y: -0.5, z: startZ + zSpacing * 11, width: 4, height: 3, rot: 5 },
             };
+
+            window.imagePlanes = [];
+
+            // Base size for the images - we lock the height or width and scale the other
+            const baseScale = 4.0;
 
             // Add image planes to scene
             for (let i = 1; i <= 12; i++) {
+                if (!materials[`img${i}`]) continue;
+                
                 const conf = imageConfig[`img${i}`];
-                const plane = createImagePlane(materials[`img${i}`], conf.width, conf.height, conf.x, conf.y, conf.z, conf.rot);
+                const matData = materials[`img${i}`];
+                
+                // Calculate dynamic width/height based on aspect ratio
+                let planeWidth, planeHeight;
+                if (matData.aspectRatio > 1) {
+                    // Landscape
+                    planeWidth = baseScale;
+                    planeHeight = baseScale / matData.aspectRatio;
+                } else {
+                    // Portrait
+                    planeHeight = baseScale;
+                    planeWidth = baseScale * matData.aspectRatio;
+                }
+                
+                const plane = createImagePlane(matData.material, planeWidth, planeHeight, conf.x, conf.y, conf.z, conf.rot);
+                
+                // Store base transformations for interpolation
+                plane.userData = {
+                    baseX: conf.x,
+                    baseY: conf.y,
+                    baseZ: conf.z,
+                    baseRotZ: conf.rot * (Math.PI / 180)
+                };
+                
+                window.imagePlanes.push(plane);
                 scene.add(plane);
             }
 
             // Set initial camera position
-            camera.position.z = 8;
+            camera.position.z = 20;
             targetZ = camera.position.z;
         }
 
         // Mouse scroll handling
-        let targetZ = 8;
-        const scrollSpeed = 0.05;
-        // 11 elements * -8 spacing = -88. Minimum Z around -95 to allow viewing the last item.
-        const minZ = -95;
-        const maxZ = 8;
+        let targetZ = 20;
+        const scrollSpeed = 0.03; // Slower scroll
+        // 11 elements * -15 spacing
+        const minZ = -175;
+        const maxZ = 20;
 
         window.addEventListener('wheel', (event) => {
             targetZ += event.deltaY * scrollSpeed;
@@ -273,12 +336,58 @@
             requestAnimationFrame(animate);
 
             // Smoother camera movement along Z axis
-            camera.position.z += (targetZ - camera.position.z) * 0.05;
+            camera.position.z += (targetZ - camera.position.z) * 0.03; // Slower Camera Lerp
 
             // Optional: add slight parallax/sway based on mouse position
+            let parallaxX = 0;
+            let parallaxY = 0;
             if (mouse.x !== undefined) {
-                camera.position.x += (mouse.x * 0.5 - camera.position.x) * 0.02;
-                camera.position.y += (mouse.y * 0.5 - camera.position.y) * 0.02;
+                parallaxX = mouse.x * 0.5;
+                parallaxY = mouse.y * 0.5;
+                
+                camera.position.x += (parallaxX - camera.position.x) * 0.02;
+                camera.position.y += (parallaxY - camera.position.y) * 0.02;
+            }
+
+            // Dynamic centering logic (Focus-on-approach)
+            if (window.imagePlanes) {
+                // We define 3 zones based on distance:
+                // > 14: Too far/Background (factor 0)
+                // 14 to 8: Approaching (slides in gently)
+                // 8 to 2: The Plateau (factor 1, stays perfectly still!)
+                // 2 to -2: Passing (slides out fast behind)
+                
+                window.imagePlanes.forEach(plane => {
+                    const dist = camera.position.z - plane.userData.baseZ;
+                    
+                    let factor = 0;
+                    if (dist > 14) {
+                        factor = 0; // Far away
+                    } else if (dist <= 14 && dist > 8) {
+                        factor = 1.0 - ((dist - 8) / 6); // Slide in (0 to 1)
+                    } else if (dist <= 8 && dist >= 2) {
+                        factor = 1.0; // The Plateau (Hold still)
+                    } else if (dist < 2 && dist > -2) {
+                        factor = (dist + 2) / 4; // Passing fast (1 to 0)
+                    } else {
+                        factor = 0; // Behind camera
+                    }
+                    
+                    // Ease the factor
+                    const smoothFactor = factor * factor * (3 - 2 * factor); // smoothstep
+                    
+                    // Interpolate towards center
+                    plane.position.x = THREE.MathUtils.lerp(plane.userData.baseX, parallaxX, smoothFactor);
+                    plane.position.y = THREE.MathUtils.lerp(plane.userData.baseY, parallaxY, smoothFactor);
+                    plane.rotation.z = THREE.MathUtils.lerp(plane.userData.baseRotZ, 0, smoothFactor);
+                    
+                    // Reset Y rotation if we approach perfectly flat
+                    if (plane.userData.baseRotY !== undefined) {
+                        plane.rotation.y = THREE.MathUtils.lerp(plane.userData.baseRotY, 0, smoothFactor);
+                    } else {
+                        plane.rotation.y = THREE.MathUtils.lerp(plane.rotation.y, 0, 0.1); 
+                    }
+                });
             }
 
             renderer.render(scene, camera);

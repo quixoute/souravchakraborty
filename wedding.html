@@ -5,17 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weddings — Sourav Chakraborty</title>
     <meta name="description" content="Wedding films by Sourav Chakraborty — cinematic wedding videography">
+    
+    <!-- Plyr CSS -->
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
     <link rel="stylesheet" href="film.css">
+    
     <style>
-        /* ─── Full-screen Scroll-Snap Video Container ─── */
-        html {
-            scroll-behavior: auto; /* snap handles smoothness */
-        }
-
-        body {
-            overflow: hidden;
-        }
-
+        /* Hide inherited page title for Siena aesthetic */
+        .page-title { display: none; }
+        
+        /* ─── Full-screen Scroll-Snap Container ─── */
+        html { scroll-behavior: auto; }
+        body { overflow: hidden; background: #000; margin: 0; padding: 0; }
+        
         .video-scroller {
             width: 100vw;
             height: 100vh;
@@ -23,169 +25,161 @@
             scroll-snap-type: y mandatory;
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
+            position: relative;
         }
+        .video-scroller::-webkit-scrollbar { display: none; }
 
-        .video-scroller::-webkit-scrollbar {
-            display: none;
-        }
-
-        /* ─── Each Video Section ─── */
         .video-section {
-            width: 100%;
+            width: 100vw;
             height: 100vh;
             scroll-snap-align: start;
+            scroll-snap-stop: always;
             position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
             overflow: hidden;
+            background: #000;
         }
 
-        .video-section__bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--film-bg);
-        }
-
-        /* Separator line between sections */
-        .video-section::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 10%;
-            width: 80%;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--film-border), transparent);
-        }
-
-        .video-section:last-child::after {
-            display: none;
-        }
-
-        /* ─── Video Wrapper ─── */
+        /* ─── Background Video Cover (Siena Style) ─── */
+        /* flawless 16:9 aspect ratio full-bleed cover trick */
         .video-wrapper {
-            position: relative;
-            width: 90%;
-            max-width: 960px;
-            aspect-ratio: 16 / 9;
-            border-radius: 4px;
-            overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5),
-                        0 0 0 1px rgba(196, 162, 101, 0.08);
-            opacity: 0;
-            transform: scale(0.96);
-            transition: opacity 0.8s var(--transition-smooth),
-                        transform 0.8s var(--transition-smooth);
+            position: absolute;
+            width: 100vw;
+            height: 56.25vw;
+            min-height: 100vh;
+            min-width: 177.77vh;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none; /* Disables youtube click pausing */
+            opacity: 0.5;
+            transition: opacity 1.5s ease-in-out;
         }
 
         .video-section.active .video-wrapper {
-            opacity: 1;
-            transform: scale(1);
+            opacity: 0.7; /* Brightens when active */
         }
 
-        .video-wrapper iframe {
+        .plyr {
             width: 100%;
             height: 100%;
-            border: none;
-            display: block;
+            transform: scale(1.05); /* Slight zoom to hide Youtube edges */
+        }
+        .plyr__controls {
+            display: none !important; /* Siena minimal style */
         }
 
-        /* ─── Video Title Overlay ─── */
-        .video-info {
+        /* ─── Siena Editorial Overlay ─── */
+        .siena-overlay {
             position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 40px 30px 24px;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
-            opacity: 0;
-            transition: opacity 0.5s var(--transition-smooth);
+            inset: 0;
             pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 40px;
+            z-index: 10;
         }
 
-        .video-section.active .video-info {
+        .siena-overlay__top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: #fff;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.8s 0.2s ease, transform 0.8s 0.2s ease;
+        }
+        
+        .video-section.active .siena-overlay__top {
             opacity: 1;
+            transform: translateY(0);
         }
 
-        .video-info__title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(18px, 3vw, 28px);
-            font-weight: 300;
-            letter-spacing: 2px;
-            color: var(--film-text);
+        .siena-overlay__bottom {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
         }
 
-        .video-info__number {
+        .video-title {
+            font-family: 'Inter', sans-serif;
+            /* Massive Siena Typography */
+            font-size: clamp(60px, 12vw, 150px);
+            font-weight: 700;
+            line-height: 0.9;
+            letter-spacing: -2px;
+            text-transform: uppercase;
+            color: #fff;
+            margin: 0;
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 1s 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), transform 1s 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .video-section.active .video-title {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Action Buttons */
+        .siena-actions {
+            pointer-events: auto;
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            display: flex;
+            gap: 20px;
+            z-index: 9999;
+            opacity: 0;
+            animation: fadeIn 1s 1.5s ease forwards;
+        }
+
+        .siena-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
             font-family: 'Inter', sans-serif;
             font-size: 10px;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: var(--film-accent);
-            margin-bottom: 6px;
-        }
-
-        /* ─── Counter ─── */
-        .video-counter {
-            position: fixed;
-            bottom: 28px;
-            right: 28px;
-            z-index: 9999;
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 14px;
-            color: var(--film-text-dim);
             letter-spacing: 2px;
-            opacity: 0;
-            animation: fadeIn 0.6s 1.2s var(--transition-smooth) forwards;
+            text-transform: uppercase;
+            padding: 12px 24px;
+            cursor: pointer;
+            border-radius: 40px;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
         }
 
-        .video-counter__current {
-            color: var(--film-accent);
-            font-size: 22px;
+        .siena-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.8);
+            transform: scale(1.05);
         }
 
-        /* ─── Responsive ─── */
         @media (max-width: 768px) {
-            .video-wrapper {
-                width: 96%;
-                border-radius: 2px;
-            }
-
-            .video-info {
-                padding: 30px 16px 16px;
-            }
-
-            .video-counter {
-                bottom: 20px;
-                right: 16px;
-                font-size: 12px;
-            }
-
-            .video-counter__current {
-                font-size: 18px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .video-wrapper {
-                width: 100%;
-                border-radius: 0;
-            }
+            .siena-overlay { padding: 24px; }
+            .video-title { font-size: clamp(40px, 15vw, 80px); }
+            .siena-actions { bottom: 24px; right: 24px; gap: 10px; }
+            .siena-btn { padding: 10px 16px; font-size: 9px; }
+            .siena-overlay__top { font-size: 9px; letter-spacing: 2px; }
         }
     </style>
 </head>
 <body class="film-grain film-vignette">
 
-    <!-- Loading -->
     <div class="film-loader" id="loader">
         <div class="film-loader__ring"></div>
         <div class="film-loader__text">Loading</div>
     </div>
 
     <!-- Back Button -->
-    <a href="index.html" class="back-btn" id="backBtn">
+    <a href="index.html" class="back-btn" style="position: fixed; z-index: 9999; pointer-events: auto;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <line x1="19" y1="12" x2="5" y2="12"></line>
             <polyline points="12 19 5 12 12 5"></polyline>
@@ -193,176 +187,135 @@
         Back
     </a>
 
-    <!-- Page Title -->
-    <div class="page-title">Weddings</div>
+    <!-- Global Interface -->
+    <div class="siena-actions">
+        <button class="siena-btn" id="soundToggle">Sound: OFF</button>
+    </div>
 
-    <!-- Scroll Indicator -->
-    <div class="scroll-hint" id="scrollHint">
-        <span class="scroll-hint__text">Scroll</span>
-        <div class="scroll-hint__mouse">
-            <div class="scroll-hint__wheel"></div>
+    <!-- Scroll Hint -->
+    <div class="scroll-hint" id="scrollHint" style="position: fixed; bottom: 40px; pointer-events: none;">
+        <span class="scroll-hint__text" style="color: #fff">Scroll</span>
+        <div class="scroll-hint__mouse" style="border-color: rgba(255,255,255,0.5)">
+            <div class="scroll-hint__wheel" style="background: #fff"></div>
         </div>
     </div>
 
-    <!-- Progress Dots -->
-    <div class="video-progress" id="progressDots"></div>
+    <div class="video-scroller" id="scroller"></div>
 
-    <!-- Video Counter -->
-    <div class="video-counter">
-        <span class="video-counter__current" id="currentIdx">01</span>
-        <span> / </span>
-        <span id="totalIdx">05</span>
-    </div>
-
-    <!-- Video Scroller -->
-    <div class="video-scroller" id="scroller">
-        <!-- Videos are injected by JS -->
-    </div>
+    <!-- Plyr JS -->
+    <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
 
     <script>
-        // ─── Video Data ───
         const videos = [
-            { id: "j6KxpiUJJ1Y", title: "Sukanya × Sayak" },
-            { id: "Zy1IGA-aFNI", title: "Sayantani × Debarshi" },
-            { id: "lZ8vpZghhG8", title: "Shivani × Pawan" },
-            { id: "VjV4iJC-rBc", title: "Rhea × Craig" },
-            { id: "lFbrmG26eos", title: "Upasana × Akash" }
+            { id: "j6KxpiUJJ1Y", title: "Sukanya<br>Sayak" },
+            { id: "Zy1IGA-aFNI", title: "Sayantani<br>Debarshi" },
+            { id: "lZ8vpZghhG8", title: "Shivani<br>Pawan" },
+            { id: "VjV4iJC-rBc", title: "Rhea<br>Craig" },
+            { id: "lFbrmG26eos", title: "Upasana<br>Akash" }
         ];
 
         const scroller = document.getElementById('scroller');
-        const progressDots = document.getElementById('progressDots');
-        const scrollHint = document.getElementById('scrollHint');
-        const currentIdxEl = document.getElementById('currentIdx');
-        const totalIdxEl = document.getElementById('totalIdx');
-
-        totalIdxEl.textContent = String(videos.length).padStart(2, '0');
-
-        // ─── Build Sections & Dots ───
+        
         videos.forEach((video, i) => {
-            // Section
             const section = document.createElement('div');
             section.className = 'video-section';
             section.dataset.index = i;
+            
             section.innerHTML = `
-                <div class="video-section__bg"></div>
                 <div class="video-wrapper">
-                    <div id="player-${i}"></div>
-                    <div class="video-info">
-                        <div class="video-info__number">Film ${String(i + 1).padStart(2, '0')}</div>
-                        <div class="video-info__title">${video.title}</div>
+                    <!-- Plyr Youtube integration -->
+                    <div id="player-${i}" data-plyr-provider="youtube" data-plyr-embed-id="${video.id}"></div>
+                </div>
+                <div class="siena-overlay">
+                    <div class="siena-overlay__top">
+                        <div class="siena-meta">Sourav.film / Weddings</div>
+                        <div class="siena-counter">FILM 0${i + 1} / 0${videos.length}</div>
+                    </div>
+                    <div class="siena-overlay__bottom">
+                        <h1 class="video-title">${video.title}</h1>
                     </div>
                 </div>
             `;
             scroller.appendChild(section);
-
-            // Dot
-            const dot = document.createElement('div');
-            dot.className = 'video-progress__dot';
-            dot.dataset.index = i;
-            dot.addEventListener('click', () => {
-                const target = scroller.children[i];
-                target.scrollIntoView({ behavior: 'smooth' });
-            });
-            progressDots.appendChild(dot);
         });
 
-        // ─── YouTube IFrame API ───
         let players = [];
-        let apiReady = false;
+        let isMuted = true;
+        const soundToggle = document.getElementById('soundToggle');
+        const scrollHint = document.getElementById('scrollHint');
 
-        // Load YT API
-        const tag = document.createElement('script');
-        tag.src = 'https://www.youtube.com/iframe_api';
-        document.head.appendChild(tag);
-
-        window.onYouTubeIframeAPIReady = function () {
-            apiReady = true;
-            videos.forEach((video, i) => {
-                players[i] = new YT.Player(`player-${i}`, {
-                    videoId: video.id,
-                    playerVars: {
-                        rel: 0,
-                        modestbranding: 1,
-                        playsinline: 1,
-                        controls: 1
-                    },
-                    events: {
-                        onReady: () => {
-                            // Hide loader once first player is ready
-                            if (i === 0) {
-                                setTimeout(() => {
-                                    document.getElementById('loader').classList.add('hidden');
-                                }, 600);
-                            }
-                        }
-                    }
-                });
+        // Initialize Plyr Instances
+        videos.forEach((video, i) => {
+            players[i] = new Plyr(`#player-${i}`, {
+                controls: [], // Hide all controls
+                autoplay: false,
+                muted: true, // Must start muted in modern browsers for autoplay
+                clickToPlay: false,
+                keyboard: { focused: false, global: false },
+                youtube: { 
+                    noCookie: false, 
+                    rel: 0, 
+                    showinfo: 0, 
+                    iv_load_policy: 3, 
+                    modestbranding: 1, 
+                    playsinline: 1 
+                }
             });
-        };
+        });
 
-        // ─── Intersection Observer for Autoplay ───
-        let activeIndex = 0;
+        // Hide loader when first video is ready
+        if (players.length > 0) {
+            players[0].on('ready', () => {
+                setTimeout(() => {
+                    document.getElementById('loader').classList.add('hidden');
+                }, 800);
+            });
+        }
 
+        // Global Sound Logic
+        soundToggle.addEventListener('click', () => {
+            isMuted = !isMuted;
+            soundToggle.textContent = isMuted ? "Sound: OFF" : "Sound: ON";
+            
+            players.forEach(player => {
+                player.muted = isMuted;
+            });
+        });
+
+        // Scroll Intersection Observer for Seamless Autoplay
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 const idx = parseInt(entry.target.dataset.index);
-
-                if (entry.isIntersecting && entry.intersectionRatio > 0.6) {
+                if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
                     entry.target.classList.add('active');
-                    activeIndex = idx;
-
-                    // Update counter
-                    currentIdxEl.textContent = String(idx + 1).padStart(2, '0');
-
-                    // Update dots
-                    document.querySelectorAll('.video-progress__dot').forEach((dot, di) => {
-                        dot.classList.toggle('active', di === idx);
-                    });
-
-                    // Hide scroll hint after first scroll
-                    if (idx > 0) {
+                    if (players[idx]) players[idx].play();
+                    
+                    if (idx > 0 && scrollHint) {
                         scrollHint.style.opacity = '0';
                     }
-
-                    // Autoplay current, pause others
-                    if (apiReady) {
-                        players.forEach((player, pi) => {
-                            try {
-                                if (pi === idx) {
-                                    player.playVideo();
-                                } else {
-                                    player.pauseVideo();
-                                }
-                            } catch (e) { /* player not ready yet */ }
-                        });
-                    }
+                    
+                    // Pause other out-of-view videos
+                    players.forEach((p, i) => {
+                        if (i !== idx) p.pause();
+                    });
                 } else {
                     entry.target.classList.remove('active');
                 }
             });
         }, {
             root: scroller,
-            threshold: [0.6]
+            threshold: 0.5
         });
 
-        // Observe all sections
         document.querySelectorAll('.video-section').forEach(section => {
             observer.observe(section);
         });
-
-        // Activate first section
+        
+        // Failsafe Loader removal
         setTimeout(() => {
-            const first = document.querySelector('.video-section');
-            if (first) first.classList.add('active');
-            document.querySelector('.video-progress__dot')?.classList.add('active');
-        }, 100);
-
-        // Fallback loader hide
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                document.getElementById('loader').classList.add('hidden');
-            }, 3000);
-        });
+            document.getElementById('loader').classList.add('hidden');
+        }, 3000);
     </script>
+<script src="mouse-skew.js"></script>
 </body>
 </html>

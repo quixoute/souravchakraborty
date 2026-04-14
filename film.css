@@ -401,3 +401,7 @@ body {
         display: none;
     }
 }
+
+/* Shopify Winter 2026 Typography Overrides */
+.gallery-header h1, .page-title { font-size: clamp(60px, 15vw, 180px) !important; font-weight: 500 !important; letter-spacing: -2px !important; text-transform: none !important; line-height: 1 !important; margin-bottom: 24px !important; }
+

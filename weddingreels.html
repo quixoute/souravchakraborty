@@ -5,57 +5,310 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wedding Reels — Sourav Chakraborty</title>
     <meta name="description" content="Wedding reels by Sourav Chakraborty — short-form wedding films">
+    
+    <!-- Plyr CSS -->
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
     <link rel="stylesheet" href="film.css">
+    
     <style>
-        body { overflow: hidden; }
-        .video-scroller { width: 100vw; height: 100vh; overflow-y: scroll; scroll-snap-type: y mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+        .page-title { display: none; }
+        html { scroll-behavior: auto; }
+        body { overflow: hidden; background: #000; margin: 0; padding: 0; }
+        
+        .video-scroller {
+            width: 100vw;
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            position: relative;
+        }
         .video-scroller::-webkit-scrollbar { display: none; }
-        .video-section { width: 100%; height: 100vh; scroll-snap-align: start; position: relative; display: flex; justify-content: center; align-items: center; }
-        .video-section::after { content: ''; position: absolute; bottom: 0; left: 10%; width: 80%; height: 1px; background: linear-gradient(90deg, transparent, var(--film-border), transparent); }
-        .video-section:last-child::after { display: none; }
-        .video-wrapper { position: relative; width: 44%; max-width: 400px; aspect-ratio: 9 / 16; border-radius: 8px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(196,162,101,0.08); opacity: 0; transform: scale(0.96); transition: opacity 0.8s var(--transition-smooth), transform 0.8s var(--transition-smooth); }
-        .video-section.active .video-wrapper { opacity: 1; transform: scale(1); }
-        .video-wrapper iframe { width: 100%; height: 100%; border: none; display: block; }
-        .video-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 40px 20px 20px; background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%); opacity: 0; transition: opacity 0.5s var(--transition-smooth); pointer-events: none; }
-        .video-section.active .video-info { opacity: 1; }
-        .video-info__title { font-family: 'Cormorant Garamond', serif; font-size: clamp(16px, 3vw, 24px); font-weight: 300; letter-spacing: 2px; color: var(--film-text); }
-        .video-info__number { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--film-accent); margin-bottom: 6px; }
-        .video-counter { position: fixed; bottom: 28px; right: 28px; z-index: 9999; font-family: 'Cormorant Garamond', serif; font-size: 14px; color: var(--film-text-dim); letter-spacing: 2px; opacity: 0; animation: fadeIn 0.6s 1.2s var(--transition-smooth) forwards; }
-        .video-counter__current { color: var(--film-accent); font-size: 22px; }
-        @media (max-width: 768px) { .video-wrapper { width: 70%; max-width: 340px; } }
-        @media (max-width: 480px) { .video-wrapper { width: 85%; border-radius: 4px; } }
+
+        .video-section {
+            width: 100vw;
+            height: 100vh;
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            background: #000;
+        }
+
+        /* ─── Reels Vertical Container ─── */
+        .video-wrapper {
+            position: relative;
+            height: 75vh;
+            aspect-ratio: 9 / 16;
+            margin-top: -5vh; /* slightly elevated to make room for bottom title */
+            border-radius: 8px; /* Slight rounding looks premium for vertical reels */
+            overflow: hidden;
+            pointer-events: none; 
+            opacity: 0.5;
+            transform: scale(0.95);
+            transition: opacity 1.2s ease, transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+            box-shadow: 0 30px 90px rgba(0,0,0,0.8);
+            z-index: 2;
+        }
+
+        .video-section.active .video-wrapper {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .plyr {
+            width: 100%;
+            height: 100%;
+        }
+        .plyr__controls {
+            display: none !important;
+        }
+
+        /* ─── Siena Editorial Overlay ─── */
+        .siena-overlay {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 40px;
+            z-index: 10;
+        }
+
+        .siena-overlay__top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: #fff;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.8s 0.2s ease, transform 0.8s 0.2s ease;
+        }
+        
+        .video-section.active .siena-overlay__top {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .siena-overlay__bottom {
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Centered for reels */
+            position: absolute;
+            bottom: 40px;
+            left: 0;
+            width: 100%;
+        }
+
+        .video-title {
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(40px, 10vw, 130px);
+            font-weight: 700;
+            line-height: 0.9;
+            letter-spacing: -2px;
+            text-transform: uppercase;
+            color: #fff;
+            margin: 0;
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 1s 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), transform 1s 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            text-align: center;
+        }
+
+        .video-section.active .video-title {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .siena-actions {
+            pointer-events: auto;
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            display: flex;
+            gap: 20px;
+            z-index: 9999;
+            opacity: 0;
+            animation: fadeIn 1s 1.5s ease forwards;
+        }
+
+        .siena-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 12px 24px;
+            cursor: pointer;
+            border-radius: 40px;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+
+        .siena-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.8);
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .video-wrapper { height: 60vh; margin-top: -10vh; }
+            .siena-overlay { padding: 24px; }
+            .video-title { font-size: clamp(30px, 14vw, 70px); }
+            .siena-actions { bottom: 24px; right: 24px; }
+            .siena-btn { padding: 10px 16px; font-size: 9px; }
+            .siena-overlay__top { font-size: 9px; letter-spacing: 2px; }
+            .siena-overlay__bottom { bottom: 30px; }
+        }
     </style>
 </head>
 <body class="film-grain film-vignette">
-    <div class="film-loader" id="loader"><div class="film-loader__ring"></div><div class="film-loader__text">Loading</div></div>
-    <a href="r.html" class="back-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>Back</a>
-    <div class="page-title">Wedding Reels</div>
-    <div class="scroll-hint" id="scrollHint"><span class="scroll-hint__text">Scroll</span><div class="scroll-hint__mouse"><div class="scroll-hint__wheel"></div></div></div>
-    <div class="video-progress" id="progressDots"></div>
-    <div class="video-counter"><span class="video-counter__current" id="currentIdx">01</span><span> / </span><span id="totalIdx">02</span></div>
+
+    <div class="film-loader" id="loader">
+        <div class="film-loader__ring"></div>
+        <div class="film-loader__text">Loading</div>
+    </div>
+
+    <!-- Back Button -->
+    <a href="r.html" class="back-btn" style="position: fixed; z-index: 9999; pointer-events: auto;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        Back
+    </a>
+
+    <!-- Global Interface -->
+    <div class="siena-actions">
+        <button class="siena-btn" id="soundToggle">Sound: OFF</button>
+    </div>
+
+    <!-- Scroll Hint -->
+    <div class="scroll-hint" id="scrollHint" style="position: fixed; bottom: 40px; left: 40px; transform: none; pointer-events: none;">
+        <span class="scroll-hint__text" style="color: #fff">Scroll</span>
+        <div class="scroll-hint__mouse" style="border-color: rgba(255,255,255,0.5)">
+            <div class="scroll-hint__wheel" style="background: #fff"></div>
+        </div>
+    </div>
+
     <div class="video-scroller" id="scroller"></div>
+
+    <!-- Plyr JS -->
+    <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
 
     <script>
         const videos = [
             { id: "Kv3bTvaUQJE", title: "Wedding Reel 1" },
             { id: "XI5eCglem3o", title: "Wedding Reel 2" }
         ];
-        const scroller = document.getElementById('scroller'), progressDots = document.getElementById('progressDots'), scrollHint = document.getElementById('scrollHint'), currentIdxEl = document.getElementById('currentIdx');
-        document.getElementById('totalIdx').textContent = String(videos.length).padStart(2, '0');
+
+        const scroller = document.getElementById('scroller');
+        
         videos.forEach((video, i) => {
-            const section = document.createElement('div'); section.className = 'video-section'; section.dataset.index = i;
-            section.innerHTML = `<div class="video-wrapper"><div id="player-${i}"></div><div class="video-info"><div class="video-info__number">Reel ${String(i+1).padStart(2,'0')}</div><div class="video-info__title">${video.title}</div></div></div>`;
+            const section = document.createElement('div');
+            section.className = 'video-section';
+            section.dataset.index = i;
+            
+            section.innerHTML = `
+                <div class="video-wrapper">
+                    <!-- Plyr Youtube integration -->
+                    <div id="player-${i}" data-plyr-provider="youtube" data-plyr-embed-id="${video.id}"></div>
+                </div>
+                <div class="siena-overlay">
+                    <div class="siena-overlay__top">
+                        <div class="siena-meta">Sourav.film / Reels</div>
+                        <div class="siena-counter">REEL 0${i + 1} / 0${videos.length}</div>
+                    </div>
+                    <div class="siena-overlay__bottom">
+                        <h1 class="video-title">${video.title}</h1>
+                    </div>
+                </div>
+            `;
             scroller.appendChild(section);
-            const dot = document.createElement('div'); dot.className = 'video-progress__dot'; dot.dataset.index = i;
-            dot.addEventListener('click', () => scroller.children[i].scrollIntoView({ behavior: 'smooth' })); progressDots.appendChild(dot);
         });
-        let players = [], apiReady = false;
-        const tag = document.createElement('script'); tag.src = 'https://www.youtube.com/iframe_api'; document.head.appendChild(tag);
-        window.onYouTubeIframeAPIReady = function() { apiReady = true; videos.forEach((v, i) => { players[i] = new YT.Player(`player-${i}`, { videoId: v.id, playerVars: { rel: 0, modestbranding: 1, playsinline: 1, controls: 1 }, events: { onReady: () => { if (i === 0) setTimeout(() => document.getElementById('loader').classList.add('hidden'), 600); } } }); }); };
-        const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { const idx = parseInt(entry.target.dataset.index); if (entry.isIntersecting && entry.intersectionRatio > 0.6) { entry.target.classList.add('active'); currentIdxEl.textContent = String(idx+1).padStart(2,'0'); document.querySelectorAll('.video-progress__dot').forEach((d,di) => d.classList.toggle('active', di === idx)); if (idx > 0) scrollHint.style.opacity = '0'; if (apiReady) players.forEach((p, pi) => { try { pi === idx ? p.playVideo() : p.pauseVideo(); } catch(e){} }); } else { entry.target.classList.remove('active'); } }); }, { root: scroller, threshold: [0.6] });
-        document.querySelectorAll('.video-section').forEach(s => observer.observe(s));
-        setTimeout(() => { document.querySelector('.video-section')?.classList.add('active'); document.querySelector('.video-progress__dot')?.classList.add('active'); }, 100);
-        window.addEventListener('load', () => setTimeout(() => document.getElementById('loader').classList.add('hidden'), 3000));
+
+        let players = [];
+        let isMuted = true;
+        const soundToggle = document.getElementById('soundToggle');
+        const scrollHint = document.getElementById('scrollHint');
+
+        // Initialize Plyr Instances
+        videos.forEach((video, i) => {
+            players[i] = new Plyr(`#player-${i}`, {
+                controls: [],
+                autoplay: false,
+                muted: true, // Must start muted in modern browsers
+                clickToPlay: false,
+                keyboard: { focused: false, global: false },
+                youtube: { 
+                    noCookie: false, 
+                    rel: 0, 
+                    showinfo: 0, 
+                    iv_load_policy: 3, 
+                    modestbranding: 1, 
+                    playsinline: 1 
+                }
+            });
+        });
+
+        if (players.length > 0) {
+            players[0].on('ready', () => {
+                setTimeout(() => {
+                    document.getElementById('loader').classList.add('hidden');
+                }, 800);
+            });
+        }
+
+        soundToggle.addEventListener('click', () => {
+            isMuted = !isMuted;
+            soundToggle.textContent = isMuted ? "Sound: OFF" : "Sound: ON";
+            
+            players.forEach(player => {
+                player.muted = isMuted;
+            });
+        });
+
+        // Intersection Observer logic
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const idx = parseInt(entry.target.dataset.index);
+                if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
+                    entry.target.classList.add('active');
+                    if (players[idx]) players[idx].play();
+                    
+                    if (idx > 0 && scrollHint) {
+                        scrollHint.style.opacity = '0';
+                    }
+                    
+                    players.forEach((p, i) => {
+                        if (i !== idx) p.pause();
+                    });
+                } else {
+                    entry.target.classList.remove('active');
+                }
+            });
+        }, {
+            root: scroller,
+            threshold: 0.5
+        });
+
+        document.querySelectorAll('.video-section').forEach(section => {
+            observer.observe(section);
+        });
+        
+        setTimeout(() => { document.getElementById('loader').classList.add('hidden'); }, 3000);
     </script>
+<script src="mouse-skew.js"></script>
 </body>
 </html>

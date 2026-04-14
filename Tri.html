@@ -1,383 +1,281 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sourav Chakraborty - Tri</title>
+    <title>Tri — Sourav Chakraborty</title>
+    <meta name="description" content="Tri photo gallery by Sourav Chakraborty">
+    <link rel="stylesheet" href="film.css">
     <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-        }
+        body { overflow-y: auto; overflow-x: hidden; }
 
-        canvas {
-            display: block;
-        }
-
-        /* Scroll indicator styles */
-        #scroll-indicator {
-            position: absolute;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
+        /* ─── Gallery Header ─── */
+        .gallery-header {
             text-align: center;
-            color: #000;
-            font-family: 'Inter', 'Roboto', sans-serif;
-            pointer-events: none;
-            transition: opacity 0.5s ease;
-            z-index: 10;
+            padding: 120px 20px 40px;
+            opacity: 0;
+            animation: fadeInUp 0.8s 0.3s var(--transition-smooth) forwards;
         }
-
-        .scroll-text {
-            font-size: 13px;
-            font-weight: 500;
-            letter-spacing: 2px;
+        .gallery-header h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(32px, 6vw, 56px);
+            font-weight: 300;
+            letter-spacing: 6px;
             text-transform: uppercase;
+            color: var(--film-text);
             margin-bottom: 12px;
-            opacity: 0.8;
         }
-
-        .mouse {
-            width: 24px;
-            height: 38px;
-            border: 2px solid rgba(0, 0, 0, 0.8);
-            border-radius: 14px;
-            margin: 0 auto;
-            position: relative;
-        }
-
-        .wheel {
-            width: 2px;
-            height: 6px;
-            background: rgba(0, 0, 0, 0.8);
-            border-radius: 2px;
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            animation: scrollUp 1.5s infinite;
-        }
-
-        @keyframes scrollUp {
-            0% {
-                top: 20px;
-                opacity: 0;
-            }
-
-            20% {
-                top: 20px;
-                opacity: 1;
-            }
-
-            80% {
-                top: 6px;
-                opacity: 1;
-            }
-
-            100% {
-                top: 6px;
-                opacity: 0;
-            }
-        }
-
-        /* Back Button */
-        .back-btn {
-            position: fixed;
-            top: 30px;
-            left: 40px;
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: #000;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 600;
-            letter-spacing: 1px;
+        .gallery-header p {
+            font-size: 12px;
+            letter-spacing: 3px;
             text-transform: uppercase;
-            padding: 10px 20px;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            border-radius: 30px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            border: 1px solid rgba(0,0,0,0.05);
+            color: var(--film-text-dim);
+        }
+        .gallery-header .divider {
+            width: 40px;
+            height: 1px;
+            background: var(--film-accent);
+            margin: 20px auto 0;
         }
 
-        .back-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-            background: rgba(255, 255, 255, 1);
+        /* ─── Masonry Grid ─── */
+        .gallery-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            columns: 3;
+            column-gap: 16px;
         }
 
-        .back-btn svg {
-            width: 18px;
-            height: 18px;
-            transition: transform 0.3s ease;
+        .gallery-item {
+            break-inside: avoid;
+            margin-bottom: 16px;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s var(--transition-smooth),
+                        transform 0.6s var(--transition-smooth);
         }
 
-        .back-btn:hover svg {
-            transform: translateX(-4px);
+        .gallery-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            display: block;
+            transition: transform 0.6s var(--transition-smooth),
+                        filter 0.6s var(--transition-smooth);
+            filter: saturate(0.85) contrast(1.05);
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.03);
+            filter: saturate(1) contrast(1.1);
+        }
+
+        .gallery-item::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.15) 0%, transparent 40%);
+            opacity: 0;
+            transition: opacity 0.4s var(--transition-smooth);
+            pointer-events: none;
+        }
+        .gallery-item:hover::after { opacity: 1; }
+
+        /* ─── Lightbox ─── */
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 10001;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s var(--transition-smooth), visibility 0.4s;
+            cursor: zoom-out;
+        }
+        .lightbox.open { opacity: 1; visibility: visible; }
+
+        .lightbox img {
+            max-width: 92vw;
+            max-height: 90vh;
+            object-fit: contain;
+            border-radius: 2px;
+            box-shadow: 0 0 60px rgba(0,0,0,0.5);
+            transform: scale(0.95);
+            transition: transform 0.4s var(--transition-smooth);
+        }
+        .lightbox.open img { transform: scale(1); }
+
+        .lightbox-close {
+            position: absolute;
+            top: 20px; right: 24px;
+            color: var(--film-text-dim);
+            font-size: 28px;
+            cursor: pointer;
+            transition: color 0.3s;
+            background: none; border: none;
+            font-family: 'Inter', sans-serif;
+        }
+        .lightbox-close:hover { color: var(--film-text); }
+
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--film-text-dim);
+            font-size: 36px;
+            cursor: pointer;
+            background: none; border: none;
+            padding: 20px;
+            transition: color 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+        .lightbox-nav:hover { color: var(--film-accent); }
+        .lightbox-prev { left: 10px; }
+        .lightbox-next { right: 10px; }
+
+        /* ─── Footer spacer ─── */
+        .gallery-footer {
+            text-align: center;
+            padding: 60px 20px 80px;
+            font-size: 11px;
+            letter-spacing: 2px;
+            color: var(--film-text-dim);
+            text-transform: uppercase;
+        }
+
+        /* ─── Responsive ─── */
+        @media (max-width: 900px) {
+            .gallery-grid { columns: 2; column-gap: 12px; padding: 16px; }
+            .gallery-item { margin-bottom: 12px; }
+        }
+        @media (max-width: 540px) {
+            .gallery-grid { columns: 1; column-gap: 0; padding: 12px; }
+            .gallery-item { margin-bottom: 12px; border-radius: 2px; }
+            .gallery-header { padding: 100px 16px 30px; }
+            .lightbox-nav { font-size: 24px; padding: 12px; }
         }
     </style>
 </head>
+<body class="film-grain film-vignette">
 
-<body>
-    <!-- Go Back Button -->
+    <div class="film-loader" id="loader"><div class="film-loader__ring"></div><div class="film-loader__text">Loading</div></div>
+
     <a href="index.html" class="back-btn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
-        </svg>
-        Back
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline>
+        </svg>Back
     </a>
 
-    <div id="scroll-indicator">
-        <div class="scroll-text">Scroll up to explore</div>
-        <div class="mouse">
-            <div class="wheel"></div>
-        </div>
+    <div class="gallery-header">
+        <h1>Tri</h1>
+        <p>A Visual Story</p>
+        <div class="divider"></div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <div class="gallery-grid" id="gallery"></div>
+
+    <div class="gallery-footer">End of Gallery</div>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox">
+        <button class="lightbox-close" id="lbClose">×</button>
+        <button class="lightbox-nav lightbox-prev" id="lbPrev">‹</button>
+        <img id="lbImg" src="" alt="Gallery image">
+        <button class="lightbox-nav lightbox-next" id="lbNext">›</button>
+    </div>
+
     <script>
-        // Scene setup
-        const scene = new THREE.Scene();
-        // Light grey background for the sub-gallery to differentiate slightly
-        scene.background = new THREE.Color(0xf5f5f5);
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
+        const imageCount = 14;
+        const gallery = document.getElementById('gallery');
+        const lightbox = document.getElementById('lightbox');
+        const lbImg = document.getElementById('lbImg');
+        let currentLb = 0;
+        const images = [];
 
-        // Lighting
-        const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
-        scene.add(ambientLight);
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
-        directionalLight.position.set(0, 1, 1);
-        scene.add(directionalLight);
+        // Build gallery
+        for (let i = 1; i <= imageCount; i++) {
+            const src = `Tri/${i}.webp`;
+            images.push(src);
 
-        // Texture loader
-        const textureLoader = new THREE.TextureLoader();
-        const loadTexture = (path) => {
-            return new Promise((resolve, reject) => {
-                textureLoader.load(
-                    path,
-                    (texture) => resolve(texture),
-                    undefined,
-                    (error) => {
-                        console.error(`Error loading texture ${path}:`, error);
-                        reject(error);
-                    }
-                );
+            const item = document.createElement('div');
+            item.className = 'gallery-item';
+
+            const img = document.createElement('img');
+            img.src = src;
+            img.alt = `Tri photograph ${i}`;
+            img.loading = 'lazy';
+            img.decoding = 'async';
+
+            item.appendChild(img);
+            item.addEventListener('click', () => openLightbox(i - 1));
+            gallery.appendChild(item);
+        }
+
+        // Intersection Observer for reveal
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    revealObserver.unobserve(entry.target);
+                }
             });
-        };
+        }, { threshold: 0.1, rootMargin: '0px 0px 60px 0px' });
 
-        // Create image plane
-        const createImagePlane = (material, width, height, x, y, z) => {
-            const geometry = new THREE.PlaneGeometry(width, height);
-            const plane = new THREE.Mesh(geometry, material);
-            plane.position.set(x, y, z);
-            return plane;
-        };
+        document.querySelectorAll('.gallery-item').forEach((item, i) => {
+            item.style.transitionDelay = `${(i % 6) * 0.08}s`;
+            revealObserver.observe(item);
+        });
 
-        // Initialize scene
-        async function init() {
-            // Define the 14 images we found in the directory
-            const imagePaths = Array.from({ length: 14 }, (_, i) => `Tri/${i + 1}.webp`);
-
-            try {
-                // Load all textures
-                const textures = await Promise.all(imagePaths.map(path => loadTexture(path).catch(e => null)));
-
-                // Track highest Z depth we place an image at to set scrolling bounds
-                let maxDepth = 0;
-                window.imagePlanes = [];
-
-                textures.forEach((texture, index) => {
-                    if (!texture) return; // Skip failed loads
-
-                    // Approximate aspect ratio (most are vertical, some horizontal)
-                    // We'll use a standard size and adjust slightly for variety
-                    const aspectRatio = texture.image.width / texture.image.height;
-                    const baseScale = 4.0;
-                    
-                    let width, height;
-                    if (aspectRatio > 1) {
-                        width = baseScale;
-                        height = baseScale / aspectRatio;
-                    } else {
-                        height = baseScale;
-                        width = baseScale * aspectRatio;
-                    }
-
-                    const material = new THREE.MeshBasicMaterial({
-                        map: texture,
-                        transparent: true
-                    });
-
-                    // Distribute images along the Z axis (depth)
-                    const z = -(index * 15); // Increased spread for dramatic pause
-                    const x = (index % 2 === 0 ? 1 : -1) * (4 + Math.random() * 2); 
-                    const y = (Math.random() * 4) - 2;
-
-                    if (z < maxDepth) maxDepth = z;
-
-                    const plane = createImagePlane(material, width, height, x, y, z);
-
-                    // Add slight rotation for artistic effect
-                    const rotZ = (Math.random() - 0.5) * 0.2;
-                    plane.rotation.z = rotZ;
-                    
-                    // Store base transforms for dynamic centering
-                    plane.userData = {
-                        baseX: x,
-                        baseY: y,
-                        baseZ: z,
-                        baseRotZ: rotZ
-                    };
-
-                    window.imagePlanes.push(plane);
-                    scene.add(plane);
-                });
-
-                // Set initial camera
-                camera.position.z = 20;
-                targetZ = 20;
-
-                // Update global minZ based on how many images we loaded
-                window.minZ = maxDepth - 10;
-                window.maxZ = 20;
-
-            } catch (error) {
-                console.error("Error setting up scene:", error);
-            }
+        // Lightbox
+        function openLightbox(idx) {
+            currentLb = idx;
+            lbImg.src = images[idx];
+            lightbox.classList.add('open');
+            document.body.style.overflow = 'hidden';
         }
 
-        // Mouse scroll handling
-        let targetZ = 20;
-        const scrollSpeed = 0.03; // Slower scroll
-        window.minZ = -100; // Updated dynamically in init()
-        window.maxZ = 20;
-
-        window.addEventListener('wheel', (event) => {
-            targetZ += event.deltaY * scrollSpeed;
-            targetZ = Math.max(window.minZ, Math.min(window.maxZ, targetZ));
-
-            // Fade scroll indicator
-            const indicator = document.getElementById('scroll-indicator');
-            if (indicator) {
-                if (targetZ < window.maxZ - 2) {
-                    indicator.style.opacity = '0';
-                } else {
-                    indicator.style.opacity = '1';
-                }
-            }
-        });
-
-        // Touch scroll handling for mobile
-        let touchStartY = 0;
-        window.addEventListener('touchstart', e => {
-            touchStartY = e.touches[0].clientY;
-        }, { passive: true });
-
-        window.addEventListener('touchmove', e => {
-            const touchY = e.touches[0].clientY;
-            const deltaY = touchStartY - touchY;
-
-            targetZ += deltaY * 0.08; // Touch sensitivity adjustment
-            targetZ = Math.max(window.minZ, Math.min(window.maxZ, targetZ));
-
-            touchStartY = touchY;
-
-            const indicator = document.getElementById('scroll-indicator');
-            if (indicator) {
-                if (targetZ < window.maxZ - 2) {
-                    indicator.style.opacity = '0';
-                } else {
-                    indicator.style.opacity = '1';
-                }
-            }
-        }, { passive: true });
-
-        // Mouse tracking for parallax effect
-        const mouse = new THREE.Vector2();
-        window.addEventListener('mousemove', (event) => {
-            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-        });
-
-        // Animation loop
-        function animate() {
-            requestAnimationFrame(animate);
-
-            // Smoother camera movement along Z axis
-            camera.position.z += (targetZ - camera.position.z) * 0.03; // Slower Camera Lerp
-
-            // Optional: add slight parallax/sway based on mouse position
-            let parallaxX = 0;
-            let parallaxY = 0;
-            if (mouse.x !== undefined) {
-                parallaxX = mouse.x * 0.5;
-                parallaxY = mouse.y * 0.5;
-                
-                camera.position.x += (parallaxX - camera.position.x) * 0.02;
-                camera.position.y += (parallaxY - camera.position.y) * 0.02;
-            }
-
-            // Dynamic centering logic (Focus-on-approach)
-            if (window.imagePlanes) {
-                // > 14: Too far/Background (factor 0)
-                // 14 to 8: Approaching (slides in gently)
-                // 8 to 2: The Plateau (factor 1, stays perfectly still!)
-                // 2 to -2: Passing (slides out fast behind)
-                
-                window.imagePlanes.forEach(plane => {
-                    const dist = camera.position.z - plane.userData.baseZ;
-                    
-                    let factor = 0;
-                    if (dist > 14) {
-                        factor = 0; // Far away
-                    } else if (dist <= 14 && dist > 8) {
-                        factor = 1.0 - ((dist - 8) / 6); // Slide in (0 to 1)
-                    } else if (dist <= 8 && dist >= 2) {
-                        factor = 1.0; // The Plateau (Hold still)
-                    } else if (dist < 2 && dist > -2) {
-                        factor = (dist + 2) / 4; // Passing fast (1 to 0)
-                    } else {
-                        factor = 0; // Behind camera
-                    }
-                    
-                    // Ease the factor
-                    const smoothFactor = factor * factor * (3 - 2 * factor); // smoothstep
-                    
-                    // Interpolate towards center
-                    plane.position.x = THREE.MathUtils.lerp(plane.userData.baseX, parallaxX, smoothFactor);
-                    plane.position.y = THREE.MathUtils.lerp(plane.userData.baseY, parallaxY, smoothFactor);
-                    plane.rotation.z = THREE.MathUtils.lerp(plane.userData.baseRotZ, 0, smoothFactor);
-                    
-                    // Reset Y rotation 
-                    if (plane.userData.baseRotY !== undefined) {
-                        plane.rotation.y = THREE.MathUtils.lerp(plane.userData.baseRotY, 0, smoothFactor);
-                    } else {
-                        plane.rotation.y = THREE.MathUtils.lerp(plane.rotation.y, 0, 0.1); 
-                    }
-                });
-            }
-
-            renderer.render(scene, camera);
+        function closeLightbox() {
+            lightbox.classList.remove('open');
+            document.body.style.overflow = '';
         }
 
-        // Handle resize
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('lbClose').addEventListener('click', closeLightbox);
+        lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+
+        document.getElementById('lbPrev').addEventListener('click', (e) => {
+            e.stopPropagation();
+            currentLb = (currentLb - 1 + images.length) % images.length;
+            lbImg.src = images[currentLb];
         });
 
-        init().then(() => animate());
+        document.getElementById('lbNext').addEventListener('click', (e) => {
+            e.stopPropagation();
+            currentLb = (currentLb + 1) % images.length;
+            lbImg.src = images[currentLb];
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (!lightbox.classList.contains('open')) return;
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft') { currentLb = (currentLb - 1 + images.length) % images.length; lbImg.src = images[currentLb]; }
+            if (e.key === 'ArrowRight') { currentLb = (currentLb + 1) % images.length; lbImg.src = images[currentLb]; }
+        });
+
+        // Loader
+        window.addEventListener('load', () => {
+            setTimeout(() => document.getElementById('loader').classList.add('hidden'), 500);
+        });
     </script>
 </body>
-
 </html>

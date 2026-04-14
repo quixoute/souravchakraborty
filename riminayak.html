@@ -3,155 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project 1 - Sourav Chakraborty</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap">
-    <link rel="stylesheet" href="security.css">   
+    <title>Rimi Nayak — Sourav Chakraborty</title>
+    <meta name="description" content="Rimi Nayak brand film by Sourav Chakraborty">
+    <link rel="stylesheet" href="film.css">
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            padding: 0;
-            color: #333;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        .dotted-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 5000px;
-            height: 5000px;
-            background-color: #e0e0e0;
-            background-image: radial-gradient(#a0a0a0 15%, transparent 16%);
-            background-size: 20px 20px;
-            z-index: 1;
-            animation: ripple 3s infinite linear;
-        }
-
-        @keyframes ripple {
-            0% {
-                background-position: 0 0;
-            }
-            100% {
-                background-position: 20px 20px;
-            }
-        }
-
-        .main-container {
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            z-index: 2;
-        }
-
-        .right-align {
-            width: 100%;
-            max-width: 1200px;
-            padding: 20px;
-        }
-
-
-        .video-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            padding: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-            justify-items: center;
-        }
-
-        .video-container {
-            position: relative;
-            width: 100%;
-            max-width: 300px;
-            max-height: 540px; /* Limit vertical stretching */
-            aspect-ratio: 9 / 16; /* Maintain 9:16 aspect ratio */
-            overflow: hidden;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            margin: 0 auto;
-        }
-
-        .video-container:hover, .video-container:focus-within {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-        }
-
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        .video-title {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
-            color: white;
-            padding: 10px;
-            font-size: 0.9rem;
-            text-align: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            aria-hidden: true;
-        }
-
-        .video-container:hover .video-title, .video-container:focus-within .video-title {
-            opacity: 1;
-            aria-hidden: false;
-        }
-
-        .video-container:last-child:nth-child(3n+1) {
-            grid-column: span 3; /* Center last video in row for odd counts */
-        }
-
-        @media (max-width: 1024px) {
-            .video-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .video-container:last-child:nth-child(3n+1) {
-                grid-column: auto;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .video-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .video-container {
-                max-width: 250px;
-            }
-
-            .video-container:last-child:nth-child(3n+1) {
-                grid-column: auto;
-            }
-        }
+        body { overflow: hidden; }
+        .video-scroller { width: 100vw; height: 100vh; overflow-y: scroll; scroll-snap-type: y mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+        .video-scroller::-webkit-scrollbar { display: none; }
+        .video-section { width: 100%; height: 100vh; scroll-snap-align: start; position: relative; display: flex; justify-content: center; align-items: center; }
+        .video-wrapper { position: relative; width: 44%; max-width: 400px; aspect-ratio: 9 / 16; border-radius: 8px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(196,162,101,0.08); opacity: 0; transform: scale(0.96); transition: opacity 0.8s var(--transition-smooth), transform 0.8s var(--transition-smooth); }
+        .video-section.active .video-wrapper { opacity: 1; transform: scale(1); }
+        .video-wrapper iframe { width: 100%; height: 100%; border: none; display: block; }
+        .video-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 40px 20px 20px; background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%); opacity: 0; transition: opacity 0.5s var(--transition-smooth); pointer-events: none; }
+        .video-section.active .video-info { opacity: 1; }
+        .video-info__title { font-family: 'Cormorant Garamond', serif; font-size: clamp(16px, 3vw, 24px); font-weight: 300; letter-spacing: 2px; color: var(--film-text); }
+        .video-info__number { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--film-accent); margin-bottom: 6px; }
+        .video-counter { position: fixed; bottom: 28px; right: 28px; z-index: 9999; font-family: 'Cormorant Garamond', serif; font-size: 14px; color: var(--film-text-dim); letter-spacing: 2px; opacity: 0; animation: fadeIn 0.6s 1.2s var(--transition-smooth) forwards; }
+        .video-counter__current { color: var(--film-accent); font-size: 22px; }
+        @media (max-width: 768px) { .video-wrapper { width: 70%; max-width: 340px; } }
+        @media (max-width: 480px) { .video-wrapper { width: 85%; border-radius: 4px; } }
     </style>
 </head>
-<body>
-    <div class="dotted-canvas"></div>
-    <div class="main-container">
-        <div class="right-align">
-            <div class="video-grid">
-                <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/7DN05qqWSvo" title="Reel 3" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
-                    <div class="video-title">Reel 3</div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <script src="security.js"></script>
+<body class="film-grain film-vignette">
+    <div class="film-loader" id="loader"><div class="film-loader__ring"></div><div class="film-loader__text">Loading</div></div>
+    <a href="r.html" class="back-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>Back</a>
+    <div class="page-title">Rimi Nayak</div>
+    <div class="video-progress" id="progressDots"></div>
+    <div class="video-counter"><span class="video-counter__current" id="currentIdx">01</span><span> / </span><span id="totalIdx">01</span></div>
+    <div class="video-scroller" id="scroller"></div>
+
+    <script>
+        const videos = [{ id: "7DN05qqWSvo", title: "Rimi Nayak" }];
+        const scroller = document.getElementById('scroller'), progressDots = document.getElementById('progressDots'), currentIdxEl = document.getElementById('currentIdx');
+        document.getElementById('totalIdx').textContent = String(videos.length).padStart(2, '0');
+        videos.forEach((video, i) => {
+            const section = document.createElement('div'); section.className = 'video-section'; section.dataset.index = i;
+            section.innerHTML = `<div class="video-wrapper"><div id="player-${i}"></div><div class="video-info"><div class="video-info__number">Reel ${String(i+1).padStart(2,'0')}</div><div class="video-info__title">${video.title}</div></div></div>`;
+            scroller.appendChild(section);
+            const dot = document.createElement('div'); dot.className = 'video-progress__dot'; dot.dataset.index = i;
+            dot.addEventListener('click', () => scroller.children[i].scrollIntoView({ behavior: 'smooth' })); progressDots.appendChild(dot);
+        });
+        let players = [], apiReady = false;
+        const tag = document.createElement('script'); tag.src = 'https://www.youtube.com/iframe_api'; document.head.appendChild(tag);
+        window.onYouTubeIframeAPIReady = function() { apiReady = true; videos.forEach((v, i) => { players[i] = new YT.Player(`player-${i}`, { videoId: v.id, playerVars: { rel: 0, modestbranding: 1, playsinline: 1, controls: 1 }, events: { onReady: () => { if (i === 0) setTimeout(() => document.getElementById('loader').classList.add('hidden'), 600); } } }); }); };
+        const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { const idx = parseInt(entry.target.dataset.index); if (entry.isIntersecting && entry.intersectionRatio > 0.6) { entry.target.classList.add('active'); currentIdxEl.textContent = String(idx+1).padStart(2,'0'); document.querySelectorAll('.video-progress__dot').forEach((d,di) => d.classList.toggle('active', di === idx)); if (apiReady) players.forEach((p, pi) => { try { pi === idx ? p.playVideo() : p.pauseVideo(); } catch(e){} }); } else { entry.target.classList.remove('active'); } }); }, { root: scroller, threshold: [0.6] });
+        document.querySelectorAll('.video-section').forEach(s => observer.observe(s));
+        setTimeout(() => { document.querySelector('.video-section')?.classList.add('active'); document.querySelector('.video-progress__dot')?.classList.add('active'); }, 100);
+        window.addEventListener('load', () => setTimeout(() => document.getElementById('loader').classList.add('hidden'), 3000));
+    </script>
 </body>
 </html>

@@ -3,364 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Indisaga</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Indisaga — Sourav Chakraborty</title>
+    <meta name="description" content="Indisaga photo gallery by Sourav Chakraborty">
+    <link rel="stylesheet" href="film.css">
     <style>
-        /* Hide scrollbars since Three JS handles it */
-        body {
-            margin: 0;
-            overflow: hidden;
-            background: #ffffff;
-        }
-        
-        canvas {
-            display: block;
-        }
+        body { overflow-y: auto; overflow-x: hidden; }
 
-        /* Scroll indicator styles */
-        #scroll-indicator {
-            position: absolute;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
-            color: #000;
-            font-family: 'Inter', 'Roboto', sans-serif;
-            pointer-events: none;
-            transition: opacity 0.5s ease;
-            z-index: 10;
-        }
+        .gallery-header { text-align: center; padding: 120px 20px 40px; opacity: 0; animation: fadeInUp 0.8s 0.3s var(--transition-smooth) forwards; }
+        .gallery-header h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(32px, 6vw, 56px); font-weight: 300; letter-spacing: 6px; text-transform: uppercase; color: var(--film-text); margin-bottom: 12px; }
+        .gallery-header p { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--film-text-dim); }
+        .gallery-header .divider { width: 40px; height: 1px; background: var(--film-accent); margin: 20px auto 0; }
 
-        .scroll-text {
-            font-size: 13px;
-            font-weight: 500;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 12px;
-            opacity: 0.8;
-            background: rgba(255, 255, 255, 0.7);
-            padding: 2px 8px;
-            border-radius: 4px;
-        }
+        .gallery-grid { max-width: 1200px; margin: 0 auto; padding: 20px; columns: 3; column-gap: 16px; }
+        .gallery-item { break-inside: avoid; margin-bottom: 16px; border-radius: 4px; overflow: hidden; position: relative; cursor: pointer; opacity: 0; transform: translateY(20px); transition: opacity 0.6s var(--transition-smooth), transform 0.6s var(--transition-smooth); }
+        .gallery-item.visible { opacity: 1; transform: translateY(0); }
+        .gallery-item img { width: 100%; display: block; transition: transform 0.6s var(--transition-smooth), filter 0.6s var(--transition-smooth); filter: saturate(0.85) contrast(1.05); }
+        .gallery-item:hover img { transform: scale(1.03); filter: saturate(1) contrast(1.1); }
+        .gallery-item::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.15) 0%, transparent 40%); opacity: 0; transition: opacity 0.4s var(--transition-smooth); pointer-events: none; }
+        .gallery-item:hover::after { opacity: 1; }
 
-        .mouse {
-            width: 24px;
-            height: 38px;
-            border: 2px solid rgba(0, 0, 0, 0.8);
-            border-radius: 14px;
-            margin: 0 auto;
-            position: relative;
-            background: rgba(255, 255, 255, 0.5);
-        }
+        .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 10001; display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: opacity 0.4s var(--transition-smooth), visibility 0.4s; cursor: zoom-out; }
+        .lightbox.open { opacity: 1; visibility: visible; }
+        .lightbox img { max-width: 92vw; max-height: 90vh; object-fit: contain; border-radius: 2px; box-shadow: 0 0 60px rgba(0,0,0,0.5); transform: scale(0.95); transition: transform 0.4s var(--transition-smooth); }
+        .lightbox.open img { transform: scale(1); }
+        .lightbox-close { position: absolute; top: 20px; right: 24px; color: var(--film-text-dim); font-size: 28px; cursor: pointer; transition: color 0.3s; background: none; border: none; }
+        .lightbox-close:hover { color: var(--film-text); }
+        .lightbox-nav { position: absolute; top: 50%; transform: translateY(-50%); color: var(--film-text-dim); font-size: 36px; cursor: pointer; background: none; border: none; padding: 20px; transition: color 0.3s; }
+        .lightbox-nav:hover { color: var(--film-accent); }
+        .lightbox-prev { left: 10px; } .lightbox-next { right: 10px; }
 
-        .wheel {
-            width: 2px;
-            height: 6px;
-            background: rgba(0, 0, 0, 0.8);
-            border-radius: 2px;
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            animation: scrollUp 1.5s infinite;
-        }
+        .gallery-footer { text-align: center; padding: 60px 20px 80px; font-size: 11px; letter-spacing: 2px; color: var(--film-text-dim); text-transform: uppercase; }
 
-        @keyframes scrollUp {
-            0% { top: 20px; opacity: 0; }
-            20% { top: 20px; opacity: 1; }
-            80% { top: 6px; opacity: 1; }
-            100% { top: 6px; opacity: 0; }
-        }
-
-        /* Back Button */
-        .back-btn {
-            position: fixed;
-            top: 30px;
-            left: 40px;
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: #000;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            padding: 10px 20px;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            border-radius: 30px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            border: 1px solid rgba(0,0,0,0.05);
-        }
-
-        .back-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-            background: rgba(255, 255, 255, 1);
-        }
-
-        .back-btn svg {
-            width: 18px;
-            height: 18px;
-            transition: transform 0.3s ease;
-        }
-
-        .back-btn:hover svg {
-            transform: translateX(-4px);
-        }
+        @media (max-width: 900px) { .gallery-grid { columns: 2; column-gap: 12px; padding: 16px; } }
+        @media (max-width: 540px) { .gallery-grid { columns: 1; padding: 12px; } .gallery-header { padding: 100px 16px 30px; } }
     </style>
 </head>
-<body>
-    <!-- Go Back Button -->
-    <a href="index.html" class="back-btn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
-        </svg>
-        Back
-    </a>
-    <div id="scroll-indicator">
-        <div class="scroll-text">Scroll to explore</div>
-        <div class="mouse">
-            <div class="wheel"></div>
-        </div>
+<body class="film-grain film-vignette">
+    <div class="film-loader" id="loader"><div class="film-loader__ring"></div><div class="film-loader__text">Loading</div></div>
+    <a href="index.html" class="back-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>Back</a>
+
+    <div class="gallery-header"><h1>Indisaga</h1><p>Editorial Photography</p><div class="divider"></div></div>
+    <div class="gallery-grid" id="gallery"></div>
+    <div class="gallery-footer">End of Gallery</div>
+
+    <div class="lightbox" id="lightbox">
+        <button class="lightbox-close" id="lbClose">×</button>
+        <button class="lightbox-nav lightbox-prev" id="lbPrev">‹</button>
+        <img id="lbImg" src="" alt="Gallery image">
+        <button class="lightbox-nav lightbox-next" id="lbNext">›</button>
     </div>
 
-    <!-- Add Three.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        // Set up Scene, Camera, and Renderer
-        const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0xffffff);
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
+        // Selected images from Untitled folder
+        const imageNames = ['2','5','9','10','11','22','23','27','30','39','46','50'];
+        const gallery = document.getElementById('gallery');
+        const lightbox = document.getElementById('lightbox');
+        const lbImg = document.getElementById('lbImg');
+        let currentLb = 0;
+        const images = [];
 
-        // Texture loader
-        const textureLoader = new THREE.TextureLoader();
-        const loadTexture = (path) => {
-            return new Promise((resolve, reject) => {
-                textureLoader.load(
-                    path,
-                    (texture) => {
-                        texture.minFilter = THREE.LinearFilter;
-                        resolve(texture);
-                    },
-                    undefined,
-                    (error) => {
-                        console.error(`Error loading texture ${path}:`, error);
-                        reject(error);
-                    }
-                );
-            });
-        };
-
-        const createMaterials = async () => {
-            const imgNames = ['2','5','9','10','11','22','23','27','30','39','46','50'];
-            const materials = {};
-            
-            await Promise.all(imgNames.map(async (name, index) => {
-                try {
-                    const texture = await loadTexture(`Untitled/${name}.webp`);
-                    materials[`img${index+1}`] = {
-                        material: new THREE.MeshBasicMaterial({
-                            map: texture,
-                            transparent: true
-                        }),
-                        aspectRatio: texture.image.width / texture.image.height
-                    };
-                } catch (e) {
-                    console.error(`Skipping image ${name}:`, e);
-                }
-            }));
-            
-            return materials;
-        };
-
-        const createImagePlane = (material, width, height, x, y, z, rotationZ = 0) => {
-            const geometry = new THREE.PlaneGeometry(width, height);
-            const plane = new THREE.Mesh(geometry, material);
-            plane.position.set(x, y, z);
-            plane.rotation.z = rotationZ * (Math.PI / 180);
-            return plane;
-        };
-
-        async function init() {
-            const materials = await createMaterials();
-            if (!materials) return;
-
-            const zSpacing = -15; // Dramatic pause spacing
-            const startZ = 0;
-
-            const imageConfig = {
-                // Staggered layout 
-                img1: { x: -4, y: 1.5, z: startZ, width: 3, height: 4, rot: -5 },
-                img2: { x: 5, y: -0.5, z: startZ + zSpacing, width: 4, height: 3, rot: 8 },
-                img3: { x: -5, y: -1.0, z: startZ + zSpacing * 2, width: 4, height: 3, rot: -12 },
-                img4: { x: 4, y: 2.0, z: startZ + zSpacing * 3, width: 4, height: 3, rot: 15 },
-                img5: { x: -6, y: -2.0, z: startZ + zSpacing * 4, width: 4, height: 3, rot: -8 },
-                img6: { x: 5, y: 0.0, z: startZ + zSpacing * 5, width: 4, height: 3, rot: 10 },
-                img7: { x: -4, y: 1.5, z: startZ + zSpacing * 6, width: 4, height: 3, rot: -15 },
-                img8: { x: 5, y: -1.5, z: startZ + zSpacing * 7, width: 4, height: 3, rot: 7 },
-                img9: { x: -5, y: 0.5, z: startZ + zSpacing * 8, width: 4, height: 3, rot: -10 },
-                img10: { x: 6, y: -1.5, z: startZ + zSpacing * 9, width: 4, height: 3, rot: 12 },
-                img11: { x: -5, y: 1.0, z: startZ + zSpacing * 10, width: 4, height: 3, rot: -8 },
-                img12: { x: 4, y: -0.5, z: startZ + zSpacing * 11, width: 4, height: 3, rot: 5 },
-            };
-
-            window.imagePlanes = [];
-
-            // Base size for the images - we lock the height or width and scale the other
-            const baseScale = 4.0;
-
-            for (let i = 1; i <= 12; i++) {
-                if (!materials[`img${i}`]) continue; 
-                
-                const matData = materials[`img${i}`];
-                const conf = imageConfig[`img${i}`];
-                
-                // Calculate dynamic width/height based on aspect ratio
-                let planeWidth, planeHeight;
-                if (matData.aspectRatio > 1) {
-                    // Landscape
-                    planeWidth = baseScale;
-                    planeHeight = baseScale / matData.aspectRatio;
-                } else {
-                    // Portrait
-                    planeHeight = baseScale;
-                    planeWidth = baseScale * matData.aspectRatio;
-                }
-                
-                // Ignore the fixed conf.width / conf.height from the array
-                const plane = createImagePlane(matData.material, planeWidth, planeHeight, conf.x, conf.y, conf.z, conf.rot);
-                
-                plane.userData = {
-                    baseX: conf.x,
-                    baseY: conf.y,
-                    baseZ: conf.z,
-                    baseRotZ: conf.rot * (Math.PI / 180)
-                };
-                
-                window.imagePlanes.push(plane);
-                scene.add(plane);
-            }
-
-            // Start far back
-            camera.position.z = 20;
-            targetZ = camera.position.z;
-        }
-
-        let targetZ = 20;
-        const scrollSpeed = 0.03; 
-        const minZ = -175;
-        const maxZ = 20;
-
-        window.addEventListener('wheel', (event) => {
-            targetZ += event.deltaY * scrollSpeed;
-            targetZ = Math.max(minZ, Math.min(maxZ, targetZ));
-
-            const indicator = document.getElementById('scroll-indicator');
-            if (indicator) {
-                if (targetZ < maxZ - 2) {
-                    indicator.style.opacity = '0';
-                } else {
-                    indicator.style.opacity = '1';
-                }
-            }
+        imageNames.forEach((name, i) => {
+            const src = `Untitled/${name}.webp`;
+            images.push(src);
+            const item = document.createElement('div'); item.className = 'gallery-item';
+            const img = document.createElement('img'); img.src = src; img.alt = `Indisaga photograph ${i + 1}`; img.loading = 'lazy'; img.decoding = 'async';
+            item.appendChild(img);
+            item.addEventListener('click', () => openLightbox(i));
+            gallery.appendChild(item);
         });
 
-        let touchStartY = 0;
-        window.addEventListener('touchstart', e => {
-            touchStartY = e.touches[0].clientY;
-        }, { passive: true });
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); revealObserver.unobserve(entry.target); } });
+        }, { threshold: 0.1, rootMargin: '0px 0px 60px 0px' });
+        document.querySelectorAll('.gallery-item').forEach((item, i) => { item.style.transitionDelay = `${(i % 6) * 0.08}s`; revealObserver.observe(item); });
 
-        window.addEventListener('touchmove', e => {
-            const touchY = e.touches[0].clientY;
-            const deltaY = touchStartY - touchY;
+        function openLightbox(idx) { currentLb = idx; lbImg.src = images[idx]; lightbox.classList.add('open'); document.body.style.overflow = 'hidden'; }
+        function closeLightbox() { lightbox.classList.remove('open'); document.body.style.overflow = ''; }
+        document.getElementById('lbClose').addEventListener('click', closeLightbox);
+        lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+        document.getElementById('lbPrev').addEventListener('click', (e) => { e.stopPropagation(); currentLb = (currentLb - 1 + images.length) % images.length; lbImg.src = images[currentLb]; });
+        document.getElementById('lbNext').addEventListener('click', (e) => { e.stopPropagation(); currentLb = (currentLb + 1) % images.length; lbImg.src = images[currentLb]; });
+        document.addEventListener('keydown', (e) => { if (!lightbox.classList.contains('open')) return; if (e.key === 'Escape') closeLightbox(); if (e.key === 'ArrowLeft') { currentLb = (currentLb - 1 + images.length) % images.length; lbImg.src = images[currentLb]; } if (e.key === 'ArrowRight') { currentLb = (currentLb + 1) % images.length; lbImg.src = images[currentLb]; } });
 
-            targetZ += deltaY * 0.08; 
-            targetZ = Math.max(minZ, Math.min(maxZ, targetZ));
-
-            touchStartY = touchY;
-
-            const indicator = document.getElementById('scroll-indicator');
-            if (indicator) {
-                if (targetZ < maxZ - 2) {
-                    indicator.style.opacity = '0';
-                } else {
-                    indicator.style.opacity = '1';
-                }
-            }
-        }, { passive: true });
-
-        const mouse = new THREE.Vector2();
-        window.addEventListener('mousemove', (event) => {
-            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-        });
-
-        function animate() {
-            requestAnimationFrame(animate);
-
-            camera.position.z += (targetZ - camera.position.z) * 0.03; 
-
-            let parallaxX = 0;
-            let parallaxY = 0;
-            if (mouse.x !== undefined) {
-                parallaxX = mouse.x * 0.5;
-                parallaxY = mouse.y * 0.5;
-                
-                camera.position.x += (parallaxX - camera.position.x) * 0.02;
-                camera.position.y += (parallaxY - camera.position.y) * 0.02;
-            }
-
-            if (window.imagePlanes) {
-                window.imagePlanes.forEach(plane => {
-                    const dist = camera.position.z - plane.userData.baseZ;
-                    
-                    let factor = 0;
-                    if (dist > 14) {
-                        factor = 0;
-                    } else if (dist <= 14 && dist > 8) {
-                        factor = 1.0 - ((dist - 8) / 6); 
-                    } else if (dist <= 8 && dist >= 2) {
-                        factor = 1.0; 
-                    } else if (dist < 2 && dist > -2) {
-                        factor = (dist + 2) / 4; 
-                    } else {
-                        factor = 0; 
-                    }
-                    
-                    const smoothFactor = factor * factor * (3 - 2 * factor); 
-                    
-                    plane.position.x = THREE.MathUtils.lerp(plane.userData.baseX, parallaxX, smoothFactor);
-                    plane.position.y = THREE.MathUtils.lerp(plane.userData.baseY, parallaxY, smoothFactor);
-                    plane.rotation.z = THREE.MathUtils.lerp(plane.userData.baseRotZ, 0, smoothFactor);
-                    
-                    if (plane.userData.baseRotY !== undefined) {
-                        plane.rotation.y = THREE.MathUtils.lerp(plane.userData.baseRotY, 0, smoothFactor);
-                    } else {
-                        plane.rotation.y = THREE.MathUtils.lerp(plane.rotation.y, 0, 0.1); 
-                    }
-                });
-            }
-
-            renderer.render(scene, camera);
-        }
-
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
-
-        init().then(() => {
-            animate();
-        });
+        window.addEventListener('load', () => setTimeout(() => document.getElementById('loader').classList.add('hidden'), 500));
     </script>
 </body>
 </html>

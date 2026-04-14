@@ -1,0 +1,403 @@
+/* ========================================================
+   FILM.CSS — Old Film Aesthetic Foundation
+   Shared across all sub-pages of the portfolio
+   ======================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap');
+
+/* ─── CSS Variables ─── */
+:root {
+    --film-bg: #0d0d0d;
+    --film-bg-light: #1a1a1a;
+    --film-surface: #141414;
+    --film-border: #2a2a2a;
+    --film-text: #e8dfd5;
+    --film-text-dim: #8a8078;
+    --film-accent: #c4a265;
+    --film-accent-dim: #8b7345;
+    --film-shadow: rgba(0, 0, 0, 0.6);
+    --film-grain-opacity: 0.04;
+    --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ─── Reset & Base ─── */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--film-bg);
+    color: var(--film-text);
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar {
+    width: 6px;
+}
+::-webkit-scrollbar-track {
+    background: var(--film-bg);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--film-border);
+    border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--film-accent-dim);
+}
+
+/* ─── Film Grain Overlay ─── */
+.film-grain::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.5'/%3E%3C/svg%3E");
+    opacity: var(--film-grain-opacity);
+    pointer-events: none;
+    z-index: 9998;
+    animation: grain-shift 0.5s steps(10) infinite;
+}
+
+@keyframes grain-shift {
+    0%, 100% { transform: translate(0, 0); }
+    10% { transform: translate(-2%, -3%); }
+    20% { transform: translate(3%, 1%); }
+    30% { transform: translate(-1%, 2%); }
+    40% { transform: translate(2%, -2%); }
+    50% { transform: translate(-3%, 3%); }
+    60% { transform: translate(1%, -1%); }
+    70% { transform: translate(-2%, 2%); }
+    80% { transform: translate(3%, -3%); }
+    90% { transform: translate(-1%, 1%); }
+}
+
+/* ─── Vignette Overlay ─── */
+.film-vignette::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.5) 100%);
+    pointer-events: none;
+    z-index: 9997;
+}
+
+/* ─── Typography ─── */
+.title-serif {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+}
+
+.text-accent {
+    color: var(--film-accent);
+}
+
+.text-dim {
+    color: var(--film-text-dim);
+}
+
+/* ─── Back Button ─── */
+.back-btn {
+    position: fixed;
+    top: 24px;
+    left: 24px;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--film-text);
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 10px 18px;
+    background: rgba(20, 20, 20, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 24px;
+    border: 1px solid rgba(196, 162, 101, 0.15);
+    transition: all 0.4s var(--transition-smooth);
+    opacity: 0;
+    animation: fadeIn 0.6s 0.5s var(--transition-smooth) forwards;
+}
+
+.back-btn:hover {
+    background: rgba(196, 162, 101, 0.12);
+    border-color: rgba(196, 162, 101, 0.3);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.back-btn svg {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.3s var(--transition-smooth);
+}
+
+.back-btn:hover svg {
+    transform: translateX(-3px);
+}
+
+/* ─── Page Title ─── */
+.page-title {
+    position: fixed;
+    top: 24px;
+    right: 28px;
+    z-index: 9999;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+    font-weight: 300;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--film-text-dim);
+    opacity: 0;
+    animation: fadeIn 0.6s 0.8s var(--transition-smooth) forwards;
+}
+
+/* ─── Scroll Indicator ─── */
+.scroll-hint {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    transition: opacity 0.5s var(--transition-smooth);
+    pointer-events: none;
+}
+
+.scroll-hint__text {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--film-text-dim);
+}
+
+.scroll-hint__mouse {
+    width: 20px;
+    height: 32px;
+    border: 1.5px solid var(--film-text-dim);
+    border-radius: 10px;
+    position: relative;
+}
+
+.scroll-hint__wheel {
+    width: 2px;
+    height: 5px;
+    background: var(--film-accent);
+    border-radius: 2px;
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: scrollPulse 1.8s infinite;
+}
+
+@keyframes scrollPulse {
+    0% { top: 6px; opacity: 0; }
+    20% { top: 6px; opacity: 1; }
+    80% { top: 18px; opacity: 1; }
+    100% { top: 18px; opacity: 0; }
+}
+
+/* ─── Video Progress Dots ─── */
+.video-progress {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    opacity: 0;
+    animation: fadeIn 0.6s 1s var(--transition-smooth) forwards;
+}
+
+.video-progress__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--film-border);
+    border: 1px solid var(--film-text-dim);
+    transition: all 0.4s var(--transition-smooth);
+    cursor: pointer;
+}
+
+.video-progress__dot.active {
+    background: var(--film-accent);
+    border-color: var(--film-accent);
+    transform: scale(1.3);
+    box-shadow: 0 0 8px rgba(196, 162, 101, 0.4);
+}
+
+/* ─── Loading Screen ─── */
+.film-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--film-bg);
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    transition: opacity 0.6s var(--transition-smooth);
+}
+
+.film-loader.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.film-loader__ring {
+    width: 36px;
+    height: 36px;
+    border: 2px solid var(--film-border);
+    border-top-color: var(--film-accent);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.film-loader__text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--film-text-dim);
+}
+
+/* ─── Animations ─── */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Scroll-triggered fade in */
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s var(--transition-smooth),
+                transform 0.8s var(--transition-smooth);
+}
+
+.reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Staggered children animation */
+.stagger-children > * {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s var(--transition-smooth),
+                transform 0.5s var(--transition-smooth);
+}
+
+.stagger-children.visible > *:nth-child(1) { transition-delay: 0.05s; }
+.stagger-children.visible > *:nth-child(2) { transition-delay: 0.1s; }
+.stagger-children.visible > *:nth-child(3) { transition-delay: 0.15s; }
+.stagger-children.visible > *:nth-child(4) { transition-delay: 0.2s; }
+.stagger-children.visible > *:nth-child(5) { transition-delay: 0.25s; }
+.stagger-children.visible > *:nth-child(6) { transition-delay: 0.3s; }
+.stagger-children.visible > *:nth-child(7) { transition-delay: 0.35s; }
+.stagger-children.visible > *:nth-child(8) { transition-delay: 0.4s; }
+.stagger-children.visible > *:nth-child(9) { transition-delay: 0.45s; }
+.stagger-children.visible > *:nth-child(10) { transition-delay: 0.5s; }
+.stagger-children.visible > *:nth-child(11) { transition-delay: 0.55s; }
+.stagger-children.visible > *:nth-child(12) { transition-delay: 0.6s; }
+
+.stagger-children.visible > * {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ─── Responsive Helpers ─── */
+@media (max-width: 768px) {
+    .back-btn {
+        top: 16px;
+        left: 16px;
+        padding: 8px 14px;
+        font-size: 11px;
+    }
+
+    .page-title {
+        top: 16px;
+        right: 16px;
+        font-size: 11px;
+        letter-spacing: 2px;
+    }
+
+    .video-progress {
+        right: 12px;
+        gap: 8px;
+    }
+
+    .video-progress__dot {
+        width: 6px;
+        height: 6px;
+    }
+
+    .scroll-hint {
+        bottom: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-title {
+        display: none;
+    }
+}

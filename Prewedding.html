@@ -1,567 +1,235 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sourav Chakraborty - Pre-Weddings</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap">
-
+    <title>Pre-Weddings — Sourav Chakraborty</title>
+    <meta name="description" content="Pre-wedding films by Sourav Chakraborty — cinematic love stories">
+    <link rel="stylesheet" href="film.css">
     <style>
-        /* Hide scrollbars since Three JS handles it */
-        body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            background: #ffffff;
-            font-family: 'Poppins', sans-serif;
-        }
+        body { overflow: hidden; }
 
-        /* Container for CSS3D elements (the floating videos) */
-        #css-container {
-            position: absolute;
-            top: 0;
-            left: 0;
+        .video-scroller {
             width: 100vw;
             height: 100vh;
-            z-index: 3;
-            pointer-events: none;
-            /* Let the container itself ignore clicks... */
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
         }
+        .video-scroller::-webkit-scrollbar { display: none; }
 
-        .video-card {
-            width: 480px;
-            height: 270px;
-            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.8);
-            border-radius: 8px;
-            /* Slight rounding looks nice */
-            background: #000;
-            pointer-events: auto;
-            /* ...but let the cards accept clicks */
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            will-change: transform;
-            /* Hardware acceleration hint for smoother scrolling */
-        }
-
-        .video-card:hover {
-            transform: scale(1.05);
-            /* Slight zoom on hover, similar to project images */
-            box-shadow: 0px 0px 30px rgba(255, 255, 255, 0.4);
-            z-index: 10;
-        }
-
-        .video-card iframe {
+        .video-section {
             width: 100%;
-            height: 270px;
-            border: none;
-            border-radius: 8px 8px 0 0;
-            pointer-events: auto;
-            transition: opacity 0.3s;
-        }
-
-        /* Title label underneath each video card */
-        .video-title {
-            position: absolute;
-            bottom: -34px;
-            left: 0;
-            width: 100%;
-            text-align: center;
-            font-family: 'Poppins', sans-serif;
-            font-size: 13px;
-            font-weight: 600;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            color: #111;
-            opacity: 0.85;
-            pointer-events: none;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        /* Shield to capture scroll events and prevent iframe from stealing wheel events */
-        .shield {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.4);
-            z-index: 10;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #fff;
-            font-size: 16px;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            border-radius: 8px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            cursor: pointer;
-        }
-
-        .video-card:hover .shield {
-            opacity: 1;
-        }
-
-        /* Performance Fix: Disable pointer events heavily during scroll */
-        body.is-scrolling iframe {
-            pointer-events: none !important;
-        }
-
-        /* Loading Overlay */
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
             height: 100vh;
-            background: #181818;
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: opacity 0.5s ease;
-        }
-
-        .loading-overlay.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 1s ease-in-out infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* Back Button */
-        .back-btn {
-            position: fixed;
-            top: 30px;
-            left: 40px;
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: #000;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            padding: 10px 20px;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            border-radius: 30px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            border: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .back-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-            background: rgba(255, 255, 255, 1);
-        }
-
-        .back-btn svg {
-            width: 18px;
-            height: 18px;
-            transition: transform 0.3s ease;
-        }
-
-        .back-btn:hover svg {
-            transform: translateX(-4px);
-        }
-
-        /* Scroll indicator styles */
-        #scroll-indicator {
-            position: absolute;
-            bottom: 20px;
-            /* Pushed down from 40px */
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
-            color: #000;
-            font-family: 'Inter', 'Roboto', sans-serif;
-            pointer-events: none;
-            transition: opacity 0.5s ease;
-            z-index: 10;
-        }
-
-        .scroll-text {
-            font-size: 13px;
-            font-weight: 500;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 12px;
-            opacity: 0.8;
-            background: rgba(255, 255, 255, 0.7);
-            padding: 2px 8px;
-            border-radius: 4px;
-        }
-
-        .mouse {
-            width: 24px;
-            height: 38px;
-            border: 2px solid rgba(0, 0, 0, 0.8);
-            border-radius: 14px;
-            margin: 0 auto;
+            scroll-snap-align: start;
             position: relative;
-            background: rgba(255, 255, 255, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
         }
 
-        .wheel {
-            width: 2px;
-            height: 6px;
-            background: rgba(0, 0, 0, 0.8);
-            border-radius: 2px;
+        .video-section::after {
+            content: '';
             position: absolute;
-            top: 6px;
-            left: 50%;
-            transform: translateX(-50%);
-            animation: scrollDown 1.5s infinite;
+            bottom: 0;
+            left: 10%;
+            width: 80%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--film-border), transparent);
+        }
+        .video-section:last-child::after { display: none; }
+
+        .video-wrapper {
+            position: relative;
+            width: 90%;
+            max-width: 960px;
+            aspect-ratio: 16 / 9;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(196,162,101,0.08);
+            opacity: 0;
+            transform: scale(0.96);
+            transition: opacity 0.8s var(--transition-smooth), transform 0.8s var(--transition-smooth);
+        }
+        .video-section.active .video-wrapper { opacity: 1; transform: scale(1); }
+
+        .video-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
         }
 
-        @keyframes scrollDown {
-            0% {
-                top: 6px;
-                opacity: 0;
-            }
+        .video-info {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            padding: 40px 30px 24px;
+            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.5s var(--transition-smooth);
+            pointer-events: none;
+        }
+        .video-section.active .video-info { opacity: 1; }
 
-            20% {
-                top: 6px;
-                opacity: 1;
-            }
+        .video-info__title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(18px, 3vw, 28px);
+            font-weight: 300;
+            letter-spacing: 2px;
+            color: var(--film-text);
+        }
+        .video-info__number {
+            font-size: 10px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--film-accent);
+            margin-bottom: 6px;
+        }
 
-            80% {
-                top: 20px;
-                opacity: 1;
-            }
+        .video-counter {
+            position: fixed;
+            bottom: 28px; right: 28px;
+            z-index: 9999;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 14px;
+            color: var(--film-text-dim);
+            letter-spacing: 2px;
+            opacity: 0;
+            animation: fadeIn 0.6s 1.2s var(--transition-smooth) forwards;
+        }
+        .video-counter__current { color: var(--film-accent); font-size: 22px; }
 
-            100% {
-                top: 20px;
-                opacity: 0;
-            }
+        @media (max-width: 768px) {
+            .video-wrapper { width: 96%; border-radius: 2px; }
+            .video-info { padding: 30px 16px 16px; }
+            .video-counter { bottom: 20px; right: 16px; font-size: 12px; }
+            .video-counter__current { font-size: 18px; }
+        }
+        @media (max-width: 480px) {
+            .video-wrapper { width: 100%; border-radius: 0; }
         }
     </style>
 </head>
+<body class="film-grain film-vignette">
 
-<body>
-
-    <div class="loading-overlay" id="loading">
-        <div class="loading-spinner"></div>
+    <div class="film-loader" id="loader">
+        <div class="film-loader__ring"></div>
+        <div class="film-loader__text">Loading</div>
     </div>
 
-    <!-- Go Back Button -->
     <a href="index.html" class="back-btn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-            stroke-linejoin="round">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <line x1="19" y1="12" x2="5" y2="12"></line>
             <polyline points="12 19 5 12 12 5"></polyline>
         </svg>
         Back
     </a>
 
-    <div id="scroll-indicator">
-        <div class="scroll-text">Scroll down to explore</div>
-        <div class="mouse">
-            <div class="wheel"></div>
-        </div>
+    <div class="page-title">Pre-Weddings</div>
+
+    <div class="scroll-hint" id="scrollHint">
+        <span class="scroll-hint__text">Scroll</span>
+        <div class="scroll-hint__mouse"><div class="scroll-hint__wheel"></div></div>
     </div>
 
+    <div class="video-progress" id="progressDots"></div>
 
-    <div id="css-container"></div>
+    <div class="video-counter">
+        <span class="video-counter__current" id="currentIdx">01</span>
+        <span> / </span>
+        <span id="totalIdx">04</span>
+    </div>
 
-    <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="CSS3DRenderer.js"></script>
-    <script src="security.js"></script>
+    <div class="video-scroller" id="scroller"></div>
 
     <script>
-        // Dismiss loading overlay after a short delay
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                document.getElementById('loading').classList.add('hidden');
-            }, 1000);
-        });
-
-        const videoIds = [
+        const videos = [
             { id: "zztWIlzzVQ0", title: "Sayantani × Debarshi" },
             { id: "D82sTEf8Yag", title: "Suhena × Abhishek" },
             { id: "jWXZ7Knp0EI", title: "Pawan × Shivani" },
             { id: "0bxzEQHPqH8", title: "Priyanka × Puneet" }
         ];
 
-        let camera, scene, cssRenderer, videoGroup;
-        const mouse = new THREE.Vector2();
+        const scroller = document.getElementById('scroller');
+        const progressDots = document.getElementById('progressDots');
+        const scrollHint = document.getElementById('scrollHint');
+        const currentIdxEl = document.getElementById('currentIdx');
+        const totalIdxEl = document.getElementById('totalIdx');
+        totalIdxEl.textContent = String(videos.length).padStart(2, '0');
 
-        // Scroll variables
-        let targetZ = 1600; // Starting camera z position
-        const scrollSpeed = 1.8;
-        const SPACING = 600; // z-distance between each video
+        videos.forEach((video, i) => {
+            const section = document.createElement('div');
+            section.className = 'video-section';
+            section.dataset.index = i;
+            section.innerHTML = `
+                <div class="video-wrapper">
+                    <div id="player-${i}"></div>
+                    <div class="video-info">
+                        <div class="video-info__number">Film ${String(i + 1).padStart(2, '0')}</div>
+                        <div class="video-info__title">${video.title}</div>
+                    </div>
+                </div>
+            `;
+            scroller.appendChild(section);
 
-        // Only cap going backwards (can't scroll past the start)
-        const maxZ = 1600;
-
-        let scrollTimeout;
-
-        init();
-        animate();
-
-        function init() {
-            const containerCSS = document.getElementById('css-container');
-
-            // --- CAMERA ---
-            camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 5000);
-            camera.position.z = maxZ;
-
-            // --- SCENE ---
-            scene = new THREE.Scene();
-            scene.background = new THREE.Color(0xffffff);
-
-            // --- RENDERERS ---
-            cssRenderer = new THREE.CSS3DRenderer();
-            cssRenderer.setSize(window.innerWidth, window.innerHeight);
-            containerCSS.appendChild(cssRenderer.domElement);
-
-            // --- CREATE VIDEO OBJECTS ---
-            videoGroup = new THREE.Group();
-
-            // Tightly staggered positions – close enough to look grouped,
-            // far enough apart to convey 3D depth through perspective scale differences
-            const apparentPositions = [
-                { x: -200, y:  180 }, // Top Left
-                { x:  220, y:  100 }, // Top Right
-                { x: -240, y:  -80 }, // Bottom Left
-                { x:  210, y: -150 }  // Bottom Right
-            ];
-
-            videoIds.forEach((video, index) => {
-                const element = document.createElement('div');
-                element.className = 'video-card';
-                element.style.position = 'relative';
-
-                const iframe = document.createElement('iframe');
-                iframe.src = `https://www.youtube.com/embed/${video.id}?rel=0`;
-                iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
-                iframe.allowFullscreen = true;
-
-                element.appendChild(iframe);
-
-                // Title label
-                const title = document.createElement('div');
-                title.className = 'video-title';
-                title.textContent = video.title;
-                element.appendChild(title);
-
-                // Shield Overlay
-                const shield = document.createElement('div');
-                shield.className = 'shield';
-                shield.innerHTML = '<span>Click to Interact</span>';
-                element.appendChild(shield);
-
-                shield.addEventListener('click', () => {
-                    shield.style.pointerEvents = 'none';
-                    shield.style.opacity = '0';
-                });
-
-                element.addEventListener('mouseleave', () => {
-                    shield.style.pointerEvents = 'auto';
-                    shield.style.opacity = '';
-                });
-
-                const object = new THREE.CSS3DObject(element);
-
-                const pos = apparentPositions[index % apparentPositions.length];
-                const zOffset = -(index * 600);
-                const distFromStart = maxZ - zOffset;
-                const scale = distFromStart / 1000;
-
-                const xOffset = pos.x * scale;
-                const yOffset = pos.y * scale;
-
-                object.position.x = xOffset;
-                object.position.y = yOffset;
-                object.position.z = zOffset;
-                object.rotation.y = 0;
-
-                object.userData = {
-                    baseX: xOffset,
-                    baseY: yOffset,
-                    baseZ: zOffset,
-                    element: element,
-                    apparentX: pos.x,   // unscaled, for recycling
-                    apparentY: pos.y
-                };
-
-                videoGroup.add(object);
-            });
-
-            scene.add(videoGroup);
-
-            // --- EVENT LISTENERS ---
-            window.addEventListener('resize', onWindowResize);
-            window.addEventListener('wheel', onMouseWheel, { passive: false });
-
-            // Touch scroll handling for mobile
-            let touchStartY = 0;
-            window.addEventListener('touchstart', e => {
-                touchStartY = e.touches[0].clientY;
-            }, { passive: true });
-
-            window.addEventListener('touchmove', e => {
-                const touchY = e.touches[0].clientY;
-                const deltaY = touchStartY - touchY;
-
-                targetZ -= deltaY * 0.5;
-                targetZ = Math.min(maxZ, targetZ); // Infinite forward scroll for touch too
-                touchStartY = touchY;
-
-                updateIndicator();
-                handleScrollState();
-            }, { passive: true });
-
-            // Right click navigation to head back
-            window.addEventListener('contextmenu', (e) => {
-                e.preventDefault();
-                targetZ = maxZ; // zoom all the way back out
-                updateIndicator();
-            });
-        }
-
-        function onMouseWheel(event) {
-            targetZ -= event.deltaY * scrollSpeed;
-            targetZ = Math.min(maxZ, targetZ); // Only cap at start, infinite forward scroll
-            updateIndicator();
-            handleScrollState();
-        }
-
-        function handleScrollState() {
-            // Set body class to disable iframe pointer events while scrolling
-            document.body.classList.add('is-scrolling');
-
-            if (scrollTimeout) clearTimeout(scrollTimeout);
-
-            // Re-enable pointer events after scrolling stops (150ms delay)
-            scrollTimeout = setTimeout(() => {
-                document.body.classList.remove('is-scrolling');
-            }, 150);
-        }
-
-        function updateIndicator() {
-            const indicator = document.getElementById('scroll-indicator');
-            if (indicator) {
-                if (targetZ < maxZ - 50) {
-                    indicator.style.opacity = '0';
-                } else {
-                    indicator.style.opacity = '1';
-                }
-            }
-        }
-
-        function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            cssRenderer.setSize(window.innerWidth, window.innerHeight);
-        }
-
-        window.addEventListener('mousemove', (event) => {
-            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+            const dot = document.createElement('div');
+            dot.className = 'video-progress__dot';
+            dot.dataset.index = i;
+            dot.addEventListener('click', () => scroller.children[i].scrollIntoView({ behavior: 'smooth' }));
+            progressDots.appendChild(dot);
         });
 
-        function animate() {
-            requestAnimationFrame(animate);
+        let players = [];
+        let apiReady = false;
+        const tag = document.createElement('script');
+        tag.src = 'https://www.youtube.com/iframe_api';
+        document.head.appendChild(tag);
 
-            // Smoothly interpolate camera position towards targetZ
-            camera.position.z += (targetZ - camera.position.z) * 0.05;
-
-            let parallaxX = 0;
-            let parallaxY = 0;
-            if (mouse.x !== undefined) {
-                parallaxX = mouse.x * 50;
-                parallaxY = mouse.y * 50;
-
-                camera.position.x += (mouse.x * 20 - camera.position.x) * 0.05;
-                camera.position.y += (mouse.y * 20 - camera.position.y) * 0.05;
-            }
-
-            // Animate items moving to center based on distance to camera
-            if (videoGroup) {
-                videoGroup.children.forEach(plane => {
-                    const dist = camera.position.z - plane.userData.baseZ;
-
-                    let factor = 0;
-
-                    if (dist >= 1600) {
-                        factor = 0;
-                    } else if (dist < 1600 && dist > 800) {
-                        factor = 1.0 - ((dist - 800) / 800);
-                    } else if (dist <= 800 && dist >= 400) {
-                        factor = 1.0;
-                    } else if (dist < 400 && dist > -200) {
-                        factor = (dist + 200) / 600;
-                    } else {
-                        factor = 0;
-                    }
-
-                    const smoothFactor = factor * factor * (3 - 2 * factor);
-
-                    plane.position.x = THREE.MathUtils.lerp(plane.userData.baseX, 0, smoothFactor) + parallaxX;
-                    plane.position.y = THREE.MathUtils.lerp(plane.userData.baseY, 0, smoothFactor) + parallaxY;
-
-                    // Depth-of-field: blur videos that are far from camera
-                    if (plane.userData.element) {
-                        const depth = Math.abs(camera.position.z - plane.userData.baseZ);
-                        const blurPx = Math.max(0, (depth - 800) / 350);
-                        plane.userData.element.style.filter = blurPx > 0
-                            ? `blur(${blurPx.toFixed(2)}px)`
-                            : '';
+        window.onYouTubeIframeAPIReady = function () {
+            apiReady = true;
+            videos.forEach((video, i) => {
+                players[i] = new YT.Player(`player-${i}`, {
+                    videoId: video.id,
+                    playerVars: { rel: 0, modestbranding: 1, playsinline: 1, controls: 1 },
+                    events: {
+                        onReady: () => {
+                            if (i === 0) setTimeout(() => document.getElementById('loader').classList.add('hidden'), 600);
+                        }
                     }
                 });
+            });
+        };
 
-                // --- INFINITE LOOP RECYCLING ---
-                // Only recycle when the camera has actually passed the video (video is behind camera)
-                videoGroup.children.forEach(plane => {
-                    if (plane.userData.baseZ > camera.position.z + 50) {
-                        // Find the current frontmost (lowest z) video position
-                        let frontZ = Infinity;
-                        videoGroup.children.forEach(p => {
-                            if (p.userData.baseZ < frontZ) frontZ = p.userData.baseZ;
+        let activeIndex = 0;
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const idx = parseInt(entry.target.dataset.index);
+                if (entry.isIntersecting && entry.intersectionRatio > 0.6) {
+                    entry.target.classList.add('active');
+                    activeIndex = idx;
+                    currentIdxEl.textContent = String(idx + 1).padStart(2, '0');
+                    document.querySelectorAll('.video-progress__dot').forEach((dot, di) => dot.classList.toggle('active', di === idx));
+                    if (idx > 0) scrollHint.style.opacity = '0';
+                    if (apiReady) {
+                        players.forEach((player, pi) => {
+                            try { pi === idx ? player.playVideo() : player.pauseVideo(); } catch (e) {}
                         });
-
-                        const newZ = frontZ - SPACING; // place one SPACING ahead of the front
-                        const camToNew = camera.position.z - newZ;
-                        const scale = camToNew / 1000;
-
-                        plane.userData.baseZ = newZ;
-                        plane.userData.baseX = plane.userData.apparentX * scale;
-                        plane.userData.baseY = plane.userData.apparentY * scale;
-
-                        // Immediately snap position so there's no lerp ghost
-                        plane.position.x = plane.userData.baseX + parallaxX;
-                        plane.position.y = plane.userData.baseY + parallaxY;
-                        plane.position.z = newZ;
                     }
-                });
-            }
+                } else {
+                    entry.target.classList.remove('active');
+                }
+            });
+        }, { root: scroller, threshold: [0.6] });
 
-            cssRenderer.render(scene, camera);
-        }
+        document.querySelectorAll('.video-section').forEach(s => observer.observe(s));
+        setTimeout(() => {
+            document.querySelector('.video-section')?.classList.add('active');
+            document.querySelector('.video-progress__dot')?.classList.add('active');
+        }, 100);
+
+        window.addEventListener('load', () => setTimeout(() => document.getElementById('loader').classList.add('hidden'), 3000));
     </script>
 </body>
-
 </html>

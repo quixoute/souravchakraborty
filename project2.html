@@ -1,410 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sourav Chakraborty - Uber Eats</title>
+    <title>Uber Eats — Sourav Chakraborty</title>
+    <meta name="description" content="Uber Eats photo gallery by Sourav Chakraborty">
+    <link rel="stylesheet" href="film.css">
     <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            background: #ffffff;
+        body { overflow-y: auto; overflow-x: hidden; }
+
+        .gallery-header {
+            text-align: center; padding: 120px 20px 40px;
+            opacity: 0; animation: fadeInUp 0.8s 0.3s var(--transition-smooth) forwards;
         }
+        .gallery-header h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(32px, 6vw, 56px); font-weight: 300; letter-spacing: 6px; text-transform: uppercase; color: var(--film-text); margin-bottom: 12px; }
+        .gallery-header p { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--film-text-dim); }
+        .gallery-header .divider { width: 40px; height: 1px; background: var(--film-accent); margin: 20px auto 0; }
 
-        canvas {
-            display: block;
+        .gallery-grid { max-width: 1200px; margin: 0 auto; padding: 20px; columns: 3; column-gap: 16px; }
+        .gallery-item {
+            break-inside: avoid; margin-bottom: 16px; border-radius: 4px; overflow: hidden;
+            position: relative; cursor: pointer; opacity: 0; transform: translateY(20px);
+            transition: opacity 0.6s var(--transition-smooth), transform 0.6s var(--transition-smooth);
         }
+        .gallery-item.visible { opacity: 1; transform: translateY(0); }
+        .gallery-item img { width: 100%; display: block; transition: transform 0.6s var(--transition-smooth), filter 0.6s var(--transition-smooth); filter: saturate(0.85) contrast(1.05); }
+        .gallery-item:hover img { transform: scale(1.03); filter: saturate(1) contrast(1.1); }
+        .gallery-item::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.15) 0%, transparent 40%); opacity: 0; transition: opacity 0.4s var(--transition-smooth); pointer-events: none; }
+        .gallery-item:hover::after { opacity: 1; }
 
-        /* Scroll indicator styles */
-        #scroll-indicator {
-            position: absolute;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
-            color: #000;
-            font-family: 'Inter', 'Roboto', sans-serif;
-            pointer-events: none;
-            transition: opacity 0.5s ease;
-            z-index: 10;
-        }
+        .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 10001; display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: opacity 0.4s var(--transition-smooth), visibility 0.4s; cursor: zoom-out; }
+        .lightbox.open { opacity: 1; visibility: visible; }
+        .lightbox img { max-width: 92vw; max-height: 90vh; object-fit: contain; border-radius: 2px; box-shadow: 0 0 60px rgba(0,0,0,0.5); transform: scale(0.95); transition: transform 0.4s var(--transition-smooth); }
+        .lightbox.open img { transform: scale(1); }
+        .lightbox-close { position: absolute; top: 20px; right: 24px; color: var(--film-text-dim); font-size: 28px; cursor: pointer; transition: color 0.3s; background: none; border: none; }
+        .lightbox-close:hover { color: var(--film-text); }
+        .lightbox-nav { position: absolute; top: 50%; transform: translateY(-50%); color: var(--film-text-dim); font-size: 36px; cursor: pointer; background: none; border: none; padding: 20px; transition: color 0.3s; }
+        .lightbox-nav:hover { color: var(--film-accent); }
+        .lightbox-prev { left: 10px; }
+        .lightbox-next { right: 10px; }
 
-        .scroll-text {
-            font-size: 13px;
-            font-weight: 500;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 12px;
-            opacity: 0.8;
-        }
+        .gallery-footer { text-align: center; padding: 60px 20px 80px; font-size: 11px; letter-spacing: 2px; color: var(--film-text-dim); text-transform: uppercase; }
 
-        .mouse {
-            width: 24px;
-            height: 38px;
-            border: 2px solid rgba(0, 0, 0, 0.8);
-            border-radius: 14px;
-            margin: 0 auto;
-            position: relative;
-        }
-
-        .wheel {
-            width: 2px;
-            height: 6px;
-            background: rgba(0, 0, 0, 0.8);
-            border-radius: 2px;
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            animation: scrollUp 1.5s infinite;
-        }
-
-        @keyframes scrollUp {
-            0% {
-                top: 20px;
-                opacity: 0;
-            }
-
-            20% {
-                top: 20px;
-                opacity: 1;
-            }
-
-            80% {
-                top: 6px;
-                opacity: 1;
-            }
-
-            100% {
-                top: 6px;
-                opacity: 0;
-            }
-        }
-
-        /* Back Button */
-        .back-btn {
-            position: fixed;
-            top: 30px;
-            left: 40px;
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: #000;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            padding: 10px 20px;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            border-radius: 30px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            border: 1px solid rgba(0,0,0,0.05);
-        }
-
-        .back-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-            background: rgba(255, 255, 255, 1);
-        }
-
-        .back-btn svg {
-            width: 18px;
-            height: 18px;
-            transition: transform 0.3s ease;
-        }
-
-        .back-btn:hover svg {
-            transform: translateX(-4px);
-        }
+        @media (max-width: 900px) { .gallery-grid { columns: 2; column-gap: 12px; padding: 16px; } }
+        @media (max-width: 540px) { .gallery-grid { columns: 1; padding: 12px; } .gallery-header { padding: 100px 16px 30px; } }
     </style>
 </head>
+<body class="film-grain film-vignette">
+    <div class="film-loader" id="loader"><div class="film-loader__ring"></div><div class="film-loader__text">Loading</div></div>
+    <a href="index.html" class="back-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>Back</a>
 
-<body>
-    <!-- Go Back Button -->
-    <a href="index.html" class="back-btn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
-        </svg>
-        Back
-    </a>
-    <div id="scroll-indicator">
-        <div class="scroll-text">Scroll to explore</div>
-        <div class="mouse">
-            <div class="wheel"></div>
-        </div>
+    <div class="gallery-header"><h1>Uber Eats</h1><p>Commercial Photography</p><div class="divider"></div></div>
+    <div class="gallery-grid" id="gallery"></div>
+    <div class="gallery-footer">End of Gallery</div>
+
+    <div class="lightbox" id="lightbox">
+        <button class="lightbox-close" id="lbClose">×</button>
+        <button class="lightbox-nav lightbox-prev" id="lbPrev">‹</button>
+        <img id="lbImg" src="" alt="Gallery image">
+        <button class="lightbox-nav lightbox-next" id="lbNext">›</button>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        // Scene setup
-        const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0xffffff);
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
+        const imageCount = 12;
+        const gallery = document.getElementById('gallery');
+        const lightbox = document.getElementById('lightbox');
+        const lbImg = document.getElementById('lbImg');
+        let currentLb = 0;
+        const images = [];
 
-        // Texture loader with error handling
-        const textureLoader = new THREE.TextureLoader();
-        const loadTexture = (path) => {
-            return new Promise((resolve, reject) => {
-                textureLoader.load(
-                    path,
-                    (texture) => {
-                        texture.minFilter = THREE.LinearFilter;
-                        resolve(texture);
-                    },
-                    undefined,
-                    (error) => {
-                        console.error(`Error loading texture ${path}:`, error);
-                        reject(error);
-                    }
-                );
-            });
-        };
-
-        // Create materials
-        const createMaterials = async () => {
-            try {
-                const materials = {};
-                
-                await Promise.all(
-                    Array.from({length: 12}, (_, i) => i + 1).map(async (i) => {
-                        try {
-                            const texture = await loadTexture(`ubereats/${i}.webp`);
-                            materials[`img${i}`] = {
-                                material: new THREE.MeshBasicMaterial({
-                                    map: texture,
-                                    transparent: true
-                                }),
-                                aspectRatio: texture.image.width / texture.image.height
-                            };
-                        } catch (e) {
-                            console.error(`Skipping ubereats/${i}.webp:`, e);
-                        }
-                    })
-                );
-                
-                return materials;
-            } catch (error) {
-                console.error('Error creating materials:', error);
-                return null;
-            }
-        };
-
-        // Create image plane
-        const createImagePlane = (material, width, height, x, y, z, rotationZ = 0) => {
-            const geometry = new THREE.PlaneGeometry(width, height);
-            const plane = new THREE.Mesh(geometry, material);
-            plane.position.set(x, y, z);
-            // Convert degrees to radians for proper Three.js rotation
-            plane.rotation.z = rotationZ * (Math.PI / 180);
-            return plane;
-        };
-
-        // Initialize scene
-        async function init() {
-            const materials = await createMaterials();
-            if (!materials) return;
-
-            // ===== CONFIGURABLE POSITIONS AND DIMENSIONS =====
-            // Create a scrolling gallery sequence spread out in Z space
-            const zSpacing = -15; // Increased spacing for dramatic pause
-            const startZ = 0;
-
-            const imageConfig = {
-                // Alternating layout down the Z-axis
-                img1: { x: -4, y: 1.5, z: startZ, width: 3, height: 4, rot: -5 },
-                img2: { x: 5, y: 0.5, z: startZ + zSpacing, width: 4, height: 3, rot: 8 },
-                img3: { x: -5, y: -1.0, z: startZ + zSpacing * 2, width: 4, height: 3, rot: -12 },
-                img4: { x: 4, y: -2.0, z: startZ + zSpacing * 3, width: 4, height: 3, rot: 15 },
-                img5: { x: -6, y: 2.0, z: startZ + zSpacing * 4, width: 4, height: 3, rot: -8 },
-                img6: { x: 5, y: 0.0, z: startZ + zSpacing * 5, width: 4, height: 3, rot: 10 },
-                img7: { x: -4, y: -1.5, z: startZ + zSpacing * 6, width: 4, height: 3, rot: -15 },
-                img8: { x: 5, y: 1.5, z: startZ + zSpacing * 7, width: 4, height: 3, rot: 7 },
-                img9: { x: -5, y: 0.5, z: startZ + zSpacing * 8, width: 4, height: 3, rot: -10 },
-                img10: { x: 6, y: -1.5, z: startZ + zSpacing * 9, width: 4, height: 3, rot: 12 },
-                img11: { x: -5, y: 1.0, z: startZ + zSpacing * 10, width: 4, height: 3, rot: -8 },
-                img12: { x: 4, y: -0.5, z: startZ + zSpacing * 11, width: 4, height: 3, rot: 5 },
-            };
-
-            window.imagePlanes = [];
-
-            // Base size for the images - we lock the height or width and scale the other
-            const baseScale = 4.0;
-
-            // Add image planes to scene
-            for (let i = 1; i <= 12; i++) {
-                if (!materials[`img${i}`]) continue;
-                
-                const conf = imageConfig[`img${i}`];
-                const matData = materials[`img${i}`];
-                
-                // Calculate dynamic width/height based on aspect ratio
-                let planeWidth, planeHeight;
-                if (matData.aspectRatio > 1) {
-                    // Landscape
-                    planeWidth = baseScale;
-                    planeHeight = baseScale / matData.aspectRatio;
-                } else {
-                    // Portrait
-                    planeHeight = baseScale;
-                    planeWidth = baseScale * matData.aspectRatio;
-                }
-                
-                const plane = createImagePlane(matData.material, planeWidth, planeHeight, conf.x, conf.y, conf.z, conf.rot);
-                
-                // Store base transformations for interpolation
-                plane.userData = {
-                    baseX: conf.x,
-                    baseY: conf.y,
-                    baseZ: conf.z,
-                    baseRotZ: conf.rot * (Math.PI / 180)
-                };
-                
-                window.imagePlanes.push(plane);
-                scene.add(plane);
-            }
-
-            // Set initial camera position
-            camera.position.z = 20;
-            targetZ = camera.position.z;
+        for (let i = 1; i <= imageCount; i++) {
+            const src = `ubereats/${i}.webp`;
+            images.push(src);
+            const item = document.createElement('div'); item.className = 'gallery-item';
+            const img = document.createElement('img'); img.src = src; img.alt = `Uber Eats photograph ${i}`; img.loading = 'lazy'; img.decoding = 'async';
+            item.appendChild(img);
+            item.addEventListener('click', () => openLightbox(i - 1));
+            gallery.appendChild(item);
         }
 
-        // Mouse scroll handling
-        let targetZ = 20;
-        const scrollSpeed = 0.03; // Slower scroll
-        // 11 elements * -15 spacing
-        const minZ = -175;
-        const maxZ = 20;
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); revealObserver.unobserve(entry.target); } });
+        }, { threshold: 0.1, rootMargin: '0px 0px 60px 0px' });
+        document.querySelectorAll('.gallery-item').forEach((item, i) => { item.style.transitionDelay = `${(i % 6) * 0.08}s`; revealObserver.observe(item); });
 
-        window.addEventListener('wheel', (event) => {
-            targetZ += event.deltaY * scrollSpeed;
-            targetZ = Math.max(minZ, Math.min(maxZ, targetZ));
+        function openLightbox(idx) { currentLb = idx; lbImg.src = images[idx]; lightbox.classList.add('open'); document.body.style.overflow = 'hidden'; }
+        function closeLightbox() { lightbox.classList.remove('open'); document.body.style.overflow = ''; }
+        document.getElementById('lbClose').addEventListener('click', closeLightbox);
+        lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+        document.getElementById('lbPrev').addEventListener('click', (e) => { e.stopPropagation(); currentLb = (currentLb - 1 + images.length) % images.length; lbImg.src = images[currentLb]; });
+        document.getElementById('lbNext').addEventListener('click', (e) => { e.stopPropagation(); currentLb = (currentLb + 1) % images.length; lbImg.src = images[currentLb]; });
+        document.addEventListener('keydown', (e) => { if (!lightbox.classList.contains('open')) return; if (e.key === 'Escape') closeLightbox(); if (e.key === 'ArrowLeft') { currentLb = (currentLb - 1 + images.length) % images.length; lbImg.src = images[currentLb]; } if (e.key === 'ArrowRight') { currentLb = (currentLb + 1) % images.length; lbImg.src = images[currentLb]; } });
 
-            // Fade out the indicator when the user scrolls deeper
-            const indicator = document.getElementById('scroll-indicator');
-            if (indicator) {
-                if (targetZ < maxZ - 2) {
-                    indicator.style.opacity = '0';
-                } else {
-                    indicator.style.opacity = '1';
-                }
-            }
-        });
-
-        // Touch scroll handling for mobile
-        let touchStartY = 0;
-        window.addEventListener('touchstart', e => {
-            touchStartY = e.touches[0].clientY;
-        }, { passive: true });
-
-        window.addEventListener('touchmove', e => {
-            const touchY = e.touches[0].clientY;
-            const deltaY = touchStartY - touchY;
-
-            targetZ += deltaY * 0.08; // Touch sensitivity adjustment
-            targetZ = Math.max(minZ, Math.min(maxZ, targetZ));
-
-            touchStartY = touchY;
-
-            const indicator = document.getElementById('scroll-indicator');
-            if (indicator) {
-                if (targetZ < maxZ - 2) {
-                    indicator.style.opacity = '0';
-                } else {
-                    indicator.style.opacity = '1';
-                }
-            }
-        }, { passive: true });
-
-        // Mouse tracking for parallax effect
-        const mouse = new THREE.Vector2();
-        window.addEventListener('mousemove', (event) => {
-            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-        });
-
-        // Animation loop
-        function animate() {
-            requestAnimationFrame(animate);
-
-            // Smoother camera movement along Z axis
-            camera.position.z += (targetZ - camera.position.z) * 0.03; // Slower Camera Lerp
-
-            // Optional: add slight parallax/sway based on mouse position
-            let parallaxX = 0;
-            let parallaxY = 0;
-            if (mouse.x !== undefined) {
-                parallaxX = mouse.x * 0.5;
-                parallaxY = mouse.y * 0.5;
-                
-                camera.position.x += (parallaxX - camera.position.x) * 0.02;
-                camera.position.y += (parallaxY - camera.position.y) * 0.02;
-            }
-
-            // Dynamic centering logic (Focus-on-approach)
-            if (window.imagePlanes) {
-                // We define 3 zones based on distance:
-                // > 14: Too far/Background (factor 0)
-                // 14 to 8: Approaching (slides in gently)
-                // 8 to 2: The Plateau (factor 1, stays perfectly still!)
-                // 2 to -2: Passing (slides out fast behind)
-                
-                window.imagePlanes.forEach(plane => {
-                    const dist = camera.position.z - plane.userData.baseZ;
-                    
-                    let factor = 0;
-                    if (dist > 14) {
-                        factor = 0; // Far away
-                    } else if (dist <= 14 && dist > 8) {
-                        factor = 1.0 - ((dist - 8) / 6); // Slide in (0 to 1)
-                    } else if (dist <= 8 && dist >= 2) {
-                        factor = 1.0; // The Plateau (Hold still)
-                    } else if (dist < 2 && dist > -2) {
-                        factor = (dist + 2) / 4; // Passing fast (1 to 0)
-                    } else {
-                        factor = 0; // Behind camera
-                    }
-                    
-                    // Ease the factor
-                    const smoothFactor = factor * factor * (3 - 2 * factor); // smoothstep
-                    
-                    // Interpolate towards center
-                    plane.position.x = THREE.MathUtils.lerp(plane.userData.baseX, parallaxX, smoothFactor);
-                    plane.position.y = THREE.MathUtils.lerp(plane.userData.baseY, parallaxY, smoothFactor);
-                    plane.rotation.z = THREE.MathUtils.lerp(plane.userData.baseRotZ, 0, smoothFactor);
-                    
-                    // Reset Y rotation if we approach perfectly flat
-                    if (plane.userData.baseRotY !== undefined) {
-                        plane.rotation.y = THREE.MathUtils.lerp(plane.userData.baseRotY, 0, smoothFactor);
-                    } else {
-                        plane.rotation.y = THREE.MathUtils.lerp(plane.rotation.y, 0, 0.1); 
-                    }
-                });
-            }
-
-            renderer.render(scene, camera);
-        }
-
-        // Handle window resize
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
-
-        // Start the scene
-        init().then(() => {
-            animate();
-        });
+        window.addEventListener('load', () => setTimeout(() => document.getElementById('loader').classList.add('hidden'), 500));
     </script>
 </body>
-
 </html>

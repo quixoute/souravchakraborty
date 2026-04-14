@@ -404,15 +404,9 @@
             // Smoother camera movement for depth (Z)
             camera.position.z += (targetZ - camera.position.z) * 0.05;
             
-            // Smooth camera movement for parallax (X, Y)
-            targetCameraX = mouseX * 2.5; // adjust for range
-            targetCameraY = mouseY * 2.5;
-            camera.position.x += (targetCameraX - camera.position.x) * 0.05;
-            camera.position.y += (targetCameraY - camera.position.y) * 0.05;
-            
-            // Subtle rotation / tilt (skew) effect on mouse track
-            camera.rotation.y = -(camera.position.x * 0.05);
-            camera.rotation.x = (camera.position.y * 0.05);
+            // Mouse follow and parallax skew removed completely per user request.
+            // camera.position.x and camera.position.y stay at default.
+            // camera.rotation remains at default.
 
             renderer.render(scene, camera);
         }

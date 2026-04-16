@@ -83,6 +83,87 @@
                 opacity: 0;
             }
         }
+
+        .invite-modal {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(15, 15, 15, 0.55);
+            z-index: 30;
+            padding: 24px;
+        }
+
+        .invite-modal.is-open {
+            display: flex;
+        }
+
+        .invite-panel {
+            width: min(100%, 360px);
+            background: #f7f3ec;
+            border: 1px solid rgba(15, 15, 15, 0.12);
+            border-radius: 20px;
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.18);
+            padding: 28px 24px 24px;
+            font-family: 'Inter', 'Roboto', sans-serif;
+            color: #111;
+        }
+
+        .invite-panel h2 {
+            margin: 0 0 10px;
+            font-size: 24px;
+        }
+
+        .invite-panel p {
+            margin: 0 0 16px;
+            font-size: 14px;
+            line-height: 1.5;
+            color: rgba(17, 17, 17, 0.75);
+        }
+
+        .invite-input {
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid rgba(15, 15, 15, 0.14);
+            border-radius: 12px;
+            background: #fff;
+            padding: 13px 14px;
+            font-size: 15px;
+            margin-bottom: 12px;
+        }
+
+        .invite-error {
+            min-height: 18px;
+            margin-bottom: 14px;
+            font-size: 13px;
+            color: #b42318;
+        }
+
+        .invite-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .invite-button {
+            flex: 1;
+            border: 0;
+            border-radius: 12px;
+            padding: 12px 14px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .invite-button.primary {
+            background: #111;
+            color: #fff;
+        }
+
+        .invite-button.secondary {
+            background: rgba(17, 17, 17, 0.08);
+            color: #111;
+        }
     </style>
 </head>
 
@@ -94,15 +175,83 @@
         </div>
     </div>
 
+    <div id="invite-modal" class="invite-modal" aria-hidden="true">
+        <div class="invite-panel" role="dialog" aria-modal="true" aria-labelledby="invite-title">
+            <h2 id="invite-title">Invite Only</h2>
+            <p>Enter the invite code to open this project.</p>
+            <input id="invite-code-input" class="invite-input" type="password" placeholder="Invite code" autocomplete="off">
+            <div id="invite-error" class="invite-error"></div>
+            <div class="invite-actions">
+                <button id="invite-cancel" class="invite-button secondary" type="button">Cancel</button>
+                <button id="invite-submit" class="invite-button primary" type="button">Open Project</button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
         // Scene setup
+        const PROJECT5_INVITE_CODE = 'Thursday!April!FrameFind!Invitation';
+
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0xffffff); // White background
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
+
+        const inviteModal = document.getElementById('invite-modal');
+        const inviteCodeInput = document.getElementById('invite-code-input');
+        const inviteError = document.getElementById('invite-error');
+        const inviteSubmit = document.getElementById('invite-submit');
+        const inviteCancel = document.getElementById('invite-cancel');
+        let pendingInviteUrl = '';
+
+        const closeInviteModal = () => {
+            inviteModal.classList.remove('is-open');
+            inviteModal.setAttribute('aria-hidden', 'true');
+            inviteCodeInput.value = '';
+            inviteError.textContent = '';
+            pendingInviteUrl = '';
+        };
+
+        const openInviteModal = (url) => {
+            pendingInviteUrl = url;
+            inviteModal.classList.add('is-open');
+            inviteModal.setAttribute('aria-hidden', 'false');
+            inviteError.textContent = '';
+            inviteCodeInput.value = '';
+            requestAnimationFrame(() => inviteCodeInput.focus());
+        };
+
+        const submitInviteCode = () => {
+            const enteredCode = inviteCodeInput.value.trim();
+
+            if (enteredCode.toUpperCase() === PROJECT5_INVITE_CODE) {
+                window.location.href = pendingInviteUrl;
+                return;
+            }
+
+            inviteError.textContent = 'That invite code is not valid.';
+            inviteCodeInput.select();
+        };
+
+        inviteSubmit.addEventListener('click', submitInviteCode);
+        inviteCancel.addEventListener('click', closeInviteModal);
+        inviteModal.addEventListener('click', (event) => {
+            if (event.target === inviteModal) {
+                closeInviteModal();
+            }
+        });
+        inviteCodeInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                submitInviteCode();
+            }
+
+            if (event.key === 'Escape') {
+                closeInviteModal();
+            }
+        });
 
         // Lighting
         const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
@@ -176,8 +325,9 @@
                         transparent: false
                     }),
                     project5: new THREE.MeshBasicMaterial({
-                        map: await loadTexture('/37.jpg'),
-                        transparent: false
+                        map: await loadTexture('/framefind-logo.svg'),
+                        transparent: true,
+                        alphaTest: 0.5
                     }),
                     project6: new THREE.MeshBasicMaterial({
                         map: await loadTexture('/44.jpg'),
@@ -272,6 +422,7 @@
                 // Add click handler
                 container.userData.page = containerPages[key];
                 container.userData.isClickable = true;
+                container.userData.requiresInvite = key === 'project5';
 
                 containers.push(container);
                 scene.add(container);
@@ -295,6 +446,11 @@
                 if (intersects.length > 0) {
                     const clickedObject = intersects[0].object;
                     if (clickedObject.userData.isClickable && clickedObject.userData.page) {
+                        if (clickedObject.userData.requiresInvite) {
+                            openInviteModal(clickedObject.userData.page);
+                            return;
+                        }
+
                         window.location.href = clickedObject.userData.page;
                     }
                 }

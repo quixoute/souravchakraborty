@@ -201,13 +201,20 @@
         document.body.appendChild(renderer.domElement);
 
         const inviteModal = document.getElementById('invite-modal');
+        const invitePanel = inviteModal.querySelector('.invite-panel');
         const inviteCodeInput = document.getElementById('invite-code-input');
         const inviteError = document.getElementById('invite-error');
         const inviteSubmit = document.getElementById('invite-submit');
         const inviteCancel = document.getElementById('invite-cancel');
         let pendingInviteUrl = '';
+        let ignoreSceneClicksUntil = 0;
+
+        const pauseSceneClicks = () => {
+            ignoreSceneClicksUntil = Date.now() + 300;
+        };
 
         const closeInviteModal = () => {
+            pauseSceneClicks();
             inviteModal.classList.remove('is-open');
             inviteModal.setAttribute('aria-hidden', 'true');
             inviteCodeInput.value = '';
@@ -216,6 +223,7 @@
         };
 
         const openInviteModal = (url) => {
+            pauseSceneClicks();
             pendingInviteUrl = url;
             inviteModal.classList.add('is-open');
             inviteModal.setAttribute('aria-hidden', 'false');
@@ -227,7 +235,8 @@
         const submitInviteCode = () => {
             const enteredCode = inviteCodeInput.value.trim();
 
-            if (enteredCode.toUpperCase() === PROJECT5_INVITE_CODE) {
+            if (enteredCode === PROJECT5_INVITE_CODE) {
+                pauseSceneClicks();
                 window.location.href = pendingInviteUrl;
                 return;
             }
@@ -236,8 +245,17 @@
             inviteCodeInput.select();
         };
 
-        inviteSubmit.addEventListener('click', submitInviteCode);
-        inviteCancel.addEventListener('click', closeInviteModal);
+        invitePanel.addEventListener('click', (event) => {
+            event.stopPropagation();
+        });
+        inviteSubmit.addEventListener('click', (event) => {
+            event.stopPropagation();
+            submitInviteCode();
+        });
+        inviteCancel.addEventListener('click', (event) => {
+            event.stopPropagation();
+            closeInviteModal();
+        });
         inviteModal.addEventListener('click', (event) => {
             if (event.target === inviteModal) {
                 closeInviteModal();
@@ -326,8 +344,7 @@
                     }),
                     project5: new THREE.MeshBasicMaterial({
                         map: await loadTexture('/framefind-logo.svg'),
-                        transparent: true,
-                        alphaTest: 0.5
+                        transparent: false
                     }),
                     project6: new THREE.MeshBasicMaterial({
                         map: await loadTexture('/44.jpg'),
@@ -390,7 +407,7 @@
                 project2: { x: 4, y: 2, z: -30, width: 2, height: 3 },          // project2.html
                 project3: { x: -4, y: -2, z: -35, width: 2.2, height: 1.6 },    // project5.html
                 project4: { x: 0, y: 0, z: -40, width: 2, height: 2 },          // wedding.html
-                project5: { x: 4, y: -2, z: -45, width: 1.5, height: 1 },       // https://photos.souravchakraborty.in
+                project5: { x: 4, y: -2, z: -45, width: 2.8, height: 0.82 },    // https://photos.souravchakraborty.in
                 project6: { x: -4, y: 0, z: -50, width: 1.7, height: 1.7 },     // Prewedding.html
                 project7: { x: 4, y: 0, z: -55, width: 2.2, height: 2.2 },      // r.html
                 project8: { x: 0, y: 2, z: -60, width: 2, height: 1.6 }         // project3.html
@@ -433,6 +450,10 @@
             const mouse = new THREE.Vector2();
 
             window.addEventListener('click', (event) => {
+                if (inviteModal.classList.contains('is-open') || Date.now() < ignoreSceneClicksUntil) {
+                    return;
+                }
+
                 // Calculate mouse position in normalized device coordinates
                 mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
                 mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -458,6 +479,14 @@
 
             // Add hover effect
             window.addEventListener('mousemove', (event) => {
+                if (inviteModal.classList.contains('is-open')) {
+                    containers.forEach(container => {
+                        container.material.opacity = 1.0;
+                    });
+                    document.body.style.cursor = 'default';
+                    return;
+                }
+
                 mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
                 mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 

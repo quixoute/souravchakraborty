@@ -208,6 +208,30 @@
         const inviteCancel = document.getElementById('invite-cancel');
         let pendingInviteUrl = '';
         let ignoreSceneClicksUntil = 0;
+        let project5GuardActive = false;
+
+        const nativeConsole = window.console;
+        const noop = () => { };
+
+        const setProject5Protection = (isActive) => {
+            project5GuardActive = isActive;
+
+            if (isActive) {
+                window.console = {
+                    ...nativeConsole,
+                    log: noop,
+                    info: noop,
+                    debug: noop,
+                    warn: noop,
+                    dir: noop,
+                    table: noop,
+                    clear: noop
+                };
+                return;
+            }
+
+            window.console = nativeConsole;
+        };
 
         const pauseSceneClicks = () => {
             ignoreSceneClicksUntil = Date.now() + 300;
@@ -215,6 +239,7 @@
 
         const closeInviteModal = () => {
             pauseSceneClicks();
+            setProject5Protection(false);
             inviteModal.classList.remove('is-open');
             inviteModal.setAttribute('aria-hidden', 'true');
             inviteCodeInput.value = '';
@@ -224,6 +249,7 @@
 
         const openInviteModal = (url) => {
             pauseSceneClicks();
+            setProject5Protection(true);
             pendingInviteUrl = url;
             inviteModal.classList.add('is-open');
             inviteModal.setAttribute('aria-hidden', 'false');
@@ -270,6 +296,25 @@
                 closeInviteModal();
             }
         });
+        document.addEventListener('contextmenu', (event) => {
+            if (!project5GuardActive) return;
+            event.preventDefault();
+        });
+        window.addEventListener('keydown', (event) => {
+            if (!project5GuardActive) return;
+
+            const key = event.key.toLowerCase();
+            const blockedShortcut =
+                event.key === 'F12' ||
+                (event.ctrlKey && event.shiftKey && ['i', 'j', 'c'].includes(key)) ||
+                (event.ctrlKey && key === 'u');
+
+            if (!blockedShortcut) return;
+
+            event.preventDefault();
+            event.stopPropagation();
+            inviteError.textContent = 'Inspector shortcuts are disabled while this invite is open.';
+        }, true);
 
         // Lighting
         const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);

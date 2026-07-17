@@ -62,10 +62,12 @@ memory first. Struggling to recall a node is the signal to rewatch, not skip.
 ---
 
 ## Day 4 — Specialization + capstone
-**Goal:** apply the full pipeline to a finished piece, and pick up one material specialization relevant to what you actually want to make.
+**Goal:** apply the full pipeline to a finished piece, and pick up material specializations relevant to what you actually want to make.
 
-**Pick ONE specialization track based on your goal (don't do both — you have half a day):**
-- **Character-focused:** [Arcane Skin Shader from Scratch in Blender](https://www.youtube.com/watch?v=hXgflY8NAOo) — procedural skin + blush layering + compositing pass (bloom/grain) to finish the look.
+**Required watch (~20 min):** [Arcane Skin Shader from Scratch in Blender](https://www.youtube.com/watch?v=hXgflY8NAOo) — procedural skin + blush layering + compositing pass (bloom/grain) to finish the look. Watch this one regardless of track: even on a prop-focused capstone, the blush/warm-patch layering and the compositing-pass finishing trick it teaches apply everywhere, and skin is the hardest surface to fake convincingly so it's worth seeing done right.
+
+**Then pick ONE additional specialization based on your capstone subject (don't try to add both — you have half a day):**
+- **Character-focused:** practice the skin shader above directly on your capstone face/bust.
 - **Prop/environment-focused:** [Forging Arcane Metal Shaders in Blender](https://www.youtube.com/watch?v=A1k1ndVfJ6s) — polished-vs-worn blend via a mask, painted specular highlights.
 
 **Also watch (~10 min):** [Make Any 3D Model Look Hand-Painted (Fast!) in Blender](https://www.youtube.com/watch?v=GEi7Ph10LCk) — the condensed shortcut version, useful now that you understand *why* it works, as a cheat sheet for future projects.

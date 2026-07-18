@@ -1,0 +1,5 @@
+{
+  "invidious_url": "https://your-invidious-tunnel.example.com",
+  "playlist_id": "PLxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "output_dir": "video-breakdowns"
+}

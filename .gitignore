@@ -1,0 +1,4 @@
+# breakdown-video skill: private instance config and scratch work
+.claude/skills/breakdown-video/config.json
+video-breakdowns/.work/
+__pycache__/

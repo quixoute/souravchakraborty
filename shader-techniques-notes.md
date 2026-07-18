@@ -169,8 +169,20 @@ Source: "Make Photorealistic/Stylized 3D Look Anime in Real-Time"
 - [Blender Slime Shader Challenge | Live Shading Under Pressure](https://www.youtube.com/watch?v=NKG84E8hhNU)
 - [Comfee Tutorials playlist](https://www.youtube.com/playlist?list=PLqh6cWQm2zLzhEiT8oeEI47y3Nk7dskeT)
 
+## 8. Other sources (non-ComfeeMug)
+
+Links from outside the Comfee Mug channel — a different technique family for putting
+"2D painting" onto 3D: **camera projection / matte painting**, instead of procedural
+shader nodes. Camera projection paints (or photo-textures) a flat image onto 3D geometry
+from the camera's point of view (UV-project-from-view + texture), commonly used for VFX
+backgrounds/matte paintings rather than character/prop shading. Complements the
+ComfeeMug node-based approach above rather than replacing it — different tool for a
+related goal.
+
+- [Easy Camera Projection in Blender 3d: Full VFX Tutorial](https://www.youtube.com/watch?v=ua8CrGf6wP8) — projects a flat painted/photo image onto simple 3D geometry from the camera view, used to fake production-value backgrounds cheaply (a common Hollywood matte-painting trick). Part of a larger playlist: [`PLZ48paZVoo4EGARB7NHOTScczmJmAmK6u`](https://www.youtube.com/playlist?list=PLZ48paZVoo4EGARB7NHOTScczmJmAmK6u) (video #32 in that list) — paste more links from that playlist here as you go and I'll keep expanding this section.
+
 ---
-*Compiled from public YouTube search results/descriptions (Comfee Mug channel). Direct
-page fetches from youtube.com were blocked (403), so exact on-screen node graphs weren't
-verifiable frame-by-frame — watch the linked videos for the precise node values/positions
-while using this doc as a study map.*
+*Compiled from public YouTube search results/descriptions (Comfee Mug channel, plus
+other sources noted in §8). Direct page fetches from youtube.com were blocked (403), so
+exact on-screen node graphs weren't verifiable frame-by-frame — watch the linked videos
+for the precise node values/positions while using this doc as a study map.*

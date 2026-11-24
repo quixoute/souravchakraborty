@@ -85,3 +85,17 @@ footer{padding:56px var(--pad) 30px;border-top:1px solid #252525;display:grid;gr
 
 /* Formspree honeypot: keep the anti-spam field completely out of the visible layout */
 .enquiry-form .form-honeypot{display:none!important;position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip-path:inset(50%)!important;white-space:nowrap!important}
+
+/* Continuous scroll-linked typography and subtle parallax */
+.hero-copy{will-change:transform,opacity}
+.intro .eyebrow,.intro-line,.section-head,.category,.feature-copy,.about-copy,.capabilities>div,.contact-heading,.enquiry-form{will-change:transform,opacity}
+.intro .eyebrow,.intro-line{transition:none!important}
+.category.reveal{transition:filter .5s ease}
+.category.visible{filter:none}
+@media(max-width:760px){
+ .hero-copy{max-width:100%}
+ .intro .eyebrow,.intro-line,.section-head,.category,.feature-copy,.about-copy,.capabilities>div,.contact-heading,.enquiry-form{will-change:auto}
+}
+@media(prefers-reduced-motion:reduce){
+ .hero-copy,.intro .eyebrow,.intro-line,.section-head,.category,.feature-copy,.about-copy,.capabilities>div,.contact-heading,.enquiry-form{transform:none!important;opacity:1!important;will-change:auto}
+}

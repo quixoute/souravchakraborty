@@ -51,6 +51,21 @@
   else if(!reduced)e.target.classList.remove('visible');
  }),{threshold:0,rootMargin:'8% 0px 8% 0px'});
  document.querySelectorAll('.reveal,.intro').forEach(el=>revealObserver.observe(el));
+ // Explicitly start the intro title video once its media data is ready.
+ const introVideo=document.querySelector('.intro-title-video');
+ if(introVideo){
+  introVideo.muted=true;
+  introVideo.defaultMuted=true;
+  introVideo.playsInline=true;
+  const startIntroVideo=()=>{
+   const playAttempt=introVideo.play();
+   if(playAttempt&&typeof playAttempt.catch==='function')playAttempt.catch(()=>{});
+  };
+  introVideo.addEventListener('loadeddata',startIntroVideo,{once:true});
+  introVideo.addEventListener('canplay',startIntroVideo,{once:true});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&introVideo.paused)startIntroVideo();});
+  startIntroVideo();
+ }
  const form=document.getElementById('enquiry-form');
  if(form)form.addEventListener('submit',async event=>{
   event.preventDefault();if(!form.reportValidity())return;

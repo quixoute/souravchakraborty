@@ -39,7 +39,7 @@
   if(currentVideo.tagName==="VIDEO"){muted=!muted;currentVideo.muted=muted;$("#sound-toggle").textContent=muted?"SOUND OFF":"SOUND ON";}
   else{$("#sound-toggle").textContent="VIDEO MUTED";$("#sound-toggle").setAttribute("aria-label","YouTube preview is muted");}
  });
- const route=$("#route-view"),mainSections=[$("#home"),$("#about"),$("#contact")];
+ const route=$("#route-view"),mainSections=[$("#home"),$("#way-of-seeing"),$("#feature"),$("#about"),$("#contact")];
  const imageCard=(p,catId)=>{
   const slug=p.title.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"");
   const target=p.videoId?"#film/"+catId+"/"+slug:p.href;

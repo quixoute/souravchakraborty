@@ -104,3 +104,7 @@ footer{padding:56px var(--pad) 30px;border-top:1px solid #252525;display:grid;gr
 .feature-image img{object-position:center 82%}
 .category-media video{filter:saturate(.82);transform:scale(1.01);transition:transform 1.2s cubic-bezier(.2,.7,.1,1)}
 .category:hover .category-media video{transform:scale(1.055)}
+
+/* Requested title-video and backstage feature image treatment */
+.intro-line .intro-title-video{display:block;width:100%;max-width:100%;height:auto;aspect-ratio:16/9;object-fit:contain;background:#080808}
+.feature-image img{object-fit:cover;object-position:center center}

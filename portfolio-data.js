@@ -10,7 +10,7 @@ window.PORTFOLIO = {
    {title:"Commercial Reels",year:"Selected work",description:"Commercial and social-first video work.",href:"r.html",image:"reels.png",videoId:"3Xkhmkpkgxg"},
    {title:"Spacify",year:"Selected work",description:"Commercial visual storytelling.",href:"spacify.html",image:"spacify.png"}]},
   {id:"ai-filmmaking",title:"AI Filmmaking",description:"Experimental cinema, generative worlds and AI-assisted commercial storytelling.",projects:[
-   {title:"AI Filmmaking",year:"Portfolio in progress",description:"A dedicated collection of AI films and visual experiments is being curated.",href:"mailto:work.souravchakraborty@gmail.com?subject=AI%20Filmmaking%20Portfolio",image:"47.jpg"}]},
+   {title:"AI Filmmaking",year:"Portfolio in progress",description:"A dedicated collection of AI films and visual experiments is being curated.",href:"mailto:work.souravchakraborty@gmail.com?subject=AI%20Filmmaking%20Portfolio",image:"31.jpg",videoSrc:"Fight-hero.mp4"}]},
   {id:"photography",title:"Photography",description:"Personal projects, portraits and visual explorations.",projects:[
    {title:"Tri",year:"Photo series",description:"A photographic series.",href:"Tri.html",image:"Tri/1.webp"},
    {title:"Dreamer",year:"Photo series",description:"A photographic series.",href:"project3.html",image:"Dreamer/Dreamer-1.jpg"},

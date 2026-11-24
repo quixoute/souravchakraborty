@@ -102,12 +102,12 @@
  };
  const renderFloatingCanvas=(ids,heading)=>{
   const entries=photoEntries(ids);
-  const cols=11,cellW=274,cellH=242,canvasW=cols*cellW+220,canvasH=Math.ceil(entries.length/cols)*cellH+260;
+  const projectIndex=ids.length>1,cols=projectIndex?4:11,cellW=projectIndex?700:274,cellH=projectIndex?600:242,canvasW=cols*cellW+220,canvasH=projectIndex?1450:Math.ceil(entries.length/cols)*cellH+260;
   const items=entries.map((item,i)=>{
    const col=i%cols,row=Math.floor(i/cols);
    const seed=(i*9301+49297)%233280,rand=seed/233280;
    const seed2=(i*7919+12345)%2147483647,rand2=(seed2%10000)/10000;
-   const width=Math.round(132+rand*104),left=90+col*cellW+Math.round(rand2*52),top=70+row*cellH+Math.round(((i*37)%83));
+   const width=projectIndex?Math.round(230+rand*110):Math.round(132+rand*104),left=90+col*cellW+Math.round(rand2*(projectIndex?130:52)),top=projectIndex?100+(i%2)*430+Math.round(rand2*90):70+row*cellH+Math.round(((i*37)%83));
    const title=ids.length===1?item.series.title:"";
    return item.isProject
     ?'<a class="floating-photo floating-project" href="#gallery/'+item.id+'" aria-label="Open '+esc(item.series.title)+' project" style="left:'+left+'px;top:'+top+'px;width:'+Math.round(width*1.28)+'px"><img src="'+esc(item.src)+'" alt="'+esc(item.series.title)+' project cover" loading="lazy"><span class="floating-photo-caption">'+esc(item.series.title)+' <small>'+String(item.series.count).padStart(2,"0")+' PHOTOGRAPHS</small></span></a>'

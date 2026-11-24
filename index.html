@@ -7,15 +7,15 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;1,6..72,300&family=Schibsted+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="portfolio.css?v=3">
-<link rel="stylesheet" href="landing-overrides.css?v=1">
+<link rel="stylesheet" href="landing-overrides.css?v=2">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <header class="nav" id="nav">
  <a class="brand" href="#home">SC<span>.</span></a>
  <nav class="desktop" aria-label="Main navigation">
-  <div class="nav-work"><a href="#work" class="nav-work-trigger" aria-haspopup="true">WORK <span>⌄</span></a>
-   <div class="work-dropdown">
+  <div class="nav-work"><button type="button" class="nav-work-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="work-dropdown">WORK <span>⌄</span></button>
+   <div class="work-dropdown" id="work-dropdown">
     <a href="#work/commercials">Commercials</a><a href="#work/weddings">Weddings</a><a href="#work/pre-wedding">Pre-wedding</a><a href="#work/short-films">Short Films</a><a href="#work/photography">Photography</a>
    </div>
   </div>

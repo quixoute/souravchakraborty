@@ -319,3 +319,8 @@ footer{padding:56px var(--pad) 30px;border-top:1px solid #252525;display:grid;gr
  .photo-lightbox{padding:8vh 5vw}
  .photo-lightbox-image{max-width:92vw;max-height:80vh}
 }
+
+/* Project cover links share the floating thumbnail treatment */
+.route-view.photography-route .floating-project{display:block;text-decoration:none}
+.route-view.photography-route .floating-project .floating-photo-caption{font-size:10px;letter-spacing:.08em;text-transform:uppercase}
+.route-view.photography-route .floating-photo-caption small{display:block;margin-top:4px;font-size:7px;letter-spacing:.14em;color:#999}

@@ -60,3 +60,25 @@ footer{padding:56px var(--pad) 30px;border-top:1px solid #252525;display:grid;gr
 .svg-filters{position:absolute;width:0;height:0;overflow:hidden;pointer-events:none}
 .optical-media img,.optical-media video{transform:scale(1.035);filter:url(#lens-distortion) brightness(.78) saturate(.82)}
 .category:hover iframe{transform:scale(1.035);transition:transform 1.2s cubic-bezier(.2,.7,.2,1)}
+
+/* Hero framing: remove baked-in letterbox/empty margins and give the footage presence */
+.hero-media{inset:-2px}
+.hero-media video{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center 50%;
+  transform:scale(1.2);
+  animation:none;
+  filter:url(#lens-distortion) brightness(.92) saturate(.9);
+}
+.hero-shade{
+  background:linear-gradient(90deg,rgba(0,0,0,.28),transparent 82%),
+             linear-gradient(0deg,rgba(0,0,0,.72),rgba(0,0,0,.02) 68%);
+}
+@media(max-width:760px){
+  .hero-media video{transform:scale(1.14);object-position:center center}
+}
+@media(prefers-reduced-motion:reduce){
+  .hero-media video{transform:none}
+}

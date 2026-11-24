@@ -99,3 +99,8 @@ footer{padding:56px var(--pad) 30px;border-top:1px solid #252525;display:grid;gr
 @media(prefers-reduced-motion:reduce){
  .hero-copy,.intro .eyebrow,.intro-line,.section-head,.category,.feature-copy,.about-copy,.capabilities>div,.contact-heading,.enquiry-form{transform:none!important;opacity:1!important;will-change:auto}
 }
+
+/* Featured photograph: preserve the couple in the lower part of the frame */
+.feature-image img{object-position:center 82%}
+.category-media video{filter:saturate(.82);transform:scale(1.01);transition:transform 1.2s cubic-bezier(.2,.7,.1,1)}
+.category:hover .category-media video{transform:scale(1.055)}

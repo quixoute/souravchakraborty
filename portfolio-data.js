@@ -28,7 +28,7 @@ window.PORTFOLIO={
   {id:"short-films",title:"Short Films",description:"Narrative work and independent moving-image experiments.",projects:[
    {title:"Light & Shadow",description:"A short film.",href:"#project/light-and-shadow",image:"31.jpg",videoSrc:"short-film.webm"}]},
   {id:"photography",title:"Photography",description:"Personal projects, portraits and visual explorations, collected as photographic series.",projects:[
-   {title:"Tri",description:"A photographic series.",href:"Tri.html",image:"Tri/1.webp",count:"14 photographs"},
+   {title:"Tri",description:"A photographic series.",href:"#gallery/tri",image:"Tri/1.webp",count:"14 photographs"},
    {title:"Dreamer",description:"A photographic series.",href:"#gallery/dreamer",image:"Dreamer/Dreamer-1.jpg",count:"15 photographs"},
    {title:"Untitled",description:"A photographic collection.",href:"#gallery/untitled",image:"Untitled/1.webp",count:"52 photographs"},
    {title:"Uber Eats",description:"A visual project.",href:"#gallery/ubereats",image:"ubereats/1.webp",count:"12 photographs"}]}

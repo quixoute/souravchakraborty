@@ -8,7 +8,7 @@
  const closeWork=()=>{workWrap?.classList.remove("is-open");workTrigger?.setAttribute("aria-expanded","false")};
  workTrigger?.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();const open=!workWrap.classList.contains("is-open");workWrap.classList.toggle("is-open",open);workTrigger.setAttribute("aria-expanded",String(open))});
  document.addEventListener("click",e=>{if(workWrap&&!workWrap.contains(e.target))closeWork()});
- $(".work-dropdown a").forEach(a=>a.addEventListener("click",closeWork));
+ $$(".work-dropdown a").forEach(a=>a.addEventListener("click",closeWork));
  const closeMenu=()=>{menu.classList.remove("open");menu.setAttribute("aria-hidden","true");toggle.setAttribute("aria-expanded","false");document.body.style.overflow=""};
  toggle.addEventListener("click",()=>{menu.classList.add("open");menu.setAttribute("aria-hidden","false");toggle.setAttribute("aria-expanded","true");document.body.style.overflow="hidden"});
  $(".menu-close").addEventListener("click",closeMenu);$$("a",menu).forEach(a=>a.addEventListener("click",closeMenu));addEventListener("keydown",e=>{if(e.key==="Escape")closeMenu()});

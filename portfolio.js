@@ -1,87 +1,72 @@
 (() => {
  const data=window.PORTFOLIO;if(!data)return;
- const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- const grid=document.getElementById('category-grid');
- const card=category=>{const p=category.projects[0]||{};const media=p.videoSrc?'<video src="'+esc(p.videoSrc)+'" poster="'+esc(p.image||data.site.heroPoster)+'" autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video>':p.videoId?'<iframe src="https://www.youtube-nocookie.com/embed/'+esc(p.videoId)+'?autoplay=1&mute=1&loop=1&playlist='+esc(p.videoId)+'&controls=0&modestbranding=1&playsinline=1&rel=0" title="'+esc(p.title)+' video thumbnail" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" tabindex="-1"></iframe>':'<img src="'+esc(p.image||data.site.heroPoster)+'" alt="'+esc(category.title)+'" loading="lazy">';return '<a class="category reveal" href="#'+esc(category.id)+'" data-category="'+esc(category.id)+'"><div class="category-media">'+media+'</div><div class="category-meta"><h3>'+esc(category.title)+'</h3><span class="category-count">'+String(category.projects.length).padStart(2,'0')+' PROJECTS</span></div><p>'+esc(category.description)+'</p></a>';};
- grid.innerHTML=data.categories.map(card).join('');document.getElementById('year').textContent=new Date().getFullYear();
- const nav=document.getElementById('nav'),toggle=document.querySelector('.menu-toggle'),menu=document.getElementById('mobile-menu');
- const closeMenu=()=>{menu.classList.remove('open');menu.setAttribute('aria-hidden','true');toggle.setAttribute('aria-expanded','false');document.body.style.overflow='';};
- toggle.addEventListener('click',()=>{menu.classList.add('open');menu.setAttribute('aria-hidden','false');toggle.setAttribute('aria-expanded','true');document.body.style.overflow='hidden';});
- document.querySelector('.menu-close').addEventListener('click',closeMenu);menu.querySelectorAll('a').forEach(a=>a.addEventListener('click',closeMenu));window.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu();});
- const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
- const clamp=(v,min,max)=>Math.min(max,Math.max(min,v));
- const heroCopy=document.querySelector('.hero-copy');
- const motionTargets=[
-  ...document.querySelectorAll('.intro .eyebrow,.intro-line,.section-head,.category,.feature-copy,.about-copy,.capabilities>div,.contact-heading,.enquiry-form')
- ];
- let ticking=false;
- const updateScrollMotion=()=>{
-  const vh=window.innerHeight||1;
-  const sy=window.scrollY||0;
-  nav.classList.toggle('scrolled',sy>40);
-  if(!reduced&&heroCopy){
-   const p=clamp(sy/(vh*.9),0,1.25);
-   heroCopy.style.transform='translate3d(0,'+(-p*210)+'px,0)';
-   heroCopy.style.opacity=String(clamp(1-p*1.12,0,1));
+ const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+ const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+ const reduced=matchMedia("(prefers-reduced-motion: reduce)").matches;
+ const nav=$("#nav"),menu=$("#mobile-menu"),toggle=$(".menu-toggle");
+ const closeMenu=()=>{menu.classList.remove("open");menu.setAttribute("aria-hidden","true");toggle.setAttribute("aria-expanded","false");document.body.style.overflow=""};
+ toggle.addEventListener("click",()=>{menu.classList.add("open");menu.setAttribute("aria-hidden","false");toggle.setAttribute("aria-expanded","true");document.body.style.overflow="hidden"});
+ $(".menu-close").addEventListener("click",closeMenu);$$("a",menu).forEach(a=>a.addEventListener("click",closeMenu));addEventListener("keydown",e=>{if(e.key==="Escape")closeMenu()});
+ addEventListener("scroll",()=>nav.classList.toggle("scrolled",scrollY>24),{passive:true});
+ $("#year").textContent=new Date().getFullYear();
+ const media=$("#showreel-media"),title=$("#active-title"),desc=$("#active-description"),kicker=$("#active-kicker"),counter=$("#showreel-counter"),buttons=$$(".recent-item");
+ let activeKey="ai",cycle={wedding:0,prewedding:0},currentVideo=null,muted=true;
+ const setMedia=(key,indexAdvance=false)=>{
+  const item=data.showreel[key];if(!item)return;
+  if(indexAdvance&&item.videos)cycle[key]=(cycle[key]+1)%item.videos.length;
+  activeKey=key;const entry=item.videos?item.videos[cycle[key]]:null;
+  title.innerHTML=item.title;desc.textContent=entry?entry.title:item.description;kicker.textContent=entry?"NOW PLAYING · "+(key==="wedding"?"WEDDINGS":"PRE-WEDDINGS"):"SELECTED WORK";
+  counter.textContent=String(["ai","wedding","prewedding","short"].indexOf(key)+1).padStart(2,"0")+" / 04";
+  buttons.forEach(b=>b.classList.toggle("active",b.dataset.showreel===key));
+  const next=document.createElement(item.type==="youtube"?"iframe":"video");
+  if(item.type==="youtube"){
+   next.src="https://www.youtube-nocookie.com/embed/"+entry.id+"?autoplay=1&mute=1&controls=0&loop=1&playlist="+entry.id+"&playsinline=1&rel=0&modestbranding=1";
+   next.title=entry.title;next.allow="autoplay; encrypted-media; picture-in-picture";next.setAttribute("allowfullscreen","");
+  }else{
+   next.src=item.src;next.autoplay=true;next.muted=true;next.loop=true;next.playsInline=true;next.preload="auto";next.controls=false;
+   if(key==="ai")next.poster="31.jpg";
+   next.addEventListener("canplay",()=>next.play().catch(()=>{}),{once:true});
   }
-  if(!reduced){
-   motionTargets.forEach((el,i)=>{
-    const r=el.getBoundingClientRect();
-    const center=r.top+r.height*.5;
-    const distance=(center-vh*.52)/vh;
-    const entering=clamp((vh-r.top)/(vh*.72),0,1);
-    const leaving=clamp((r.bottom+vh*.12)/(vh*.72),0,1);
-    const visibility=Math.min(entering,leaving);
-    const drift=clamp(-distance*42,-42,42);
-    const intro=el.classList.contains('intro-line')||el.closest('.intro');
-    const fromBelow=intro?((1-entering)*58 - (1-leaving)*24):drift;
-    const opacity=intro?clamp(visibility*1.35,0,1):clamp(visibility*1.6,0,1);
-    el.style.transform='translate3d(0,'+fromBelow.toFixed(1)+'px,0)';
-    el.style.opacity=String(opacity);
-   });
-  }
-  ticking=false;
+  next.className="showreel-video";next.setAttribute("aria-hidden","true");
+  const old=currentVideo||$("#hero-video");next.style.opacity="0";media.appendChild(next);
+  requestAnimationFrame(()=>{next.style.opacity="1";old.style.opacity="0";});
+  setTimeout(()=>{if(old!==next&&old.parentNode)old.remove()},reduced?0:850);
+  currentVideo=next;const sound=$("#sound-toggle");sound.textContent="SOUND OFF";sound.setAttribute("aria-label","Turn video sound on");muted=true;
  };
- const requestScrollUpdate=()=>{if(!ticking){requestAnimationFrame(updateScrollMotion);ticking=true;}};
- window.addEventListener('scroll',requestScrollUpdate,{passive:true});
- window.addEventListener('resize',requestScrollUpdate,{passive:true});
- updateScrollMotion();
- const revealObserver=new IntersectionObserver(entries=>entries.forEach(e=>{
-  if(e.isIntersecting){e.target.classList.add('visible','is-visible');}
-  else if(!reduced)e.target.classList.remove('visible');
- }),{threshold:0,rootMargin:'8% 0px 8% 0px'});
- document.querySelectorAll('.reveal,.intro').forEach(el=>revealObserver.observe(el));
- // Explicitly start the intro title video once its media data is ready.
- const introVideo=document.querySelector('.intro-title-video');
- if(introVideo){
-  introVideo.muted=true;
-  introVideo.defaultMuted=true;
-  introVideo.playsInline=true;
-  const startIntroVideo=()=>{
-   const playAttempt=introVideo.play();
-   if(playAttempt&&typeof playAttempt.catch==='function')playAttempt.catch(()=>{});
-  };
-  introVideo.addEventListener('loadeddata',startIntroVideo,{once:true});
-  introVideo.addEventListener('canplay',startIntroVideo,{once:true});
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&introVideo.paused)startIntroVideo();});
-  startIntroVideo();
- }
- const form=document.getElementById('enquiry-form');
- if(form)form.addEventListener('submit',async event=>{
-  event.preventDefault();if(!form.reportValidity())return;
-  const note=document.getElementById('form-note'),button=form.querySelector('[type="submit"]');
-  if(form.elements._gotcha?.value)return;
-  form.classList.remove('is-error','is-success');form.classList.add('is-submitting');button.textContent='SENDING…';note.textContent='Sending your enquiry securely…';
-  try{const response=await fetch(form.action,{method:'POST',body:new FormData(form),headers:{Accept:'application/json'}});
-   if(!response.ok)throw new Error('Form submission failed');
-   form.classList.remove('is-submitting');form.classList.add('is-success');note.textContent='Thank you — your enquiry has been sent. I’ll be in touch soon.';button.textContent='ENQUIRY SENT ✓';form.reset();
-  }catch(error){form.classList.remove('is-submitting');form.classList.add('is-error');note.textContent='Something went wrong. Please try again, or email me directly.';button.textContent='TRY AGAIN ↗';}
+ buttons.forEach(b=>b.addEventListener("click",()=>setMedia(b.dataset.showreel,b.dataset.showreel===activeKey)));
+ $("#sound-toggle").addEventListener("click",()=>{
+  if(!currentVideo)return;
+  if(currentVideo.tagName==="VIDEO"){muted=!muted;currentVideo.muted=muted;$("#sound-toggle").textContent=muted?"SOUND OFF":"SOUND ON";}
+  else{$("#sound-toggle").textContent="VIDEO MUTED";$("#sound-toggle").setAttribute("aria-label","YouTube preview is muted");}
  });
- const renderRoute=()=>{const id=decodeURIComponent(location.hash.slice(1)||'home'),category=data.categories.find(c=>c.id===id);document.getElementById('category-view')?.remove();if(!category)return;
-  const section=document.createElement('section');section.id='category-view';section.className='section category-view';
-  const items=category.projects.map(p=>{const media=p.videoSrc?'<video src="'+esc(p.videoSrc)+'" poster="'+esc(p.image||data.site.heroPoster)+'" autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video>':p.videoId?'<iframe src="https://www.youtube-nocookie.com/embed/'+esc(p.videoId)+'?autoplay=1&mute=1&loop=1&playlist='+esc(p.videoId)+'&controls=0&modestbranding=1&playsinline=1" title="'+esc(p.title)+' video thumbnail" loading="lazy" allow="autoplay; encrypted-media" tabindex="-1"></iframe>':'<img src="'+esc(p.image||data.site.heroPoster)+'" alt="'+esc(p.title)+'" loading="lazy">';return '<a class="project-link reveal" href="'+esc(p.href)+'"><div class="category-media">'+media+'</div><h3>'+esc(p.title)+'</h3><p>'+esc(p.description)+'</p><span class="text-link">VIEW PROJECT ↗</span></a>';}).join('');
-  section.innerHTML='<div class="category-view-head"><button class="back-link" type="button" id="back-work">← BACK TO SELECTED WORK</button><p class="eyebrow" style="margin-top:52px">PORTFOLIO CATEGORY</p><h2 style="font:300 clamp(48px,8vw,100px)/1 var(--serif);margin:18px 0">'+esc(category.title)+'</h2><p style="color:var(--muted);max-width:48ch">'+esc(category.description)+'</p></div><div class="category-view-grid">'+items+'</div>';
-  document.querySelector('main').appendChild(section);document.getElementById('back-work').addEventListener('click',()=>{section.remove();history.pushState(null,'','#work');document.getElementById('work').scrollIntoView({behavior:'smooth'});});section.querySelectorAll('.reveal').forEach(el=>revealObserver.observe(el));window.scrollTo({top:section.offsetTop-20,behavior:'smooth'});
+ const route=$("#route-view"),mainSections=[$("#home"),$("#about"),$("#contact")];
+ const imageCard=p=>'<a class="work-card" href="'+esc(p.href)+'"><div class="work-card-media">'+(p.videoSrc?'<video src="'+esc(p.videoSrc)+'" muted autoplay loop playsinline preload="metadata"></video>':p.image?'<img src="'+esc(p.image)+'" alt="'+esc(p.title)+'" loading="lazy">':'<div class="work-card-placeholder"></div>')+'<span class="card-open">VIEW ↗</span></div><div class="work-card-meta"><h3>'+esc(p.title)+'</h3><span>'+(p.count?esc(p.count):"VIEW PROJECT ↗")+'</span></div><p>'+esc(p.description)+'</p></a>';
+ const showCategory=id=>{
+  const cat=data.categories.find(x=>x.id===id);if(!cat)return false;
+  mainSections.forEach(s=>s.hidden=true);route.hidden=false;route.innerHTML='<div class="route-inner"><a class="route-back" href="#home">← BACK TO HOME</a><header class="route-heading"><p class="eyebrow">SELECTED WORK / '+esc(cat.title.toUpperCase())+'</p><h1>'+esc(cat.title)+'.</h1><p>'+esc(cat.description)+'</p></header><div class="work-grid">'+cat.projects.map(imageCard).join("")+'</div></div>';
+  scrollTo({top:0,behavior:reduced?"auto":"smooth"});return true;
  };
- window.addEventListener('hashchange',renderRoute);if(data.categories.some(c=>c.id===decodeURIComponent(location.hash.slice(1))))renderRoute();
+ const showProject=id=>{
+  if(id!=="light-and-shadow")return false;
+  mainSections.forEach(s=>s.hidden=true);route.hidden=false;route.innerHTML='<div class="route-inner project-detail"><a class="route-back" href="#work/short-films">← BACK TO SHORT FILMS</a><p class="eyebrow">SHORT FILM</p><h1>Light &amp; Shadow.</h1><div class="detail-video"><video src="short-film.webm" controls autoplay muted playsinline preload="metadata"></video></div></div>';
+  scrollTo({top:0,behavior:reduced?"auto":"smooth"});return true;
+ };
+ const renderRoute=()=>{
+  const parts=decodeURIComponent(location.hash.slice(1)).split("/");
+  if(parts[0]==="work"&&parts[1]){showCategory(parts[1]);return}
+  if(parts[0]==="project"&&parts[1]){showProject(parts[1]);return}
+  route.hidden=true;route.innerHTML="";mainSections.forEach(s=>s.hidden=false);
+  if(parts[0]==="about"||parts[0]==="contact")setTimeout(()=>$(parts[0]==="about"?"#about":"#contact").scrollIntoView({behavior:reduced?"auto":"smooth"}),0);
+  else if(parts[0]==="work")setTimeout(()=>$("#nav").scrollIntoView(),0);
+ };
+ addEventListener("hashchange",renderRoute);renderRoute();
+ const form=$("#enquiry-form");
+ if(form)form.addEventListener("submit",async e=>{
+  e.preventDefault();if(!form.reportValidity())return;
+  const note=$("#form-note"),button=$('[type="submit"]',form);
+  if(form.elements._gotcha?.value)return;
+  form.classList.remove("is-error","is-success");form.classList.add("is-submitting");button.textContent="SENDING…";note.textContent="Sending your enquiry securely…";
+  try{const res=await fetch(form.action,{method:"POST",body:new FormData(form),headers:{Accept:"application/json"}});if(!res.ok)throw Error("Submission failed");form.classList.remove("is-submitting");form.classList.add("is-success");note.textContent="Thank you — your enquiry has been sent.";button.textContent="ENQUIRY SENT ✓";form.reset()}
+  catch(err){form.classList.remove("is-submitting");form.classList.add("is-error");note.textContent="Something went wrong. Please try again or email me directly.";button.textContent="TRY AGAIN ↗"}
+ });
 })();

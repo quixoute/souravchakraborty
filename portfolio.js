@@ -57,8 +57,18 @@
  window.selectShowreel=setMedia;
  $("#sound-toggle").addEventListener("click",()=>{
   if(!currentVideo)return;
-  if(currentVideo.tagName==="VIDEO"){muted=!muted;currentVideo.muted=muted;$("#sound-toggle").textContent=muted?"SOUND OFF":"SOUND ON";}
-  else{$("#sound-toggle").textContent="VIDEO MUTED";$("#sound-toggle").setAttribute("aria-label","YouTube preview is muted");}
+  muted=!muted;
+  if(currentVideo.tagName==="VIDEO"){
+   currentVideo.muted=muted;
+   if(!muted){const playPromise=currentVideo.play();if(playPromise&&playPromise.catch)playPromise.catch(()=>{});}
+  }else if(currentVideo.tagName==="IFRAME"){
+   // YouTube embeds start muted; use the IFrame API postMessage command on this user gesture.
+   currentVideo.contentWindow?.postMessage(JSON.stringify({event:"command",func:muted?"mute":"unMute",args:[]}),"*");
+   currentVideo.contentWindow?.postMessage(JSON.stringify({event:"command",func:"setVolume",args:[100]}),"*");
+  }
+  const button=$("#sound-toggle");
+  button.textContent=muted?"SOUND OFF":"SOUND ON";
+  button.setAttribute("aria-label",muted?"Turn video sound on":"Turn video sound off");
  });
  const route=$("#route-view"),mainSections=[$("#home"),$("#way-of-seeing"),$("#feature"),$("#about"),$("#contact")];
  const imageCard=(p,catId)=>{

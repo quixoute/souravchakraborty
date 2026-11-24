@@ -91,15 +91,47 @@
   ubereats:{title:"Uber Eats",description:"A visual project.",directory:"ubereats",prefix:"",extension:"webp",count:12}
  };
  const photoSrc=(series,index)=>series.directory+"/"+series.prefix+(index+1)+"."+series.extension;
- const showPhotographyIndex=()=>{
-  const sections=Object.entries(photoSeries).map(([id,series],seriesIndex)=>{
-   const previewCount=Math.min(series.count,4);
-   const previews=Array.from({length:previewCount},(_,i)=>'<a class="photo-index-item" href="#gallery/'+id+'" aria-label="Open '+esc(series.title)+' photo series"><img src="'+esc(photoSrc(series,i))+'" alt="'+esc(series.title)+' — photograph '+(i+1)+'" loading="lazy"><span class="photo-index-number">'+String(i+1).padStart(2,"0")+'</span></a>').join("");
-   return '<section class="photo-series" id="photo-series-'+id+'"><header class="photo-series-heading"><div><p class="photo-overline">SERIES '+String(seriesIndex+1).padStart(2,"0")+'</p><h2>'+esc(series.title)+'</h2><p>'+esc(series.description)+'</p></div><a class="photo-series-link" href="#gallery/'+id+'">VIEW SERIES <span>↗</span></a></header><div class="photo-index-grid">'+previews+'</div></section>';
+ const photoEntries=(ids)=>{
+  const entries=[];ids.forEach(id=>{const g=photoSeries[id];for(let i=0;i<g.count;i++)entries.push({id,series:g,index:i,src:photoSrc(g,i),number:i+1})});return entries;
+ };
+ const renderFloatingCanvas=(ids,heading)=>{
+  const entries=photoEntries(ids);
+  const cols=11,cellW=274,cellH=242,canvasW=cols*cellW+220,canvasH=Math.ceil(entries.length/cols)*cellH+260;
+  const items=entries.map((item,i)=>{
+   const col=i%cols,row=Math.floor(i/cols);
+   const seed=(i*9301+49297)%233280,rand=seed/233280;
+   const seed2=(i*7919+12345)%2147483647,rand2=(seed2%10000)/10000;
+   const width=Math.round(132+rand*104),left=90+col*cellW+Math.round(rand2*52),top=70+row*cellH+Math.round(((i*37)%83));
+   const title=ids.length===1?item.series.title:"";
+   return '<button class="floating-photo" type="button" data-photo-src="'+esc(item.src)+'" data-photo-title="'+esc(title)+'" data-photo-index="'+item.index+'" aria-label="View '+esc(item.series.title)+' photograph '+item.number+'" style="left:'+left+'px;top:'+top+'px;width:'+width+'px"><img src="'+esc(item.src)+'" alt="'+esc(item.series.title)+' — photograph '+item.number+'" loading="lazy"><span class="floating-photo-caption">'+(ids.length===1?String(item.number).padStart(2,"0")+' / '+esc(item.series.title):esc(item.series.title))+'</span></button>';
   }).join("");
+  const labels=ids.length===1?'':ids.map((id,i)=>{
+   const x=390+i*780,y=520+(i%2)*650;
+   return '<a class="floating-series-label" href="#gallery/'+id+'" style="left:'+x+'px;top:'+y+'px"><span>PHOTOGRAPHIC SERIES</span><strong>'+esc(photoSeries[id].title)+'</strong><small>'+esc(photoSeries[id].description)+'</small></a>';
+  }).join("");
+  return '<div class="floating-gallery-shell"><div class="floating-gallery-top"><a href="#home" class="floating-gallery-mark">SC.</a><nav><a href="#work/photography">GALLERY</a><a href="#about">ABOUT</a><a href="#contact">CONTACT</a></nav></div><div class="floating-gallery-heading">'+heading+'</div><div class="floating-gallery-canvas" style="width:'+canvasW+'px;height:'+canvasH+'px">'+items+labels+'</div><div class="floating-gallery-hint">DRAG TO EXPLORE</div><div class="photo-lightbox" hidden><button type="button" class="photo-lightbox-close" aria-label="Close image">×</button><button type="button" class="photo-lightbox-prev" aria-label="Previous image">‹</button><img class="photo-lightbox-image" alt=""><button type="button" class="photo-lightbox-next" aria-label="Next image">›</button><div class="photo-lightbox-caption"></div></div></div>';
+ };
+ const bindFloatingGallery=()=>{
+  const shell=$(".floating-gallery-shell",route);if(!shell)return;
+  const canvas=$(".floating-gallery-canvas",shell),lightbox=$(".photo-lightbox",shell),image=$(".photo-lightbox-image",shell),caption=$(".photo-lightbox-caption",shell);
+  const photos=$$("[data-photo-src]",canvas);let current=0;
+  const open=i=>{current=(i+photos.length)%photos.length;const p=photos[current];image.src=p.dataset.photoSrc;caption.textContent=(p.dataset.photoTitle||"Photography")+" · "+String(Number(p.dataset.photoIndex)+1).padStart(2,"0");lightbox.hidden=false};
+  const close=()=>{lightbox.hidden=true;image.removeAttribute("src")};
+  photos.forEach((p,i)=>p.addEventListener("click",()=>open(i)));
+  $(".photo-lightbox-close",shell).addEventListener("click",close);
+  $(".photo-lightbox-prev",shell).addEventListener("click",()=>open(current-1));
+  $(".photo-lightbox-next",shell).addEventListener("click",()=>open(current+1));
+  lightbox.addEventListener("click",e=>{if(e.target===lightbox)close()});
+  document.addEventListener("keydown",e=>{if(lightbox.hidden)return;if(e.key==="Escape")close();if(e.key==="ArrowLeft")open(current-1);if(e.key==="ArrowRight")open(current+1)});
+  let down=false,startX=0,startY=0,left=0,top=0;
+  shell.addEventListener("pointerdown",e=>{if(e.target.closest("button,a"))return;down=true;startX=e.clientX;startY=e.clientY;left=shell.scrollLeft;top=shell.scrollTop;shell.classList.add("is-dragging")});
+  shell.addEventListener("pointermove",e=>{if(!down)return;shell.scrollLeft=left-(e.clientX-startX);shell.scrollTop=top-(e.clientY-startY)});
+  ["pointerup","pointercancel","pointerleave"].forEach(type=>shell.addEventListener(type,()=>{down=false;shell.classList.remove("is-dragging")}));
+ };
+ const showPhotographyIndex=()=>{
   mainSections.forEach(s=>s.hidden=true);route.hidden=false;route.classList.add("photography-route");
-  route.innerHTML='<div class="photo-gallery-site"><header class="photo-site-header"><a href="#home" class="photo-site-mark">SC.</a><span class="photo-site-current">PHOTOGRAPHY</span><nav><a href="#work/photography">GALLERY</a><a href="#about">ABOUT</a><a href="#contact">CONTACT</a></nav></header><div class="photo-site-intro"><p class="photo-overline">PERSONAL WORK / INDIA</p><h1>Photography<span>.</span></h1><p>Selected photographic series and visual studies.</p></div><main class="photo-series-list">'+sections+'</main><footer class="photo-site-footer"><span>SOURAV CHAKRABORTY</span><span>PHOTOGRAPHY / INDIA</span></footer></div>';
-  scrollTo({top:0,behavior:reduced?"auto":"smooth"});return true;
+  route.innerHTML=renderFloatingCanvas(Object.keys(photoSeries),'<span>PHOTOGRAPHY / SELECTED WORK</span>');
+  bindFloatingGallery();scrollTo({top:0,behavior:reduced?"auto":"smooth"});return true;
  };
  const showCategory=id=>{
   if(id==="photography")return showPhotographyIndex();
@@ -152,11 +184,10 @@
   scrollTo({top:0,behavior:reduced?"auto":"smooth"});return true;
  };
  const showGallery=id=>{
-  const g=photoSeries[id];if(!g)return false;
+  const series=photoSeries[id];if(!series)return false;
   mainSections.forEach(s=>s.hidden=true);route.hidden=false;route.classList.add("photography-route");
-  const cards=Array.from({length:g.count},(_,i)=>'<figure class="photo-artwork"><img src="'+esc(photoSrc(g,i))+'" alt="'+esc(g.title)+' — photograph '+(i+1)+'" loading="lazy"><figcaption><span>'+String(i+1).padStart(2,"0")+'</span><span>'+esc(g.title)+'</span></figcaption></figure>').join("");
-  route.innerHTML='<div class="photo-gallery-site"><header class="photo-site-header"><a href="#home" class="photo-site-mark">SC.</a><span class="photo-site-current">PHOTOGRAPHY</span><nav><a href="#work/photography">GALLERY</a><a href="#about">ABOUT</a><a href="#contact">CONTACT</a></nav></header><main class="photo-series-detail"><a class="photo-back-link" href="#work/photography">← ALL PHOTOGRAPHY</a><header class="photo-detail-heading"><p class="photo-overline">PHOTOGRAPHIC SERIES</p><h1>'+esc(g.title)+'<span>.</span></h1><p>'+esc(g.description)+'</p><span class="photo-count">'+String(g.count).padStart(2,"0")+' PHOTOGRAPHS</span></header><div class="photo-artwork-grid">'+cards+'</div></main><footer class="photo-site-footer"><span>SOURAV CHAKRABORTY</span><span>PHOTOGRAPHY / INDIA</span></footer></div>';
-  scrollTo({top:0,behavior:reduced?"auto":"smooth"});return true;
+  route.innerHTML=renderFloatingCanvas([id],'<a href="#work/photography">← ALL PHOTOGRAPHY</a><span>'+esc(series.title)+'</span>');
+  bindFloatingGallery();scrollTo({top:0,behavior:reduced?"auto":"smooth"});return true;
  };
  const showProject=id=>{
   if(id!=="light-and-shadow")return false;

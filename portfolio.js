@@ -105,9 +105,8 @@
  };
  const renderFloatingCanvas=(ids,heading)=>{
   const entries=photoEntries(ids);
-  const projectIndex=ids.length>1,viewportW=Math.max(320,window.innerWidth),cols=projectIndex?2:(viewportW<650?2:viewportW<1050?3:5),cellW=projectIndex?700:viewportW/cols,cellH=projectIndex?600:220,canvasW=projectIndex?1750:viewportW,canvasH=projectIndex?1320:Math.max(window.innerHeight-70,Math.ceil(entries.length/cols)*cellH+100);
+  const projectIndex=ids.length>1,viewportW=Math.max(320,window.innerWidth),rowCounts=[4,3,4,4],totalRows=4,canvasW=projectIndex?1750:viewportW,canvasH=projectIndex?1320:Math.max(window.innerHeight-70,80+totalRows*250);
   const items=entries.map((item,i)=>{
-   const col=i%cols,row=Math.floor(i/cols);
    const seed=(i*9301+49297)%233280,rand=seed/233280;
    const seed2=(i*7919+12345)%2147483647,rand2=(seed2%10000)/10000;
    const projectIndex=ids.length>1;
@@ -118,10 +117,18 @@
     {left:1280,top:790,width:310}
    ];
    const position=projectIndex?projectPositions[i]:null;
-   const width=projectIndex?position.width:Math.min(Math.round(138+rand*48),Math.round(cellW*.66));
-   const localJitter=Math.round((rand2-.5)*Math.min(28,cellW*.08));
-   const left=projectIndex?position.left:Math.round(col*cellW+(cellW-width)/2+localJitter);
-   const top=projectIndex?position.top:62+row*cellH+Math.round(rand*34);
+   let row=0,col=0,rowStart=0;
+   if(!projectIndex){
+    for(let r=0;r<rowCounts.length;r++){if(i<rowStart+rowCounts[r]){row=r;col=i-rowStart;break;}rowStart+=rowCounts[r];}
+   }
+   const count=projectIndex?1:rowCounts[row];
+   const width=projectIndex?position.width:Math.min(Math.round(150+rand*58),Math.round(viewportW/(count+.7)));
+   const gap=projectIndex?0:Math.max(24,Math.round(viewportW*.025));
+   const slot=projectIndex?0:(viewportW-gap*(count+1))/count;
+   const rowShift=projectIndex?0:((row%2===0)?-0.035:0.045)*viewportW;
+   const localJitter=Math.round((rand2-.5)*Math.min(62,slot*.34));
+   const left=projectIndex?position.left:Math.max(12,Math.min(viewportW-width-12,Math.round(gap+col*slot+((slot-width)/2)+rowShift+localJitter)));
+   const top=projectIndex?position.top:48+row*250+Math.round(rand*74);
    const caption=projectIndex?esc(item.series.title)+' <small>'+String(item.series.count).padStart(2,"0")+' PHOTOGRAPHS</small>':String(item.number).padStart(2,"0")+' / '+esc(item.series.title);
    return projectIndex
     ?'<a class="floating-photo floating-project" href="#gallery/'+item.id+'" aria-label="Open '+esc(item.series.title)+' project" style="left:'+left+'px;top:'+top+'px;width:'+width+'px"><img src="'+esc(item.src)+'" alt="'+esc(item.series.title)+' project cover" loading="lazy"><span class="floating-photo-caption">'+caption+'</span></a>'

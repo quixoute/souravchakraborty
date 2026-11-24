@@ -31,3 +31,10 @@ footer{padding:56px var(--pad) 30px;border-top:1px solid #252525;display:grid;gr
 .enquiry-form .contact-button{justify-self:start;border:0;cursor:pointer;font-family:var(--sans)}
 .form-note{color:var(--muted);font-size:11px;margin-top:-14px}
 @media(max-width:760px){.contact{grid-template-columns:1fr;gap:42px}.form-row{grid-template-columns:1fr}}
+
+.capabilities{grid-column:1/-1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:28px;padding-top:28px;border-top:1px solid #292929}
+.capabilities>.eyebrow{grid-column:1/-1}
+.capabilities h3{font:500 14px/1.4 var(--sans);margin:0 0 10px}
+.capabilities div p{font-size:12px;line-height:1.7;color:var(--muted);margin:0}
+@media(max-width:760px){.capabilities{grid-template-columns:1fr 1fr;gap:26px 18px}}
+@media(max-width:420px){.capabilities{grid-template-columns:1fr}}

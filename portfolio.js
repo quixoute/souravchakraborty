@@ -16,7 +16,7 @@
     const section=document.createElement('section');section.id='category-view';section.className='section category-view';
     const items=category.projects.map(p=>'<a class="project-link reveal" href="'+esc(p.href)+'"><div class="category-media"><img src="'+esc(p.image||data.site.heroPoster)+'" alt="'+esc(p.title)+'" loading="lazy"></div><h3>'+esc(p.title)+'</h3><p>'+esc(p.description)+'</p><span class="text-link">VIEW PROJECT ↗</span></a>').join('');
     section.innerHTML='<div class="category-view-head"><button class="back-link" type="button" id="back-work">← BACK TO SELECTED WORK</button><p class="eyebrow" style="margin-top:52px">PORTFOLIO CATEGORY</p><h2 style="font:300 clamp(48px,8vw,100px)/1 var(--serif);margin:18px 0">'+esc(category.title)+'</h2><p style="color:var(--muted);max-width:48ch">'+esc(category.description)+'</p></div><div class="category-view-grid">'+items+'</div>';
-    document.querySelector('main').appendChild(section);document.getElementById('back-work').addEventListener('click',()=>{history.pushState(null,'','#work');document.getElementById('work').scrollIntoView({behavior:'smooth'});});observe();window.scrollTo({top:section.offsetTop-20,behavior:'smooth'});
+    document.querySelector('main').appendChild(section);document.getElementById('back-work').addEventListener('click',()=>{section.remove();history.pushState(null,'','#work');document.getElementById('work').scrollIntoView({behavior:'smooth'});});observe();window.scrollTo({top:section.offsetTop-20,behavior:'smooth'});
   };
   window.addEventListener('hashchange',renderRoute);if(data.categories.some(c=>c.id===decodeURIComponent(location.hash.slice(1))))renderRoute();
 })();

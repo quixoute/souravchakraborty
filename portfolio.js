@@ -46,6 +46,14 @@
   mainSections.forEach(s=>s.hidden=true);route.hidden=false;route.innerHTML='<div class="route-inner"><a class="route-back" href="#home">← BACK TO HOME</a><header class="route-heading"><p class="eyebrow">SELECTED WORK / '+esc(cat.title.toUpperCase())+'</p><h1>'+esc(cat.title)+'.</h1><p>'+esc(cat.description)+'</p></header><div class="work-grid">'+cat.projects.map(imageCard).join("")+'</div></div>';
   scrollTo({top:0,behavior:reduced?"auto":"smooth"});return true;
  };
+ const showGallery=id=>{
+  const map={dreamer:{title:"Dreamer",dir:"Dreamer",prefix:"Dreamer-",ext:"jpg",count:15},untitled:{title:"Untitled",dir:"Untitled",prefix:"",ext:"webp",count:52},ubereats:{title:"Uber Eats",dir:"ubereats",prefix:"",ext:"webp",count:12},tri:{title:"Tri",dir:"Tri",prefix:"",ext:"webp",count:14}};
+  const g=map[id];if(!g)return false;
+  mainSections.forEach(s=>s.hidden=true);route.hidden=false;
+  const cards=Array.from({length:g.count},(_,i)=>{const n=i+1;const src=g.dir+"/"+g.prefix+n+"."+g.ext;return '<figure class="photo-gallery-item"><img src="'+esc(src)+'" alt="'+esc(g.title)+' — photograph '+n+'" loading="lazy"><figcaption>'+String(n).padStart(2,"0")+'</figcaption></figure>'}).join("");
+  route.innerHTML='<div class="route-inner photo-gallery"><a class="route-back" href="#work/photography">← BACK TO PHOTOGRAPHY</a><header class="route-heading"><p class="eyebrow">PHOTOGRAPHIC SERIES</p><h1>'+esc(g.title)+'.</h1></header><div class="photo-gallery-grid">'+cards+'</div></div>';
+  scrollTo({top:0,behavior:reduced?"auto":"smooth"});return true;
+ };
  const showProject=id=>{
   if(id!=="light-and-shadow")return false;
   mainSections.forEach(s=>s.hidden=true);route.hidden=false;route.innerHTML='<div class="route-inner project-detail"><a class="route-back" href="#work/short-films">← BACK TO SHORT FILMS</a><p class="eyebrow">SHORT FILM</p><h1>Light &amp; Shadow.</h1><div class="detail-video"><video src="short-film.webm" controls autoplay muted playsinline preload="metadata"></video></div></div>';
@@ -55,6 +63,7 @@
   const parts=decodeURIComponent(location.hash.slice(1)).split("/");
   if(parts[0]==="work"&&parts[1]){showCategory(parts[1]);return}
   if(parts[0]==="project"&&parts[1]){showProject(parts[1]);return}
+  if(parts[0]==="gallery"&&parts[1]){showGallery(parts[1]);return}
   route.hidden=true;route.innerHTML="";mainSections.forEach(s=>s.hidden=false);
   if(parts[0]==="about"||parts[0]==="contact")setTimeout(()=>$(parts[0]==="about"?"#about":"#contact").scrollIntoView({behavior:reduced?"auto":"smooth"}),0);
   else if(parts[0]==="work")setTimeout(()=>$("#nav").scrollIntoView(),0);

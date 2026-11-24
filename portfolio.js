@@ -19,7 +19,7 @@
     if(!form.reportValidity())return;
     const values=Object.fromEntries(new FormData(form));
     const subject='Project enquiry: '+values['Project category'];
-    const body=Object.entries(values).filter(([,value])=>String(value).trim()).map(([key,value])=>key+': '+value).join('\\n\\n');
+    const body=Object.entries(values).filter(([,value])=>String(value).trim()).map(([key,value])=>key+': '+value).join('\n\n');
     document.getElementById('form-note').textContent='Opening your email application with the enquiry details. Nothing is sent automatically.';
     window.location.href='mailto:'+encodeURIComponent(data.site.email)+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
   });

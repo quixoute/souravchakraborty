@@ -15,34 +15,49 @@
  addEventListener("scroll",()=>nav.classList.toggle("scrolled",scrollY>24),{passive:true});
  $("#year").textContent=new Date().getFullYear();
  const media=$("#showreel-media"),title=$("#active-title"),desc=$("#active-description"),kicker=$("#active-kicker"),counter=$("#showreel-counter"),buttons=$$(".recent-item");
- let activeKey="ai",cycle={wedding:0,prewedding:0},currentVideo=$("#hero-video"),muted=true;
- const setMedia=(key,indexAdvance=false)=>{
+ let activeKey="ai",cycle={wedding:0,prewedding:0},currentVideo=$("#hero-video"),muted=true,mediaRequest=0;
+ const setMedia=(key)=>{
   const item=data.showreel[key];if(!item)return;
-  if(indexAdvance&&item.videos)cycle[key]=(cycle[key]+1)%item.videos.length;
-  activeKey=key;const entry=item.videos?item.videos[cycle[key]]:null;
-  title.innerHTML=item.title;desc.textContent=entry?entry.title:item.description;kicker.textContent=entry?"NOW PLAYING · "+(key==="wedding"?"WEDDINGS":"PRE-WEDDINGS"):"SELECTED WORK";
+  // First selection starts at item zero; each repeat click advances to the next film.
+  if(key===activeKey&&item.videos?.length)cycle[key]=(cycle[key]+1)%item.videos.length;
+  else if(item.videos?.length)cycle[key]=0;
+  activeKey=key;
+  const entry=item.videos?item.videos[cycle[key]]:null;
+  title.innerHTML=item.title;
+  desc.textContent=entry?entry.title:item.description;
+  kicker.textContent=entry?"NOW PLAYING · "+(key==="wedding"?"WEDDINGS":"PRE-WEDDINGS"):"SELECTED WORK";
   counter.textContent=String(["ai","wedding","prewedding","short"].indexOf(key)+1).padStart(2,"0")+" / 04";
-  buttons.forEach(b=>b.classList.toggle("active",b.dataset.showreel===key));
-  const next=document.createElement(item.type==="youtube"?"iframe":"video");
+  buttons.forEach(b=>{const active=b.dataset.showreel===key;b.classList.toggle("active",active);b.setAttribute("aria-pressed",String(active))});
+  const request=++mediaRequest;
+  let next;
   if(item.type==="youtube"){
-   next.src="https://www.youtube-nocookie.com/embed/"+entry.id+"?autoplay=1&mute=1&controls=0&loop=1&playlist="+entry.id+"&playsinline=1&rel=0&modestbranding=1";
-   next.title=entry.title;next.allow="autoplay; encrypted-media; picture-in-picture";next.setAttribute("allowfullscreen","");
+   next=document.createElement("iframe");
+   next.src="https://www.youtube.com/embed/"+entry.id+"?autoplay=1&mute=1&controls=0&playsinline=1&rel=0&modestbranding=1&iv_load_policy=3&enablejsapi=1";
+   next.title=entry.title+" — "+(key==="wedding"?"Wedding teaser":"Pre-wedding teaser");
+   next.allow="autoplay; encrypted-media; picture-in-picture; fullscreen";
+   next.referrerPolicy="strict-origin-when-cross-origin";
+   next.setAttribute("allowfullscreen","");
+   next.loading="eager";
   }else{
+   next=document.createElement("video");
    next.src=item.src;next.autoplay=true;next.muted=true;next.loop=true;next.playsInline=true;next.preload="auto";next.controls=false;
    if(key==="ai")next.poster="31.jpg";
-   next.addEventListener("canplay",()=>next.play().catch(()=>{}),{once:true});
+   next.addEventListener("loadeddata",()=>{if(request===mediaRequest)next.play().catch(()=>{})},{once:true});
+   next.addEventListener("error",()=>{if(request===mediaRequest)desc.textContent="Video could not be loaded. Please refresh the page."},{once:true});
   }
-  next.className="showreel-video";next.setAttribute("aria-hidden","true");next.style.pointerEvents="none";
-  const old=currentVideo||$("#hero-video");next.style.opacity="0";media.appendChild(next);
-  requestAnimationFrame(()=>{next.style.opacity="1";old.style.opacity="0";});
-  setTimeout(()=>{if(old!==next&&old.parentNode)old.remove()},reduced?0:850);
-  currentVideo=next;const sound=$("#sound-toggle");sound.textContent="SOUND OFF";sound.setAttribute("aria-label","Turn video sound on");muted=true;
+  next.className="showreel-video";next.setAttribute("aria-hidden","true");next.style.pointerEvents="none";next.style.opacity="0";
+  const old=currentVideo;
+  media.appendChild(next);
+  requestAnimationFrame(()=>{if(request!==mediaRequest)return;next.style.opacity="1";if(old)old.style.opacity="0"});
+  setTimeout(()=>{if(request===mediaRequest&&old&&old!==next&&old.parentNode)old.remove()},reduced?0:850);
+  currentVideo=next;
+  const sound=$("#sound-toggle");sound.textContent="SOUND OFF";sound.setAttribute("aria-label","Turn video sound on");muted=true;
  };
  // Delegated interaction keeps the Recent Works controls responsive even if the hero is re-rendered.
  const activateShowreelButton=b=>{
   const key=b?.dataset?.showreel;
   if(!key||!data.showreel[key])return;
-  setMedia(key,key===activeKey);
+  setMedia(key);
  };
  buttons.forEach(b=>b.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();activateShowreelButton(b)}));
  $("#showreel-media").addEventListener("click",e=>{

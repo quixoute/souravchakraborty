@@ -5,7 +5,6 @@ window.PORTFOLIO = {
     email: "work.souravchakraborty@gmail.com",
     whatsapp: "https://wa.me/918697572685",
     instagram: "https://www.instagram.com/looney_is_glad/",
-    linkedin: "https://www.linkedin.com/",
     heroVideo: "",
     heroPoster: "31.jpg"
   },

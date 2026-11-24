@@ -276,3 +276,46 @@ footer{padding:56px var(--pad) 30px;border-top:1px solid #252525;display:grid;gr
  .photo-site-mark{font-size:13px}
  .photo-site-current{display:none}
 }
+
+/* Photography reference: floating, spatially arranged thumbnail canvas */
+.route-view.photography-route{padding:0!important;margin:0!important;width:100%;height:calc(100svh - 1px);min-height:620px;overflow:hidden!important;background:#f5f5f3!important;color:#181818!important}
+.route-view.photography-route .floating-gallery-shell{position:relative;width:100%;height:100%;overflow:auto;overscroll-behavior:contain;cursor:grab;background-color:#f5f5f3;background-image:linear-gradient(rgba(20,20,20,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(20,20,20,.035) 1px,transparent 1px);background-size:110px 110px;scrollbar-width:thin;scrollbar-color:#bbb transparent}
+.route-view.photography-route .floating-gallery-shell.is-dragging{cursor:grabbing;user-select:none}
+.floating-gallery-top{position:sticky;z-index:20;top:0;left:0;width:100%;height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:rgba(245,245,243,.9);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,.035);cursor:default}
+.floating-gallery-top a{color:#222;text-decoration:none;font:500 9px/1 var(--sans);letter-spacing:.04em}
+.floating-gallery-mark{font-size:13px!important;font-weight:700!important;letter-spacing:.12em!important}
+.floating-gallery-top nav{display:flex;gap:24px}
+.floating-gallery-top nav a:hover{opacity:.5}
+.floating-gallery-heading{position:sticky;z-index:10;top:48px;left:0;display:flex;gap:24px;align-items:center;padding:12px 28px;width:max-content;min-width:100%;background:rgba(245,245,243,.86);font:500 9px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:#777;pointer-events:none}
+.floating-gallery-heading a{color:#555;text-decoration:none;pointer-events:auto}
+.floating-gallery-canvas{position:relative;margin:0;min-height:1400px}
+.floating-photo{position:absolute;display:block;padding:0;border:0;background:transparent;text-align:left;color:#777;cursor:zoom-in}
+.floating-photo img{display:block;width:100%;height:auto;max-height:220px;object-fit:contain;object-position:left bottom;mix-blend-mode:multiply;transition:filter .35s,transform .5s;transform-origin:center}
+.floating-photo:hover{z-index:5}
+.floating-photo:hover img{filter:contrast(1.04);transform:scale(1.035)}
+.floating-photo-caption{display:block;margin-top:5px;font:400 8px/1.35 var(--sans);letter-spacing:.01em;color:#777;text-align:left}
+.floating-series-label{position:absolute;display:flex;flex-direction:column;gap:7px;width:230px;color:#222;text-decoration:none;cursor:pointer}
+.floating-series-label>span{font:500 8px var(--sans);letter-spacing:.18em;color:#999}
+.floating-series-label strong{font:600 clamp(24px,2.2vw,38px)/.95 var(--sans);letter-spacing:-.05em}
+.floating-series-label small{font:400 10px/1.5 var(--sans);color:#888}
+.floating-gallery-hint{position:fixed;z-index:20;right:18px;bottom:16px;padding:8px 10px;background:rgba(245,245,243,.85);font:500 8px var(--sans);letter-spacing:.16em;color:#777;pointer-events:none}
+.photo-lightbox[hidden]{display:none}
+.photo-lightbox{position:fixed;z-index:50;inset:0;background:rgba(12,12,12,.94);display:flex;align-items:center;justify-content:center;padding:6vh 7vw;cursor:default}
+.photo-lightbox-image{max-width:86vw;max-height:84vh;width:auto;height:auto;object-fit:contain}
+.photo-lightbox-close,.photo-lightbox-prev,.photo-lightbox-next{position:absolute;border:0;background:transparent;color:#fff;font:300 38px/1 var(--sans);cursor:pointer;padding:12px}
+.photo-lightbox-close{top:16px;right:24px;font-size:32px}
+.photo-lightbox-prev{left:18px;top:50%;transform:translateY(-50%)}
+.photo-lightbox-next{right:18px;top:50%;transform:translateY(-50%)}
+.photo-lightbox-caption{position:absolute;bottom:18px;left:0;right:0;text-align:center;color:#ddd;font:400 9px var(--sans);letter-spacing:.16em;text-transform:uppercase}
+@media(max-width:700px){
+ .route-view.photography-route{height:calc(100svh - 1px);min-height:540px}
+ .floating-gallery-top{height:46px;padding:0 16px}
+ .floating-gallery-top nav{gap:14px}
+ .floating-gallery-top a{font-size:8px}
+ .floating-gallery-heading{top:46px;padding:10px 16px}
+ .floating-gallery-canvas{transform-origin:top left}
+ .floating-photo img{max-height:170px}
+ .floating-gallery-hint{right:10px;bottom:10px}
+ .photo-lightbox{padding:8vh 5vw}
+ .photo-lightbox-image{max-width:92vw;max-height:80vh}
+}

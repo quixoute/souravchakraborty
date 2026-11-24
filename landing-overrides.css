@@ -130,3 +130,23 @@ html,body{width:100%;max-width:100%;margin:0;overflow-x:hidden}
 .recent-item .recent-arrow{opacity:.55!important}
 .recent-item:hover,.recent-item:focus-visible,.recent-item.active{border:0!important;background:transparent!important;color:#fff!important}
 .recent-works>.eyebrow{padding-bottom:10px!important}
+
+/* Recent Works rows: absolutely no divider rules or secondary right-hand labels */
+.showreel-bottom .recent-works .recent-item,
+.showreel-bottom .recent-works .recent-item:hover,
+.showreel-bottom .recent-works .recent-item:focus-visible,
+.showreel-bottom .recent-works .recent-item.active{
+  border:0!important;
+  border-top:0!important;
+  border-right:0!important;
+  border-bottom:0!important;
+  border-left:0!important;
+  box-shadow:none!important;
+  background:transparent!important;
+}
+.showreel-bottom .recent-works .recent-item::before,
+.showreel-bottom .recent-works .recent-item::after{display:none!important;content:none!important}
+.showreel-bottom .recent-works .recent-item .recent-arrow{display:none!important}
+.showreel-bottom .recent-works .recent-item{grid-template-columns:24px minmax(0,1fr)!important}
+.showreel-bottom .recent-works .recent-item b{grid-column:2!important;text-align:left!important}
+.showreel-bottom .recent-works .recent-item i{display:none!important}

@@ -113,3 +113,20 @@ html,body{width:100%;max-width:100%;margin:0;overflow-x:hidden}
  .showreel-title h1{font-size:clamp(52px,13vw,72px)!important}
  .recent-item{min-height:36px!important}
 }
+
+/* Recent Works: category names only, no project labels or decorative rules */
+.recent-item{
+ border:0!important;
+ border-bottom:0!important;
+ box-shadow:none!important;
+ outline-offset:5px;
+ min-height:34px!important;
+ padding:7px 0!important;
+ grid-template-columns:24px minmax(0,1fr) 14px!important;
+ gap:10px!important;
+}
+.recent-item b{font-size:11px!important;font-weight:500!important;letter-spacing:.015em!important}
+.recent-item>span:first-child{font-size:8px!important}
+.recent-item .recent-arrow{opacity:.55!important}
+.recent-item:hover,.recent-item:focus-visible,.recent-item.active{border:0!important;background:transparent!important;color:#fff!important}
+.recent-works>.eyebrow{padding-bottom:10px!important}

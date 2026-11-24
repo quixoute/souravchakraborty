@@ -150,3 +150,26 @@ html,body{width:100%;max-width:100%;margin:0;overflow-x:hidden}
 .showreel-bottom .recent-works .recent-item{grid-template-columns:24px minmax(0,1fr)!important}
 .showreel-bottom .recent-works .recent-item b{grid-column:2!important;text-align:left!important}
 .showreel-bottom .recent-works .recent-item i{display:none!important}
+
+/* Recent Works must contain no arrows, borders, pseudo arrows or decorative row marks */
+.showreel-bottom .recent-works .recent-item,
+.showreel-bottom .recent-works .recent-item:hover,
+.showreel-bottom .recent-works .recent-item:focus,
+.showreel-bottom .recent-works .recent-item:focus-visible,
+.showreel-bottom .recent-works .recent-item.active{
+  display:grid!important;
+  grid-template-columns:24px minmax(0,1fr)!important;
+  border:0!important;
+  outline:0!important;
+  box-shadow:none!important;
+  background:transparent!important;
+  text-decoration:none!important;
+}
+.showreel-bottom .recent-works .recent-item::before,
+.showreel-bottom .recent-works .recent-item::after,
+.showreel-bottom .recent-works .recent-item .recent-arrow,
+.showreel-bottom .recent-works .recent-item i{display:none!important;content:none!important}
+.showreel-bottom .recent-works .recent-item b{grid-column:2!important;text-align:left!important}
+.showreel-bottom .recent-works .recent-item{cursor:pointer!important;pointer-events:auto!important}
+.showreel-bottom .recent-works{position:relative;z-index:30;pointer-events:auto!important}
+.showreel-bottom{z-index:20;pointer-events:none}

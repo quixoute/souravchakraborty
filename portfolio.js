@@ -53,15 +53,15 @@
   currentVideo=next;
   const sound=$("#sound-toggle");sound.textContent="SOUND OFF";sound.setAttribute("aria-label","Turn video sound on");muted=true;
  };
- // Capture-phase delegation: the text rows themselves always activate the hero player.
- document.addEventListener("click",e=>{
-  const button=e.target.closest(".recent-item[data-showreel]");
-  if(!button)return;
-  e.preventDefault();
-  e.stopPropagation();
-  e.stopImmediatePropagation();
-  setMedia(button.dataset.showreel);
- },true);
+ // Bind every Recent Works row directly to the hero video selector.
+ buttons.forEach(button=>{
+  button.type="button";
+  button.addEventListener("click",event=>{
+   event.preventDefault();
+   event.stopPropagation();
+   setMedia(button.dataset.showreel);
+  });
+ });
  $("#sound-toggle").addEventListener("click",()=>{
   if(!currentVideo)return;
   if(currentVideo.tagName==="VIDEO"){muted=!muted;currentVideo.muted=muted;$("#sound-toggle").textContent=muted?"SOUND OFF":"SOUND ON";}

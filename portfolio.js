@@ -71,22 +71,57 @@
   button.setAttribute("aria-label",muted?"Turn video sound on":"Turn video sound off");
  });
  const route=$("#route-view"),mainSections=[$("#home"),$("#way-of-seeing"),$("#feature"),$("#about"),$("#contact")];
- const imageCard=(p,catId)=>{
+ const imageCard=(p,catId,index)=>{
   const slug=p.title.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"");
   const target=p.href||(p.videoId?"#film/"+catId+"/"+slug:"#work/"+catId);
-  const preview=p.videoSrc?'<video src="'+esc(p.videoSrc)+'" muted autoplay loop playsinline preload="metadata"></video>':p.videoId?'<img src="https://img.youtube.com/vi/'+encodeURIComponent(p.videoId)+'/hqdefault.jpg" alt="" loading="lazy">':p.image?'<img src="'+esc(p.image)+'" alt="" loading="lazy">':'<div class="work-card-placeholder"></div>';
-  return '<a class="work-card" href="'+esc(target)+'"><div class="work-card-media">'+preview+'<span class="category-card-title">'+esc(p.title)+'</span></div></a>';
+  let mediaHtml;
+  if(p.videoSrc){
+   mediaHtml='<video class="category-tile-media" data-src="'+esc(p.videoSrc)+'" muted loop playsinline preload="none"></video>';
+  }else if(p.videoId){
+   mediaHtml='<iframe class="category-tile-media" data-video-id="'+esc(p.videoId)+'" title="'+esc(p.title)+'" allow="autoplay; encrypted-media; picture-in-picture" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>';
+  }else{
+   mediaHtml='<img class="category-tile-media" src="'+esc(p.image||"")+'" alt="" loading="lazy">';
+  }
+  return '<a class="category-tile" data-category-tile href="'+esc(target)+'">'+mediaHtml+'<span class="category-tile-title">'+esc(p.title)+'</span></a>';
  };
  const showCategory=id=>{
   const cat=data.categories.find(x=>x.id===id);if(!cat)return false;
   const first=cat.projects[0]||{};
-  const feature=first.videoSrc?'<video class="category-feature__video" src="'+esc(first.videoSrc)+'" autoplay muted loop playsinline></video>':first.videoId?'<iframe class="category-feature__video" src="https://www.youtube-nocookie.com/embed/'+encodeURIComponent(first.videoId)+'?autoplay=1&mute=1&controls=0&loop=1&playlist='+encodeURIComponent(first.videoId)+'&playsinline=1&rel=0&modestbranding=1" title="'+esc(first.title)+'" allow="autoplay; encrypted-media; picture-in-picture" loading="eager"></iframe>':first.image?'<img class="category-feature__video" src="'+esc(first.image)+'" alt="">':'';
+  const feature=first.videoSrc
+   ?'<video class="category-feature__video" src="'+esc(first.videoSrc)+'" autoplay muted loop playsinline></video>'
+   :first.videoId
+    ?'<iframe class="category-feature__video" src="https://www.youtube-nocookie.com/embed/'+encodeURIComponent(first.videoId)+'?autoplay=1&mute=1&controls=0&loop=1&playlist='+encodeURIComponent(first.videoId)+'&playsinline=1&rel=0&modestbranding=1" title="'+esc(first.title)+'" allow="autoplay; encrypted-media; picture-in-picture" loading="eager"></iframe>'
+    :first.image?'<img class="category-feature__video" src="'+esc(first.image)+'" alt="">':'';
   mainSections.forEach(s=>s.hidden=true);route.hidden=false;
-  route.innerHTML='<div class="category-showcase-page"><section class="category-feature">'+feature+'</section><div class="category-project-grid">'+cat.projects.map(p=>imageCard(p,cat.id)).join("")+'</div></div>';
+  const remaining=cat.projects.slice(1);
+  route.innerHTML='<div class="category-showcase-page"><section class="category-feature">'+feature+'</section><div class="category-project-grid">'+remaining.map((p,i)=>imageCard(p,cat.id,i)).join("")+'</div></div>';
+  initCategoryTilePlayback();
   scrollTo({top:0,behavior:reduced?"auto":"smooth"});return true;
  };
-
-  const showFilm=(categoryId,slug)=>{
+ const initCategoryTilePlayback=()=>{
+  const tiles=$$("[data-category-tile]");
+  if(!("IntersectionObserver" in window)){
+   tiles.forEach(tile=>loadCategoryTile(tile,true));return;
+  }
+  const observer=new IntersectionObserver(entries=>{
+   entries.forEach(entry=>loadCategoryTile(entry.target,entry.isIntersecting&&entry.intersectionRatio>.12));
+  },{rootMargin:"180px 0px",threshold:[0,.12,.5]});
+  tiles.forEach(tile=>observer.observe(tile));
+ };
+ const loadCategoryTile=(tile,visible)=>{
+  const frame=$("iframe[data-video-id]",tile);
+  const video=$("video[data-src]",tile);
+  if(frame){
+   const id=frame.dataset.videoId;
+   if(visible&&!frame.src)frame.src="https://www.youtube-nocookie.com/embed/"+encodeURIComponent(id)+"?autoplay=1&mute=1&controls=0&loop=1&playlist="+encodeURIComponent(id)+"&playsinline=1&rel=0&modestbranding=1";
+   else if(!visible&&frame.src){frame.src="about:blank";frame.removeAttribute("src");}
+  }
+  if(video){
+   if(visible&&!video.src){video.src=video.dataset.src;video.load();video.play().catch(()=>{});}
+   else if(!visible&&video.src){video.pause();video.removeAttribute("src");video.load();}
+  }
+ };
+ const showFilm=(categoryId,slug)=>{
   const cat=data.categories.find(x=>x.id===categoryId);if(!cat)return false;
   const project=cat.projects.find(p=>p.title.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"")===slug);
   if(!project||(!project.videoId&&!project.videoSrc))return false;

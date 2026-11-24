@@ -9,9 +9,47 @@
  toggle.addEventListener('click',()=>{menu.classList.add('open');menu.setAttribute('aria-hidden','false');toggle.setAttribute('aria-expanded','true');document.body.style.overflow='hidden';});
  document.querySelector('.menu-close').addEventListener('click',closeMenu);menu.querySelectorAll('a').forEach(a=>a.addEventListener('click',closeMenu));window.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu();});
  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
- let ticking=false;const scrollFx=()=>{const y=window.scrollY;nav.classList.toggle('scrolled',y>40);if(!reduced){const progress=Math.min(1,Math.max(0,y/(window.innerHeight*.82)));const heroCopy=document.querySelector('.hero-copy');if(heroCopy){heroCopy.style.opacity=String(1-progress);heroCopy.style.transform='translate3d(0,'+(-progress*72)+'px,0)';}}ticking=false;};
- window.addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(scrollFx);ticking=true;}},{passive:true});scrollFx();
- const revealObserver=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');e.target.classList.add('is-visible');revealObserver.unobserve(e.target);}}),{threshold:.14});
+ const clamp=(v,min,max)=>Math.min(max,Math.max(min,v));
+ const heroCopy=document.querySelector('.hero-copy');
+ const motionTargets=[
+  ...document.querySelectorAll('.intro .eyebrow,.intro-line,.section-head,.category,.feature-copy,.about-copy,.capabilities>div,.contact-heading,.enquiry-form')
+ ];
+ let ticking=false;
+ const updateScrollMotion=()=>{
+  const vh=window.innerHeight||1;
+  const sy=window.scrollY||0;
+  nav.classList.toggle('scrolled',sy>40);
+  if(!reduced&&heroCopy){
+   const p=clamp(sy/(vh*.9),0,1.25);
+   heroCopy.style.transform='translate3d(0,'+(-p*210)+'px,0)';
+   heroCopy.style.opacity=String(clamp(1-p*1.12,0,1));
+  }
+  if(!reduced){
+   motionTargets.forEach((el,i)=>{
+    const r=el.getBoundingClientRect();
+    const center=r.top+r.height*.5;
+    const distance=(center-vh*.52)/vh;
+    const entering=clamp((vh-r.top)/(vh*.72),0,1);
+    const leaving=clamp((r.bottom+vh*.12)/(vh*.72),0,1);
+    const visibility=Math.min(entering,leaving);
+    const drift=clamp(-distance*42,-42,42);
+    const intro=el.classList.contains('intro-line')||el.closest('.intro');
+    const fromBelow=intro?((1-entering)*58 - (1-leaving)*24):drift;
+    const opacity=intro?clamp(visibility*1.35,0,1):clamp(visibility*1.6,0,1);
+    el.style.transform='translate3d(0,'+fromBelow.toFixed(1)+'px,0)';
+    el.style.opacity=String(opacity);
+   });
+  }
+  ticking=false;
+ };
+ const requestScrollUpdate=()=>{if(!ticking){requestAnimationFrame(updateScrollMotion);ticking=true;}};
+ window.addEventListener('scroll',requestScrollUpdate,{passive:true});
+ window.addEventListener('resize',requestScrollUpdate,{passive:true});
+ updateScrollMotion();
+ const revealObserver=new IntersectionObserver(entries=>entries.forEach(e=>{
+  if(e.isIntersecting){e.target.classList.add('visible','is-visible');}
+  else if(!reduced)e.target.classList.remove('visible');
+ }),{threshold:0,rootMargin:'8% 0px 8% 0px'});
  document.querySelectorAll('.reveal,.intro').forEach(el=>revealObserver.observe(el));
  const form=document.getElementById('enquiry-form');
  if(form)form.addEventListener('submit',async event=>{

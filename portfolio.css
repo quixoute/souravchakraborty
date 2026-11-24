@@ -108,3 +108,8 @@ footer{padding:56px var(--pad) 30px;border-top:1px solid #252525;display:grid;gr
 /* Requested title-video and backstage feature image treatment */
 .intro-line .intro-title-video{display:block;width:100%;max-width:100%;height:auto;aspect-ratio:16/9;object-fit:contain;background:#080808}
 .feature-image img{object-fit:cover;object-position:center center}
+
+/* The feature photograph should remain natural: no lens warp, vignette, tint or darkening filter */
+.feature-image:after{display:none!important}
+.feature-image img{filter:none!important;transform:none!important;object-fit:cover;object-position:center center}
+.intro-line .intro-title-video{display:block;width:100%;max-width:100%;height:auto;aspect-ratio:16/9;object-fit:contain;background:transparent}

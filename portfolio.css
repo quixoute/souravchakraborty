@@ -173,3 +173,10 @@ footer{padding:56px var(--pad) 30px;border-top:1px solid #252525;display:grid;gr
 .photo-gallery-item img{display:block;width:100%;height:auto}
 .photo-gallery-item figcaption{position:absolute;right:12px;bottom:10px;font-size:9px;letter-spacing:.15em;color:#fff;text-shadow:0 1px 4px #000}
 @media(max-width:760px){.photo-gallery-grid{columns:2 140px;column-gap:10px}.photo-gallery-item{margin-bottom:10px}}
+
+/* Dedicated project film pages */
+.film-detail-frame{width:100%;background:#050505;aspect-ratio:16/9;max-height:78vh}
+.film-detail-player{display:block;width:100%;height:100%;border:0;object-fit:contain;background:#050505}
+.film-detail .route-heading{padding:40px 0 32px}
+.film-detail .route-heading h1{font:300 clamp(44px,7vw,86px)/1 var(--serif);letter-spacing:-.04em;margin:14px 0}
+.film-detail .route-heading p:not(.eyebrow){color:var(--muted);font-size:13px}

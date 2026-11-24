@@ -74,15 +74,27 @@
  const imageCard=(p,catId)=>{
   const slug=p.title.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"");
   const target=p.href||(p.videoId?"#film/"+catId+"/"+slug:"#work/"+catId);
-  return '<a class="work-card" href="'+esc(target)+'"><div class="work-card-media">'+(p.videoSrc?'<video src="'+esc(p.videoSrc)+'" muted autoplay loop playsinline preload="metadata"></video>':p.image?'<img src="'+esc(p.image)+'" alt="'+esc(p.title)+'" loading="lazy">':'<div class="work-card-placeholder"></div>')+'<span class="card-open">VIEW ↗</span></div><div class="work-card-meta"><h3>'+esc(p.title)+'</h3><span>'+(p.count?esc(p.count):"VIEW PROJECT ↗")+'</span></div><p>'+esc(p.description)+'</p></a>';
+  const preview=p.videoSrc
+   ?'<video src="'+esc(p.videoSrc)+'" muted autoplay loop playsinline preload="metadata"></video>'
+   :p.videoId
+    ?'<img src="https://img.youtube.com/vi/'+encodeURIComponent(p.videoId)+'/hqdefault.jpg" alt="" loading="lazy">'
+    :p.image?'<img src="'+esc(p.image)+'" alt="" loading="lazy">':'<div class="work-card-placeholder"></div>';
+  return '<a class="work-card" href="'+esc(target)+'"><div class="work-card-media">'+preview+'<span class="category-card-title">'+esc(p.title)+'</span></div></a>';
  };
  const showCategory=id=>{
   const cat=data.categories.find(x=>x.id===id);if(!cat)return false;
-  mainSections.forEach(s=>s.hidden=true);route.hidden=false;route.innerHTML='<div class="route-inner"><a class="route-back" href="#home">← BACK TO HOME</a><header class="route-heading"><p class="eyebrow">SELECTED WORK / '+esc(cat.title.toUpperCase())+'</p><h1>'+esc(cat.title)+'.</h1><p>'+esc(cat.description)+'</p></header><div class="work-grid">'+cat.projects.map(p=>imageCard(p,cat.id)).join("")+'</div></div>';
+  const first=cat.projects[0]||{};
+  const feature=first.videoSrc
+   ?'<video class="category-feature__video" src="'+esc(first.videoSrc)+'" autoplay muted loop playsinline></video>'
+   :first.videoId
+    ?'<iframe class="category-feature__video" src="https://www.youtube-nocookie.com/embed/'+encodeURIComponent(first.videoId)+'?autoplay=1&mute=1&controls=0&loop=1&playlist='+encodeURIComponent(first.videoId)+'&playsinline=1&rel=0&modestbranding=1" title="'+esc(first.title)+'" allow="autoplay; encrypted-media; picture-in-picture" loading="eager"></iframe>'
+    :first.image?'<img class="category-feature__video" src="'+esc(first.image)+'" alt="">':'';
+  mainSections.forEach(s=>s.hidden=true);route.hidden=false;
+  route.innerHTML='<div class="category-showcase-page"><section class="category-feature">'+feature+'</section><div class="category-project-grid">'+cat.projects.map(p=>imageCard(p,cat.id)).join("")+'</div></div>';
   scrollTo({top:0,behavior:reduced?"auto":"smooth"});return true;
  };
 
- const showFilm=(categoryId,slug)=>{
+  const showFilm=(categoryId,slug)=>{
   const cat=data.categories.find(x=>x.id===categoryId);if(!cat)return false;
   const project=cat.projects.find(p=>p.title.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"")===slug);
   if(!project||(!project.videoId&&!project.videoSrc))return false;

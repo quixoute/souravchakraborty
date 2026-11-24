@@ -63,7 +63,7 @@
  const route=$("#route-view"),mainSections=[$("#home"),$("#way-of-seeing"),$("#feature"),$("#about"),$("#contact")];
  const imageCard=(p,catId)=>{
   const slug=p.title.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"");
-  const target=p.videoId?"#film/"+catId+"/"+slug:p.href;
+  const target=p.href||(p.videoId?"#film/"+catId+"/"+slug:"#work/"+catId);
   return '<a class="work-card" href="'+esc(target)+'"><div class="work-card-media">'+(p.videoSrc?'<video src="'+esc(p.videoSrc)+'" muted autoplay loop playsinline preload="metadata"></video>':p.image?'<img src="'+esc(p.image)+'" alt="'+esc(p.title)+'" loading="lazy">':'<div class="work-card-placeholder"></div>')+'<span class="card-open">VIEW ↗</span></div><div class="work-card-meta"><h3>'+esc(p.title)+'</h3><span>'+(p.count?esc(p.count):"VIEW PROJECT ↗")+'</span></div><p>'+esc(p.description)+'</p></a>';
  };
  const showCategory=id=>{

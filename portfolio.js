@@ -105,15 +105,22 @@
  };
  const renderFloatingCanvas=(ids,heading)=>{
   const entries=photoEntries(ids);
-  const projectIndex=ids.length>1,cols=projectIndex?2:11,cellW=projectIndex?700:274,cellH=projectIndex?600:242,canvasW=projectIndex?1550:cols*cellW+220,canvasH=projectIndex?1050:Math.ceil(entries.length/cols)*cellH+260;
+  const projectIndex=ids.length>1,cols=projectIndex?2:11,cellW=projectIndex?700:274,cellH=projectIndex?600:242,canvasW=projectIndex?1750:cols*cellW+220,canvasH=projectIndex?1320:Math.ceil(entries.length/cols)*cellH+260;
   const items=entries.map((item,i)=>{
    const col=i%cols,row=Math.floor(i/cols);
    const seed=(i*9301+49297)%233280,rand=seed/233280;
    const seed2=(i*7919+12345)%2147483647,rand2=(seed2%10000)/10000;
    const projectIndex=ids.length>1;
-   const width=projectIndex?Math.round(230+rand*100):Math.round(132+rand*104);
-   const left=projectIndex?100+col*cellW+Math.round(rand2*110):90+col*cellW+Math.round(rand2*52);
-   const top=projectIndex?150+(i%2)*360+Math.round(rand2*90):70+row*cellH+Math.round(((i*37)%83));
+   const projectPositions=[
+    {left:130,top:130,width:300},
+    {left:1120,top:180,width:330},
+    {left:430,top:760,width:320},
+    {left:1280,top:790,width:310}
+   ];
+   const position=projectIndex?projectPositions[i]:null;
+   const width=projectIndex?position.width:Math.round(132+rand*104);
+   const left=projectIndex?position.left:90+col*cellW+Math.round(rand2*52);
+   const top=projectIndex?position.top:70+row*cellH+Math.round(((i*37)%83));
    const caption=projectIndex?esc(item.series.title)+' <small>'+String(item.series.count).padStart(2,"0")+' PHOTOGRAPHS</small>':String(item.number).padStart(2,"0")+' / '+esc(item.series.title);
    return projectIndex
     ?'<a class="floating-photo floating-project" href="#gallery/'+item.id+'" aria-label="Open '+esc(item.series.title)+' project" style="left:'+left+'px;top:'+top+'px;width:'+width+'px"><img src="'+esc(item.src)+'" alt="'+esc(item.series.title)+' project cover" loading="lazy"><span class="floating-photo-caption">'+caption+'</span></a>'

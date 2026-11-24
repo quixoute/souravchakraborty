@@ -12,6 +12,18 @@
   const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target);}}),{threshold:.12});
   const observe=()=>document.querySelectorAll('.reveal:not(.visible)').forEach(el=>observer.observe(el));observe();
   if(data.site.heroVideo){const hero=document.getElementById('hero-media'),v=document.createElement('video');v.src=data.site.heroVideo;v.autoplay=true;v.muted=true;v.loop=true;v.playsInline=true;v.preload='metadata';v.setAttribute('aria-hidden','true');hero.replaceChildren(v);v.play().catch(()=>{});}
+
+  const form=document.getElementById('enquiry-form');
+  if(form)form.addEventListener('submit',event=>{
+    event.preventDefault();
+    if(!form.reportValidity())return;
+    const values=Object.fromEntries(new FormData(form));
+    const subject='Project enquiry: '+values['Project category'];
+    const body=Object.entries(values).filter(([,value])=>String(value).trim()).map(([key,value])=>key+': '+value).join('\\n\\n');
+    document.getElementById('form-note').textContent='Opening your email application with the enquiry details. Nothing is sent automatically.';
+    window.location.href='mailto:'+encodeURIComponent(data.site.email)+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+  });
+
   const renderRoute=()=>{const id=decodeURIComponent(location.hash.slice(1)||'home'),category=data.categories.find(c=>c.id===id);document.getElementById('category-view')?.remove();if(!category)return;
     const section=document.createElement('section');section.id='category-view';section.className='section category-view';
     const items=category.projects.map(p=>'<a class="project-link reveal" href="'+esc(p.href)+'"><div class="category-media"><img src="'+esc(p.image||data.site.heroPoster)+'" alt="'+esc(p.title)+'" loading="lazy"></div><h3>'+esc(p.title)+'</h3><p>'+esc(p.description)+'</p><span class="text-link">VIEW PROJECT ↗</span></a>').join('');

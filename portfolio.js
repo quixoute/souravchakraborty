@@ -10,7 +10,7 @@
  addEventListener("scroll",()=>nav.classList.toggle("scrolled",scrollY>24),{passive:true});
  $("#year").textContent=new Date().getFullYear();
  const media=$("#showreel-media"),title=$("#active-title"),desc=$("#active-description"),kicker=$("#active-kicker"),counter=$("#showreel-counter"),buttons=$$(".recent-item");
- let activeKey="ai",cycle={wedding:0,prewedding:0},currentVideo=null,muted=true;
+ let activeKey="ai",cycle={wedding:0,prewedding:0},currentVideo=$("#hero-video"),muted=true;
  const setMedia=(key,indexAdvance=false)=>{
   const item=data.showreel[key];if(!item)return;
   if(indexAdvance&&item.videos)cycle[key]=(cycle[key]+1)%item.videos.length;

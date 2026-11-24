@@ -208,3 +208,10 @@ footer{padding:56px var(--pad) 30px;border-top:1px solid #252525;display:grid;gr
 .category-feature__video{position:absolute;inset:0;width:100%;height:100%;border:0;object-fit:cover;object-position:center center;display:block}
 .category-showcase-page{padding-top:0}
 @media(max-width:700px){.category-project-grid{grid-template-columns:1fr;grid-auto-rows:clamp(210px,62vw,360px);gap:10px;padding:10px}.category-project-grid .category-tile:nth-child(n){grid-column:1;grid-row:span 1}.category-project-grid .category-tile:nth-child(1),.category-project-grid .category-tile:nth-child(4n){grid-row:span 1}.category-feature{height:42vh;min-height:230px}}
+
+/* Category grid rhythm: feature -> pair -> full-width film -> pair */
+.category-project-grid .category-tile:nth-child(1),
+.category-project-grid .category-tile:nth-child(2){grid-column:span 1;grid-row:span 1}
+.category-project-grid .category-tile:nth-child(3){grid-column:1/-1;grid-row:span 2}
+.category-project-grid .category-tile:last-child:nth-child(4){grid-column:1/-1;grid-row:span 2}
+@media(max-width:700px){.category-project-grid .category-tile:nth-child(n){grid-column:1;grid-row:span 1}}

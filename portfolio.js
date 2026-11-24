@@ -93,7 +93,8 @@
     ?'<iframe class="category-feature__video" src="https://www.youtube-nocookie.com/embed/'+encodeURIComponent(first.videoId)+'?autoplay=1&mute=1&controls=0&loop=1&playlist='+encodeURIComponent(first.videoId)+'&playsinline=1&rel=0&modestbranding=1" title="'+esc(first.title)+'" allow="autoplay; encrypted-media; picture-in-picture" loading="eager"></iframe>'
     :first.image?'<img class="category-feature__video" src="'+esc(first.image)+'" alt="">':'';
   mainSections.forEach(s=>s.hidden=true);route.hidden=false;
-  const remaining=cat.projects.slice(1);\n  route.innerHTML='<div class="category-showcase-page"><section class="category-feature">'+feature+'</section><div class="category-project-grid">'+remaining.map((p,i)=>imageCard(p,cat.id,i)).join("")+'</div></div>';
+  const remaining=cat.projects.slice(1);
+  route.innerHTML='<div class="category-showcase-page"><section class="category-feature">'+feature+'</section><div class="category-project-grid">'+remaining.map((p,i)=>imageCard(p,cat.id,i)).join("")+'</div></div>';
   initCategoryTilePlayback();
   scrollTo({top:0,behavior:reduced?"auto":"smooth"});return true;
  };

@@ -39,11 +39,35 @@
   if(currentVideo.tagName==="VIDEO"){muted=!muted;currentVideo.muted=muted;$("#sound-toggle").textContent=muted?"SOUND OFF":"SOUND ON";}
   else{$("#sound-toggle").textContent="VIDEO MUTED";$("#sound-toggle").setAttribute("aria-label","YouTube preview is muted");}
  });
- const route=$("#route-view"),mainSections=[$("#home"),$("#about"),$("#contact")];
- const imageCard=p=>'<a class="work-card" href="'+esc(p.href)+'"><div class="work-card-media">'+(p.videoSrc?'<video src="'+esc(p.videoSrc)+'" muted autoplay loop playsinline preload="metadata"></video>':p.image?'<img src="'+esc(p.image)+'" alt="'+esc(p.title)+'" loading="lazy">':'<div class="work-card-placeholder"></div>')+'<span class="card-open">VIEW ↗</span></div><div class="work-card-meta"><h3>'+esc(p.title)+'</h3><span>'+(p.count?esc(p.count):"VIEW PROJECT ↗")+'</span></div><p>'+esc(p.description)+'</p></a>';
+ const route=$("#route-view"),mainSections=[$("#home"),$("#way-of-seeing"),$("#feature"),$("#about"),$("#contact")];
+ const imageCard=(p,catId)=>{
+  const slug=p.title.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"");
+  const target=p.videoId?"#film/"+catId+"/"+slug:p.href;
+  return '<a class="work-card" href="'+esc(target)+'"><div class="work-card-media">'+(p.videoSrc?'<video src="'+esc(p.videoSrc)+'" muted autoplay loop playsinline preload="metadata"></video>':p.image?'<img src="'+esc(p.image)+'" alt="'+esc(p.title)+'" loading="lazy">':'<div class="work-card-placeholder"></div>')+'<span class="card-open">VIEW ↗</span></div><div class="work-card-meta"><h3>'+esc(p.title)+'</h3><span>'+(p.count?esc(p.count):"VIEW PROJECT ↗")+'</span></div><p>'+esc(p.description)+'</p></a>';
+ };
  const showCategory=id=>{
   const cat=data.categories.find(x=>x.id===id);if(!cat)return false;
-  mainSections.forEach(s=>s.hidden=true);route.hidden=false;route.innerHTML='<div class="route-inner"><a class="route-back" href="#home">← BACK TO HOME</a><header class="route-heading"><p class="eyebrow">SELECTED WORK / '+esc(cat.title.toUpperCase())+'</p><h1>'+esc(cat.title)+'.</h1><p>'+esc(cat.description)+'</p></header><div class="work-grid">'+cat.projects.map(imageCard).join("")+'</div></div>';
+  mainSections.forEach(s=>s.hidden=true);route.hidden=false;route.innerHTML='<div class="route-inner"><a class="route-back" href="#home">← BACK TO HOME</a><header class="route-heading"><p class="eyebrow">SELECTED WORK / '+esc(cat.title.toUpperCase())+'</p><h1>'+esc(cat.title)+'.</h1><p>'+esc(cat.description)+'</p></header><div class="work-grid">'+cat.projects.map(p=>imageCard(p,cat.id)).join("")+'</div></div>';
+  scrollTo({top:0,behavior:reduced?"auto":"smooth"});return true;
+ };
+
+ const showFilm=(categoryId,slug)=>{
+  const cat=data.categories.find(x=>x.id===categoryId);if(!cat)return false;
+  const project=cat.projects.find(p=>p.title.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"")===slug);
+  if(!project||(!project.videoId&&!project.videoSrc))return false;
+  mainSections.forEach(s=>s.hidden=true);route.hidden=false;
+  const player=project.videoSrc
+   ? '<video class="film-detail-player" src="'+esc(project.videoSrc)+'" controls autoplay muted playsinline preload="metadata"></video>'
+   : '<iframe class="film-detail-player" src="https://www.youtube-nocookie.com/embed/'+esc(project.videoId)+'?autoplay=1&controls=1&rel=0&modestbranding=1&playsinline=1" title="'+esc(project.title)+'" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>';
+  route.innerHTML='<div class="route-inner film-detail"><a class="route-back" href="#work/'+esc(categoryId)+'">← BACK TO '+esc(cat.title.toUpperCase())+'</a><header class="route-heading"><p class="eyebrow">'+esc(cat.title.toUpperCase())+' / FILM</p><h1>'+esc(project.title)+'.</h1><p>'+esc(project.description||"")+'</p></header><div class="film-detail-frame">'+player+'</div></div>';
+  scrollTo({top:0,behavior:reduced?"auto":"smooth"});return true;
+ };
+ const showGallery=id=>{
+  const map={dreamer:{title:"Dreamer",dir:"Dreamer",prefix:"Dreamer-",ext:"jpg",count:15},untitled:{title:"Untitled",dir:"Untitled",prefix:"",ext:"webp",count:52},ubereats:{title:"Uber Eats",dir:"ubereats",prefix:"",ext:"webp",count:12},tri:{title:"Tri",dir:"Tri",prefix:"",ext:"webp",count:14}};
+  const g=map[id];if(!g)return false;
+  mainSections.forEach(s=>s.hidden=true);route.hidden=false;
+  const cards=Array.from({length:g.count},(_,i)=>{const n=i+1;const src=g.dir+"/"+g.prefix+n+"."+g.ext;return '<figure class="photo-gallery-item"><img src="'+esc(src)+'" alt="'+esc(g.title)+' — photograph '+n+'" loading="lazy"><figcaption>'+String(n).padStart(2,"0")+'</figcaption></figure>'}).join("");
+  route.innerHTML='<div class="route-inner photo-gallery"><a class="route-back" href="#work/photography">← BACK TO PHOTOGRAPHY</a><header class="route-heading"><p class="eyebrow">PHOTOGRAPHIC SERIES</p><h1>'+esc(g.title)+'.</h1></header><div class="photo-gallery-grid">'+cards+'</div></div>';
   scrollTo({top:0,behavior:reduced?"auto":"smooth"});return true;
  };
  const showProject=id=>{
@@ -55,6 +79,8 @@
   const parts=decodeURIComponent(location.hash.slice(1)).split("/");
   if(parts[0]==="work"&&parts[1]){showCategory(parts[1]);return}
   if(parts[0]==="project"&&parts[1]){showProject(parts[1]);return}
+  if(parts[0]==="gallery"&&parts[1]){showGallery(parts[1]);return}
+  if(parts[0]==="film"&&parts[1]&&parts[2]){showFilm(parts[1],parts[2]);return}
   route.hidden=true;route.innerHTML="";mainSections.forEach(s=>s.hidden=false);
   if(parts[0]==="about"||parts[0]==="contact")setTimeout(()=>$(parts[0]==="about"?"#about":"#contact").scrollIntoView({behavior:reduced?"auto":"smooth"}),0);
   else if(parts[0]==="work")setTimeout(()=>$("#nav").scrollIntoView(),0);

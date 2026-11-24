@@ -155,3 +155,28 @@ footer{padding:56px var(--pad) 30px;border-top:1px solid #252525;display:grid;gr
  .route-view{padding:95px 22px 70px}.route-heading{padding:60px 0 40px}.work-grid{grid-template-columns:1fr;gap:44px}.work-card-meta h3{font-size:30px}
 }
 @media(prefers-reduced-motion:reduce){.showreel-media video,.showreel-media iframe,.work-card-media img,.work-card-media video{transition:none!important}.recent-item,.work-dropdown{transition:none!important}}
+
+
+/* Restored "A Way of Seeing" editorial section and feature */
+.intro.section{display:grid;grid-template-columns:minmax(260px,.8fr) minmax(0,1.6fr);align-items:center;gap:clamp(36px,7vw,110px);min-height:78svh;padding-top:clamp(80px,10vw,150px);padding-bottom:clamp(80px,10vw,150px);background:#111}
+.intro-copy h2{font:300 clamp(42px,6.6vw,88px)/.98 var(--serif);letter-spacing:-.04em;margin:22px 0}
+.intro-copy h2 em{font-weight:300;color:var(--accent)}
+.intro-copy>p:last-child{color:var(--muted);max-width:36ch;font-size:14px}
+.intro-film{width:100%;aspect-ratio:16/9;background:#050505;overflow:hidden}
+.intro-film video{display:block;width:100%;height:100%;object-fit:contain}
+.feature{min-height:76svh}
+@media(max-width:760px){.intro.section{grid-template-columns:1fr;min-height:0}.intro-film{aspect-ratio:16/9}.feature{min-height:68svh}}
+
+.photo-gallery .route-heading{padding:50px 0 36px}
+.photo-gallery-grid{columns:3 260px;column-gap:16px}
+.photo-gallery-item{break-inside:avoid;margin:0 0 16px;position:relative;background:#161616}
+.photo-gallery-item img{display:block;width:100%;height:auto}
+.photo-gallery-item figcaption{position:absolute;right:12px;bottom:10px;font-size:9px;letter-spacing:.15em;color:#fff;text-shadow:0 1px 4px #000}
+@media(max-width:760px){.photo-gallery-grid{columns:2 140px;column-gap:10px}.photo-gallery-item{margin-bottom:10px}}
+
+/* Dedicated project film pages */
+.film-detail-frame{width:100%;background:#050505;aspect-ratio:16/9;max-height:78vh}
+.film-detail-player{display:block;width:100%;height:100%;border:0;object-fit:contain;background:#050505}
+.film-detail .route-heading{padding:40px 0 32px}
+.film-detail .route-heading h1{font:300 clamp(44px,7vw,86px)/1 var(--serif);letter-spacing:-.04em;margin:14px 0}
+.film-detail .route-heading p:not(.eyebrow){color:var(--muted);font-size:13px}

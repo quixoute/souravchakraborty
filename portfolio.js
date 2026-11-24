@@ -84,7 +84,26 @@
   }
   return '<a class="category-tile" data-category-tile href="'+esc(target)+'">'+mediaHtml+'<span class="category-tile-title">'+esc(p.title)+'</span></a>';
  };
+ const photoSeries={
+  tri:{title:"Tri",description:"A photographic series.",directory:"Tri",prefix:"",extension:"webp",count:14},
+  dreamer:{title:"Dreamer",description:"A photographic series.",directory:"Dreamer",prefix:"Dreamer-",extension:"jpg",count:15},
+  untitled:{title:"Untitled",description:"A photographic collection.",directory:"Untitled",prefix:"",extension:"webp",count:52},
+  ubereats:{title:"Uber Eats",description:"A visual project.",directory:"ubereats",prefix:"",extension:"webp",count:12}
+ };
+ const photoSrc=(series,index)=>series.directory+"/"+series.prefix+(index+1)+"."+series.extension;
+ const showPhotographyIndex=()=>{
+  const sections=Object.entries(photoSeries).map(([id,series],seriesIndex)=>{
+   const previewCount=Math.min(series.count,4);
+   const previews=Array.from({length:previewCount},(_,i)=>'<a class="photo-index-item" href="#gallery/'+id+'" aria-label="Open '+esc(series.title)+' photo series"><img src="'+esc(photoSrc(series,i))+'" alt="'+esc(series.title)+' — photograph '+(i+1)+'" loading="lazy"><span class="photo-index-number">'+String(i+1).padStart(2,"0")+'</span></a>').join("");
+   return '<section class="photo-series" id="photo-series-'+id+'"><header class="photo-series-heading"><div><p class="photo-overline">SERIES '+String(seriesIndex+1).padStart(2,"0")+'</p><h2>'+esc(series.title)+'</h2><p>'+esc(series.description)+'</p></div><a class="photo-series-link" href="#gallery/'+id+'">VIEW SERIES <span>↗</span></a></header><div class="photo-index-grid">'+previews+'</div></section>';
+  }).join("");
+  mainSections.forEach(s=>s.hidden=true);route.hidden=false;route.classList.add("photography-route");
+  route.innerHTML='<div class="photo-gallery-site"><header class="photo-site-header"><a href="#home" class="photo-site-mark">SC.</a><span class="photo-site-current">PHOTOGRAPHY</span><nav><a href="#work/photography">GALLERY</a><a href="#about">ABOUT</a><a href="#contact">CONTACT</a></nav></header><div class="photo-site-intro"><p class="photo-overline">PERSONAL WORK / INDIA</p><h1>Photography<span>.</span></h1><p>Selected photographic series and visual studies.</p></div><main class="photo-series-list">'+sections+'</main><footer class="photo-site-footer"><span>SOURAV CHAKRABORTY</span><span>PHOTOGRAPHY / INDIA</span></footer></div>';
+  scrollTo({top:0,behavior:reduced?"auto":"smooth"});return true;
+ };
  const showCategory=id=>{
+  if(id==="photography")return showPhotographyIndex();
+  route.classList.remove("photography-route");
   const cat=data.categories.find(x=>x.id===id);if(!cat)return false;
   const first=cat.projects[0]||{};
   const feature=first.videoSrc
@@ -133,11 +152,10 @@
   scrollTo({top:0,behavior:reduced?"auto":"smooth"});return true;
  };
  const showGallery=id=>{
-  const map={dreamer:{title:"Dreamer",dir:"Dreamer",prefix:"Dreamer-",ext:"jpg",count:15},untitled:{title:"Untitled",dir:"Untitled",prefix:"",ext:"webp",count:52},ubereats:{title:"Uber Eats",dir:"ubereats",prefix:"",ext:"webp",count:12},tri:{title:"Tri",dir:"Tri",prefix:"",ext:"webp",count:14}};
-  const g=map[id];if(!g)return false;
-  mainSections.forEach(s=>s.hidden=true);route.hidden=false;
-  const cards=Array.from({length:g.count},(_,i)=>{const n=i+1;const src=g.dir+"/"+g.prefix+n+"."+g.ext;return '<figure class="photo-gallery-item"><img src="'+esc(src)+'" alt="'+esc(g.title)+' — photograph '+n+'" loading="lazy"><figcaption>'+String(n).padStart(2,"0")+'</figcaption></figure>'}).join("");
-  route.innerHTML='<div class="route-inner photo-gallery"><a class="route-back" href="#work/photography">← BACK TO PHOTOGRAPHY</a><header class="route-heading"><p class="eyebrow">PHOTOGRAPHIC SERIES</p><h1>'+esc(g.title)+'.</h1></header><div class="photo-gallery-grid">'+cards+'</div></div>';
+  const g=photoSeries[id];if(!g)return false;
+  mainSections.forEach(s=>s.hidden=true);route.hidden=false;route.classList.add("photography-route");
+  const cards=Array.from({length:g.count},(_,i)=>'<figure class="photo-artwork"><img src="'+esc(photoSrc(g,i))+'" alt="'+esc(g.title)+' — photograph '+(i+1)+'" loading="lazy"><figcaption><span>'+String(i+1).padStart(2,"0")+'</span><span>'+esc(g.title)+'</span></figcaption></figure>').join("");
+  route.innerHTML='<div class="photo-gallery-site"><header class="photo-site-header"><a href="#home" class="photo-site-mark">SC.</a><span class="photo-site-current">PHOTOGRAPHY</span><nav><a href="#work/photography">GALLERY</a><a href="#about">ABOUT</a><a href="#contact">CONTACT</a></nav></header><main class="photo-series-detail"><a class="photo-back-link" href="#work/photography">← ALL PHOTOGRAPHY</a><header class="photo-detail-heading"><p class="photo-overline">PHOTOGRAPHIC SERIES</p><h1>'+esc(g.title)+'<span>.</span></h1><p>'+esc(g.description)+'</p><span class="photo-count">'+String(g.count).padStart(2,"0")+' PHOTOGRAPHS</span></header><div class="photo-artwork-grid">'+cards+'</div></main><footer class="photo-site-footer"><span>SOURAV CHAKRABORTY</span><span>PHOTOGRAPHY / INDIA</span></footer></div>';
   scrollTo({top:0,behavior:reduced?"auto":"smooth"});return true;
  };
  const showProject=id=>{

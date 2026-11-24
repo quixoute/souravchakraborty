@@ -105,7 +105,10 @@
  };
  const renderFloatingCanvas=(ids,heading)=>{
   const entries=photoEntries(ids);
-  const projectIndex=ids.length>1,viewportW=Math.max(320,window.innerWidth),rowCounts=[4,3,4,4],totalRows=4,canvasW=projectIndex?1750:viewportW,canvasH=projectIndex?1320:Math.max(window.innerHeight-70,80+totalRows*250);
+  const projectIndex=ids.length>1,viewportW=Math.max(320,window.innerWidth),rowCounts=[],rowPattern=[4,3,4,3,5],canvasW=projectIndex?1750:viewportW;
+  let remaining=entries.length,patternIndex=0;
+  while(remaining>0){const n=Math.min(rowPattern[patternIndex%rowPattern.length],remaining);rowCounts.push(n);remaining-=n;patternIndex++;}
+  const totalRows=rowCounts.length,canvasH=projectIndex?1320:Math.max(window.innerHeight-70,80+totalRows*250);
   const items=entries.map((item,i)=>{
    const seed=(i*9301+49297)%233280,rand=seed/233280;
    const seed2=(i*7919+12345)%2147483647,rand2=(seed2%10000)/10000;

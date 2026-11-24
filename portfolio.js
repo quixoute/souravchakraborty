@@ -24,15 +24,15 @@
   activeKey=key;
   const entry=item.videos?item.videos[cycle[key]]:null;
   title.innerHTML=item.title;
-  desc.textContent=entry?entry.title:item.description;
-  kicker.textContent=entry?"NOW PLAYING · "+(key==="wedding"?"WEDDINGS":"PRE-WEDDINGS"):"SELECTED WORK";
+  desc.textContent=item.description;
+  kicker.textContent="SELECTED WORK";
   counter.textContent=String(["ai","wedding","prewedding","short"].indexOf(key)+1).padStart(2,"0")+" / 04";
   buttons.forEach(b=>{const active=b.dataset.showreel===key;b.classList.toggle("active",active);b.setAttribute("aria-pressed",String(active))});
   const request=++mediaRequest;
   let next;
   if(item.type==="youtube"){
    next=document.createElement("iframe");
-   next.src="https://www.youtube.com/embed/"+entry.id+"?autoplay=1&mute=1&controls=0&playsinline=1&rel=0&modestbranding=1&iv_load_policy=3&enablejsapi=1";
+   next.src="https://www.youtube-nocookie.com/embed/"+entry.id+"?autoplay=1&mute=1&controls=0&playsinline=1&rel=0&modestbranding=1&iv_load_policy=3&enablejsapi=1";
    next.title=entry.title+" — "+(key==="wedding"?"Wedding teaser":"Pre-wedding teaser");
    next.allow="autoplay; encrypted-media; picture-in-picture; fullscreen";
    next.referrerPolicy="strict-origin-when-cross-origin";
@@ -53,18 +53,15 @@
   currentVideo=next;
   const sound=$("#sound-toggle");sound.textContent="SOUND OFF";sound.setAttribute("aria-label","Turn video sound on");muted=true;
  };
- // Delegated interaction keeps the Recent Works controls responsive even if the hero is re-rendered.
- const activateShowreelButton=b=>{
-  const key=b?.dataset?.showreel;
-  if(!key||!data.showreel[key])return;
-  setMedia(key);
- };
- buttons.forEach(b=>b.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();activateShowreelButton(b)}));
- $("#showreel-media").addEventListener("click",e=>{
-  const b=e.target.closest("[data-showreel]");
-  if(b)activateShowreelButton(b);
- });
-
+ // Capture-phase delegation: the text rows themselves always activate the hero player.
+ document.addEventListener("click",e=>{
+  const button=e.target.closest(".recent-item[data-showreel]");
+  if(!button)return;
+  e.preventDefault();
+  e.stopPropagation();
+  e.stopImmediatePropagation();
+  setMedia(button.dataset.showreel);
+ },true);
  $("#sound-toggle").addEventListener("click",()=>{
   if(!currentVideo)return;
   if(currentVideo.tagName==="VIDEO"){muted=!muted;currentVideo.muted=muted;$("#sound-toggle").textContent=muted?"SOUND OFF":"SOUND ON";}

@@ -27,13 +27,24 @@
    if(key==="ai")next.poster="31.jpg";
    next.addEventListener("canplay",()=>next.play().catch(()=>{}),{once:true});
   }
-  next.className="showreel-video";next.setAttribute("aria-hidden","true");
+  next.className="showreel-video";next.setAttribute("aria-hidden","true");next.style.pointerEvents="none";
   const old=currentVideo||$("#hero-video");next.style.opacity="0";media.appendChild(next);
   requestAnimationFrame(()=>{next.style.opacity="1";old.style.opacity="0";});
   setTimeout(()=>{if(old!==next&&old.parentNode)old.remove()},reduced?0:850);
   currentVideo=next;const sound=$("#sound-toggle");sound.textContent="SOUND OFF";sound.setAttribute("aria-label","Turn video sound on");muted=true;
  };
- buttons.forEach(b=>b.addEventListener("click",()=>setMedia(b.dataset.showreel,b.dataset.showreel===activeKey)));
+ // Delegated interaction keeps the Recent Works controls responsive even if the hero is re-rendered.
+ const activateShowreelButton=b=>{
+  const key=b?.dataset?.showreel;
+  if(!key||!data.showreel[key])return;
+  setMedia(key,key===activeKey);
+ };
+ buttons.forEach(b=>b.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();activateShowreelButton(b)}));
+ $("#showreel-media").addEventListener("click",e=>{
+  const b=e.target.closest("[data-showreel]");
+  if(b)activateShowreelButton(b);
+ });
+
  $("#sound-toggle").addEventListener("click",()=>{
   if(!currentVideo)return;
   if(currentVideo.tagName==="VIDEO"){muted=!muted;currentVideo.muted=muted;$("#sound-toggle").textContent=muted?"SOUND OFF":"SOUND ON";}

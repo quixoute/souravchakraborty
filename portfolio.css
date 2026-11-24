@@ -56,3 +56,7 @@ footer{padding:56px var(--pad) 30px;border-top:1px solid #252525;display:grid;gr
 .enquiry-form.is-success .form-note{color:#c9d8c2}
 .enquiry-form.is-error .form-note{color:#e0aaa2}
 @media(prefers-reduced-motion:reduce){.intro .eyebrow,.intro-line{opacity:1;transform:none;transition:none}.hero-copy{will-change:auto}}
+
+.svg-filters{position:absolute;width:0;height:0;overflow:hidden;pointer-events:none}
+.optical-media img,.optical-media video{transform:scale(1.035);filter:url(#lens-distortion) brightness(.78) saturate(.82)}
+.category:hover iframe{transform:scale(1.035);transition:transform 1.2s cubic-bezier(.2,.7,.2,1)}

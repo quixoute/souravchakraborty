@@ -92,7 +92,13 @@
  };
  const photoSrc=(series,index)=>series.directory+"/"+series.prefix+(index+1)+"."+series.extension;
  const photoEntries=(ids)=>{
-  const entries=[];ids.forEach(id=>{const g=photoSeries[id];for(let i=0;i<g.count;i++)entries.push({id,series:g,index:i,src:photoSrc(g,i),number:i+1})});return entries;
+  const entries=[];
+  ids.forEach(id=>{
+   const g=photoSeries[id];
+   if(ids.length>1){entries.push({id,series:g,index:0,src:photoSrc(g,0),number:1,isProject:true});}
+   else{for(let i=0;i<g.count;i++)entries.push({id,series:g,index:i,src:photoSrc(g,i),number:i+1,isProject:false});}
+  });
+  return entries;
  };
  const renderFloatingCanvas=(ids,heading)=>{
   const entries=photoEntries(ids);
@@ -103,12 +109,11 @@
    const seed2=(i*7919+12345)%2147483647,rand2=(seed2%10000)/10000;
    const width=Math.round(132+rand*104),left=90+col*cellW+Math.round(rand2*52),top=70+row*cellH+Math.round(((i*37)%83));
    const title=ids.length===1?item.series.title:"";
-   return '<button class="floating-photo" type="button" data-photo-src="'+esc(item.src)+'" data-photo-title="'+esc(title)+'" data-photo-index="'+item.index+'" aria-label="View '+esc(item.series.title)+' photograph '+item.number+'" style="left:'+left+'px;top:'+top+'px;width:'+width+'px"><img src="'+esc(item.src)+'" alt="'+esc(item.series.title)+' — photograph '+item.number+'" loading="lazy"><span class="floating-photo-caption">'+(ids.length===1?String(item.number).padStart(2,"0")+' / '+esc(item.series.title):esc(item.series.title))+'</span></button>';
+   return item.isProject
+    ?'<a class="floating-photo floating-project" href="#gallery/'+item.id+'" aria-label="Open '+esc(item.series.title)+' project" style="left:'+left+'px;top:'+top+'px;width:'+Math.round(width*1.28)+'px"><img src="'+esc(item.src)+'" alt="'+esc(item.series.title)+' project cover" loading="lazy"><span class="floating-photo-caption">'+esc(item.series.title)+' <small>'+String(item.series.count).padStart(2,"0")+' PHOTOGRAPHS</small></span></a>'
+    :'<button class="floating-photo" type="button" data-photo-src="'+esc(item.src)+'" data-photo-title="'+esc(title)+'" data-photo-index="'+item.index+'" aria-label="View '+esc(item.series.title)+' photograph '+item.number+'" style="left:'+left+'px;top:'+top+'px;width:'+width+'px"><img src="'+esc(item.src)+'" alt="'+esc(item.series.title)+' — photograph '+item.number+'" loading="lazy"><span class="floating-photo-caption">'+String(item.number).padStart(2,"0")+' / '+esc(item.series.title)+'</span></button>';
   }).join("");
-  const labels=ids.length===1?'':ids.map((id,i)=>{
-   const x=390+i*780,y=520+(i%2)*650;
-   return '<a class="floating-series-label" href="#gallery/'+id+'" style="left:'+x+'px;top:'+y+'px"><span>PHOTOGRAPHIC SERIES</span><strong>'+esc(photoSeries[id].title)+'</strong><small>'+esc(photoSeries[id].description)+'</small></a>';
-  }).join("");
+  const labels='';
   return '<div class="floating-gallery-shell"><div class="floating-gallery-top"><a href="#home" class="floating-gallery-mark">SC.</a><nav><a href="#work/photography">GALLERY</a><a href="#about">ABOUT</a><a href="#contact">CONTACT</a></nav></div><div class="floating-gallery-heading">'+heading+'</div><div class="floating-gallery-canvas" style="width:'+canvasW+'px;height:'+canvasH+'px">'+items+labels+'</div><div class="floating-gallery-hint">DRAG TO EXPLORE</div><div class="photo-lightbox" hidden><button type="button" class="photo-lightbox-close" aria-label="Close image">×</button><button type="button" class="photo-lightbox-prev" aria-label="Previous image">‹</button><img class="photo-lightbox-image" alt=""><button type="button" class="photo-lightbox-next" aria-label="Next image">›</button><div class="photo-lightbox-caption"></div></div></div>';
  };
  const bindFloatingGallery=()=>{

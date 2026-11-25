@@ -173,3 +173,35 @@ html,body{width:100%;max-width:100%;margin:0;overflow-x:hidden}
 .showreel-bottom .recent-works .recent-item{cursor:pointer!important;pointer-events:auto!important}
 .showreel-bottom .recent-works{position:relative;z-index:30;pointer-events:auto!important}
 .showreel-bottom{z-index:20;pointer-events:none}
+
+
+/* Homepage hero: remove the oversized title block and let the category selector lead. */
+.showreel-bottom{
+  left:auto!important;
+  right:clamp(34px,20vw,420px)!important;
+  bottom:clamp(88px,12vh,132px)!important;
+  display:block!important;
+  width:clamp(300px,25vw,440px)!important;
+  height:auto!important;
+  padding:0!important;
+  gap:0!important;
+}
+.showreel-bottom .showreel-title{display:none!important}
+.showreel-bottom .recent-works{width:100%!important;max-width:none!important}
+.showreel-bottom .recent-works>.eyebrow{padding-bottom:12px!important}
+.showreel-bottom .recent-works .recent-item b{color:rgba(242,240,236,.78)!important;transition:color .22s ease,text-shadow .22s ease}
+.showreel-bottom .recent-works .recent-item.active b{
+  color:#a9c8ff!important;
+  text-shadow:0 0 12px rgba(112,166,255,.38),0 0 2px rgba(180,210,255,.7);
+}
+.showreel-bottom .recent-works .recent-item:hover b,
+.showreel-bottom .recent-works .recent-item:focus-visible b{color:#d7e5ff!important}
+@media(max-width:1100px){
+ .showreel-bottom{right:7vw!important;left:auto!important;width:min(45vw,440px)!important;bottom:clamp(90px,13vh,124px)!important}
+}
+@media(max-width:640px){
+ .showreel-bottom{left:22px!important;right:22px!important;bottom:86px!important;width:auto!important}
+ .showreel-bottom .recent-works{max-width:100%!important}
+ .showreel-bottom .recent-works>.eyebrow{font-size:7px!important}
+ .showreel-bottom .recent-works .recent-item{min-height:34px!important;padding:6px 0!important}
+}

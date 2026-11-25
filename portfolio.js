@@ -16,7 +16,7 @@
  $("#year").textContent=new Date().getFullYear();
  const cp=data.copy||{}, n=cp.navigation||{}, h=cp.showreel||{}, i=cp.intro||{}, f=cp.feature||{}, a=cp.about||{}, c=cp.capabilities||{}, ct=cp.contact||{}, ft=cp.footer||{};
  const txt=(s,v)=>{const el=$(s);if(el&&v!==undefined)el.textContent=v};
- const html=(s,v)=>{const el=$(s);if(el&&v!==undefined)el.innerHTML=String(v).replace(/<(?!\\/?(?:em|br)\\b)[^>]*>/gi,"")};
+ const html=(s,v)=>{const el=$(s);if(el&&v!==undefined)el.innerHTML=String(v).replace(/<(?!\/?(?:em|br)\b)[^>]*>/gi,"")};
  txt(".nav-work-trigger",n.work);txt('.desktop a[href="#about"]',n.about);txt('.desktop a[href="#contact"]',n.contact);txt(".menu-toggle",n.menu);txt(".menu-close",n.close);
  const navKeys={"#home":"home","#work/commercials":"commercials","#work/weddings":"weddings","#work/pre-wedding":"prewedding","#work/short-films":"shortFilms","#work/photography":"photography","#about":"about","#contact":"contact"};$(".mobile-menu a").forEach(el=>{const k=navKeys[el.getAttribute("href")];if(k&&n[k])el.textContent=n[k]});
  txt(".showreel-top .eyebrow",h.topLabel);txt("#active-kicker",h.activeKicker);txt(".recent-works>.eyebrow",h.recentLabel+" ");
@@ -47,8 +47,8 @@
   else if(entries.length)cycle[key]=0;
   activeKey=key;
   const entry=entries.length?entries[cycle[key]]:null;
-  title.innerHTML=item.title;
-  desc.textContent=item.description;
+  title.innerHTML=(data.copy?.showreel?.[key+"Title"]||item.title);
+  desc.textContent=(data.copy?.showreel?.[key+"Description"]||item.description);
   kicker.textContent="SELECTED WORK";
   counter.textContent=String(["ai","wedding","prewedding","short"].indexOf(key)+1).padStart(2,"0")+" / 04";
   buttons.forEach(b=>{const active=b.dataset.showreel===key;b.classList.toggle("active",active);b.setAttribute("aria-pressed",String(active))});

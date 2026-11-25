@@ -155,7 +155,7 @@
     photoList.querySelectorAll(".photo-row").forEach(row=>{const i=Number(row.dataset.photoIndex);row.querySelector(".photo-up").addEventListener("click",()=>movePhoto(id,i,i-1));row.querySelector(".photo-down").addEventListener("click",()=>movePhoto(id,i,i+1));row.querySelector(".photo-remove").addEventListener("click",()=>{if(!confirm("Remove this photograph from the gallery? The file stays in the repository."))return;series.images.splice(i,1);markDirty();renderPhotography();});});
     setStatus($("#photo-status"),series.title+" · "+images.length+" photographs. Publish Changes updates the public gallery.");
   }
-  function movePhoto(id,from,to){const images=portfolio.photography[id].images;if(to<0||to>=images.length||from===to)return;const [v]=images.splice(from,1);images.splice(to,0,v);markDirty();renderPhotography();}
+  function movePhoto(id,from,to){const images=portfolio.photography[id].images;if(to<0||to>=images.length||from===to)return;const [v]=images.splice(from,1);images.splice(to,0,v);syncPhotographyProjects();markDirty();renderPhotography();}
   function safeImageFilename(name){return name.normalize("NFKD").replace(/[^a-zA-Z0-9._-]+/g,"-").replace(/^-+|-+$/g,"").slice(-90)||"photograph";}
   async function uploadPhotographyFile(file,id){
     if(!["image/jpeg","image/png","image/webp","image/gif","image/avif"].includes(file.type))throw new Error(file.name+": unsupported image format.");

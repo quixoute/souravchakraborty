@@ -102,6 +102,9 @@
  const photoSrc=(series,index)=>series.images?.[index]||(series.directory+"/"+(series.prefix||"")+(index+1)+"."+(series.extension||"webp"));
  const photoEntries=(ids)=>{
   const entries=[];
+  if(ids.length>1){
+   entries.push({id:"standalone",series:{title:"Photography"},index:0,src:"fcdff11cd40ed32148681d3a7729cdee.jpg",number:1,isStandalone:true});
+  }
   ids.forEach(id=>{
    const g=photoSeries[id];
    if(ids.length>1){
@@ -128,7 +131,7 @@
     {left:430,top:760,width:320},
     {left:1280,top:790,width:310}
    ];
-   const position=projectIndex?projectPositions[i]:null;
+   const position=projectIndex?(item.isStandalone?{left:790,top:470,width:300}:projectPositions[i-1]):null;
    let row=0,col=0,rowStart=0;
    if(!projectIndex){
     for(let r=0;r<rowCounts.length;r++){if(i<rowStart+rowCounts[r]){row=r;col=i-rowStart;break;}rowStart+=rowCounts[r];}
@@ -142,7 +145,9 @@
    const left=projectIndex?position.left:Math.max(12,Math.min(viewportW-width-12,Math.round(gap+col*slot+((slot-width)/2)+rowShift+localJitter)));
    const top=projectIndex?position.top:48+row*250+Math.round(rand*74);
    const caption=projectIndex?esc(item.series.title)+' <small>'+String(item.series.images?.length??item.series.count??0).padStart(2,"0")+' PHOTOGRAPHS</small>':String(item.number).padStart(2,"0")+' / '+esc(item.series.title);
-   return projectIndex
+   return item.isStandalone
+    ?'<button class="floating-photo floating-photo-standalone" type="button" data-photo-src="'+esc(item.src)+'" data-photo-title="Photography" data-photo-index="0" aria-label="View standalone photography image" style="left:'+left+'px;top:'+top+'px;width:'+width+'px"><img src="'+esc(item.src)+'" alt="Photography" loading="lazy"><span class="floating-photo-caption">01 / PHOTOGRAPHY</span></button>'
+    :projectIndex
     ?'<a class="floating-photo floating-project" href="#gallery/'+item.id+'" aria-label="Open '+esc(item.series.title)+' project" style="left:'+left+'px;top:'+top+'px;width:'+width+'px"><img src="'+esc(item.src)+'" alt="'+esc(item.series.title)+' project cover" loading="lazy"><span class="floating-photo-caption">'+caption+'</span></a>'
     :'<button class="floating-photo" type="button" data-photo-src="'+esc(item.src)+'" data-photo-title="'+esc(item.series.title)+'" data-photo-index="'+item.index+'" aria-label="View '+esc(item.series.title)+' photograph '+item.number+'" style="left:'+left+'px;top:'+top+'px;width:'+width+'px"><img src="'+esc(item.src)+'" alt="'+esc(item.series.title)+' — photograph '+item.number+'" loading="lazy"><span class="floating-photo-caption">'+caption+'</span></button>';
   }).join("");

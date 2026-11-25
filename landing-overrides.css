@@ -352,3 +352,9 @@ html,body{width:100%;max-width:100%;margin:0;overflow-x:hidden}
   .feature{align-items:flex-end!important;justify-content:flex-start!important}
   .feature-copy{width:100%!important;max-width:100%!important;margin:0!important;padding-bottom:20px!important}
 }
+
+/* Refine featured headline scale and lift the text block slightly on desktop. */
+@media(min-width:761px){
+  .feature h2{font-size:clamp(50px,7.8vw,108px)!important}
+  .feature-copy{top:-24px}
+}

@@ -140,7 +140,7 @@
 
   const textGroups = [
     ["Navigation",["navigation.work","navigation.about","navigation.contact","navigation.menu","navigation.close","navigation.home","navigation.commercials","navigation.weddings","navigation.prewedding","navigation.shortFilms","navigation.photography"]],
-    ["Showreel",["showreel.topLabel","showreel.activeKicker","showreel.recentLabel","showreel.recentHint","showreel.aiLabel","showreel.weddingLabel","showreel.preweddingLabel","showreel.shortLabel","showreel.scrollLabel","showreel.soundOff","showreel.soundOn"]],
+    ["Showreel",["showreel.topLabel","showreel.activeKicker","showreel.recentLabel","showreel.recentHint","showreel.aiLabel","showreel.weddingLabel","showreel.preweddingLabel","showreel.shortLabel","showreel.scrollLabel","showreel.soundOff","showreel.soundOn","showreel.aiTitle","showreel.aiDescription","showreel.weddingTitle","showreel.weddingDescription","showreel.preweddingTitle","showreel.preweddingDescription","showreel.shortTitle","showreel.shortDescription"]],
     ["A way of seeing",["intro.eyebrow","intro.headline","intro.body"]],
     ["Featured section",["feature.eyebrow","feature.headline","feature.body","feature.link"]],
     ["About",["about.eyebrow","about.headline","about.body1","about.body2","about.link"]],

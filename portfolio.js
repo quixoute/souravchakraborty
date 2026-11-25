@@ -16,7 +16,7 @@
  $("#year").textContent=new Date().getFullYear();
  const cp=data.copy||{}, n=cp.navigation||{}, h=cp.showreel||{}, i=cp.intro||{}, f=cp.feature||{}, a=cp.about||{}, c=cp.capabilities||{}, ct=cp.contact||{}, ft=cp.footer||{};
  const txt=(s,v)=>{const el=$(s);if(!el||v===undefined)return;const node=[...el.childNodes].find(n=>n.nodeType===Node.TEXT_NODE);if(node)node.textContent=v;else el.textContent=v};
- const html=(s,v)=>{const el=$(s);if(el&&v!==undefined){const safe=String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/&lt;(\\/?)(em|br)&gt;/gi,"<$1$2>");el.innerHTML=safe}};
+ const html=(s,v)=>{const el=$(s);if(el&&v!==undefined){const safe=String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/&lt;(\/?)(em|br)&gt;/gi,"<$1$2>");el.innerHTML=safe}};
  txt(".nav-work-trigger",n.work);txt('.desktop a[href="#about"]',n.about);txt('.desktop a[href="#contact"]',n.contact);txt(".menu-toggle",n.menu);txt(".menu-close",n.close);
  const navKeys={"#home":"home","#work/commercials":"commercials","#work/weddings":"weddings","#work/pre-wedding":"prewedding","#work/short-films":"shortFilms","#work/photography":"photography","#about":"about","#contact":"contact"};$(".mobile-menu a").forEach(el=>{const k=navKeys[el.getAttribute("href")];if(k&&n[k])el.textContent=n[k]});
  txt(".showreel-top .eyebrow",h.topLabel);txt("#active-kicker",h.activeKicker);txt(".recent-works>.eyebrow",h.recentLabel+" ");

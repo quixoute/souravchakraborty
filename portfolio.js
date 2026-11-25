@@ -15,14 +15,22 @@
  addEventListener("scroll",()=>nav.classList.toggle("scrolled",scrollY>24),{passive:true});
  $("#year").textContent=new Date().getFullYear();
  const media=$("#showreel-media"),title=$("#active-title"),desc=$("#active-description"),kicker=$("#active-kicker"),counter=$("#showreel-counter"),buttons=$$(".recent-item");
- let activeKey="ai",cycle={wedding:0,prewedding:0},currentVideo=$("#hero-video"),muted=true,mediaRequest=0;
+ let activeKey="ai",cycle={wedding:0,prewedding:0,short:0},currentVideo=$("#hero-video"),muted=true,mediaRequest=0;
+ const categoryEntries=(key)=>{
+  const categoryId=key==="wedding"?"weddings":key==="prewedding"?"pre-wedding":key==="short"?"short-films":null;
+  const category=data.categories.find(c=>c.id===categoryId);
+  return (category?.projects||[]).filter(p=>p.videoId||p.videoSrc).map(p=>({
+   id:p.videoId||null,src:p.videoSrc||null,title:p.title||"Film",type:p.videoId?"youtube":"video"
+  }));
+ };
  const setMedia=(key)=>{
   const item=data.showreel[key];if(!item)return;
-  // First selection starts at item zero; each repeat click advances to the next film.
-  if(key===activeKey&&item.videos?.length)cycle[key]=(cycle[key]+1)%item.videos.length;
-  else if(item.videos?.length)cycle[key]=0;
+  const entries=key==="ai"?[]:categoryEntries(key);
+  // Every video in the selected category is included; clicking the active category advances the playlist.
+  if(key===activeKey&&entries.length)cycle[key]=(cycle[key]+1)%entries.length;
+  else if(entries.length)cycle[key]=0;
   activeKey=key;
-  const entry=item.videos?item.videos[cycle[key]]:null;
+  const entry=entries.length?entries[cycle[key]]:null;
   title.innerHTML=item.title;
   desc.textContent=item.description;
   kicker.textContent="SELECTED WORK";
@@ -30,17 +38,17 @@
   buttons.forEach(b=>{const active=b.dataset.showreel===key;b.classList.toggle("active",active);b.setAttribute("aria-pressed",String(active))});
   const request=++mediaRequest;
   let next;
-  if(item.type==="youtube"){
+  if(entry?.type==="youtube"){
    next=document.createElement("iframe");
-   next.src="https://www.youtube-nocookie.com/embed/"+entry.id+"?autoplay=1&mute=1&controls=0&playsinline=1&rel=0&modestbranding=1&iv_load_policy=3&enablejsapi=1";
-   next.title=entry.title+" — "+(key==="wedding"?"Wedding teaser":"Pre-wedding teaser");
+   next.src="https://www.youtube-nocookie.com/embed/"+encodeURIComponent(entry.id)+"?autoplay=1&mute=1&controls=0&playsinline=1&rel=0&modestbranding=1&iv_load_policy=3&enablejsapi=1";
+   next.title=entry.title+" — "+(key==="wedding"?"Wedding teaser":key==="prewedding"?"Pre-wedding teaser":"Short film");
    next.allow="autoplay; encrypted-media; picture-in-picture; fullscreen";
    next.referrerPolicy="strict-origin-when-cross-origin";
    next.setAttribute("allowfullscreen","");
    next.loading="eager";
   }else{
    next=document.createElement("video");
-   next.src=item.src;next.autoplay=true;next.muted=true;next.loop=true;next.playsInline=true;next.preload="auto";next.controls=false;
+   next.src=entry?.src||item.src;next.autoplay=true;next.muted=true;next.loop=true;next.playsInline=true;next.preload="auto";next.controls=false;
    if(key==="ai")next.poster="31.jpg";
    next.addEventListener("loadeddata",()=>{if(request===mediaRequest)next.play().catch(()=>{})},{once:true});
    next.addEventListener("error",()=>{if(request===mediaRequest)desc.textContent="Video could not be loaded. Please refresh the page."},{once:true});

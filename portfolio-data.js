@@ -78,7 +78,8 @@ window.PORTFOLIO = {
         {
           "title": "Uber Eats Launch",
           "description": "Video project.",
-          "videoId": "GOVlnItgDXk"
+          "videoId": "GOVlnItgDXk",
+          "aspectRatio": "16 / 9"
         },
         {
           "title": "Mumuso",

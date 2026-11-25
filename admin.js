@@ -11,6 +11,7 @@
   const tokenInput = $("#github-token");
   const loginStatus = $("#login-status");
   const projectList = $("#project-list");
+  const photoList = $("#photo-list");
   const publishButton = $("#publish");
   const publishBottom = $("#publish-bottom");
   const changeState = $("#change-state");
@@ -125,6 +126,8 @@
     dashboard.hidden = false;
     $("#logout").hidden = false;
     populateCategoryControls();
+    populatePhotographyControls();
+    renderPhotography();
     renderProjects();
     markClean();
     setStatus(dashboardStatus, "Connected as " + (user.login || "GitHub user") + ". Changes publish to the main branch.", "success");
@@ -135,6 +138,33 @@
     $("#new-category").innerHTML = options;
     $("#filter-category").innerHTML = '<option value="all">All categories</option>' + options;
   }
+
+
+  const photoSeriesOrder=["tri","dreamer","untitled","ubereats"];
+  const photoSeriesList=()=>photoSeriesOrder.filter(id=>portfolio?.photography?.[id]);
+  const selectedPhotoSeries=()=>portfolio.photography[$("#photo-series").value];
+  function populatePhotographyControls(){$("#photo-series").innerHTML=photoSeriesList().map(id=>'<option value="'+escapeHtml(id)+'">'+escapeHtml(portfolio.photography[id].title)+'</option>').join("");}
+  function renderPhotography(){
+    if(!portfolio?.photography)return;const id=$("#photo-series").value||photoSeriesList()[0],series=portfolio.photography[id];if(!series)return;
+    const images=series.images||[];
+    photoList.innerHTML=images.length?images.map((src,index)=>'<article class="photo-row" data-photo-index="'+index+'"><span class="photo-number">'+String(index+1).padStart(2,"0")+'</span><img class="photo-thumb" src="'+escapeHtml(src)+'" alt="" loading="lazy"><span class="photo-path" title="'+escapeHtml(src)+'">'+escapeHtml(src)+'</span><div class="photo-actions"><button class="icon-button photo-up" type="button" '+(index===0?'disabled':'')+'>↑</button><button class="icon-button photo-down" type="button" '+(index===images.length-1?'disabled':'')+'>↓</button><button class="icon-button delete photo-remove" type="button">×</button></div></article>').join(""):'<div class="empty">No photographs yet. Upload your first image above.</div>';
+    photoList.querySelectorAll(".photo-row").forEach(row=>{const i=Number(row.dataset.photoIndex);row.querySelector(".photo-up").addEventListener("click",()=>movePhoto(id,i,i-1));row.querySelector(".photo-down").addEventListener("click",()=>movePhoto(id,i,i+1));row.querySelector(".photo-remove").addEventListener("click",()=>{if(!confirm("Remove this photograph from the gallery? The file stays in the repository."))return;series.images.splice(i,1);markDirty();renderPhotography();});});
+    setStatus($("#photo-status"),series.title+" · "+images.length+" photographs. Publish Changes updates the public gallery.");
+  }
+  function movePhoto(id,from,to){const images=portfolio.photography[id].images;if(to<0||to>=images.length||from===to)return;const [v]=images.splice(from,1);images.splice(to,0,v);markDirty();renderPhotography();}
+  function safeImageFilename(name){return name.normalize("NFKD").replace(/[^a-zA-Z0-9._-]+/g,"-").replace(/^-+|-+$/g,"").slice(-90)||"photograph";}
+  async function uploadPhotographyFile(file,id){
+    if(!["image/jpeg","image/png","image/webp","image/gif","image/avif"].includes(file.type))throw new Error(file.name+": unsupported image format.");
+    if(file.size>20*1024*1024)throw new Error(file.name+": image exceeds 20 MB.");
+    const series=portfolio.photography[id],ext=(file.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"")||"jpg";
+    const base=safeImageFilename(file.name.replace(/\.[^.]+$/,"")),path=series.directory+"/admin-"+Date.now()+"-"+Math.random().toString(36).slice(2,7)+"-"+base+"."+ext;
+    const bytes=new Uint8Array(await file.arrayBuffer());let binary="";for(let i=0;i<bytes.length;i+=0x8000)binary+=String.fromCharCode(...bytes.subarray(i,i+0x8000));
+    await github("/repos/"+OWNER+"/"+REPO+"/contents/"+path.split("/").map(encodeURIComponent).join("/"),{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:"Add photography image: "+file.name,content:btoa(binary),branch:"main"})});
+    series.images.push(path);markDirty();
+  }
+  $("#photo-series").addEventListener("change",renderPhotography);
+  $("#photo-files").addEventListener("change",async event=>{const selected=Array.from(event.target.files||[]),id=$("#photo-series").value;if(!selected.length||!id)return;event.target.disabled=true;try{for(let i=0;i<selected.length;i++){setStatus($("#photo-status"),"Uploading "+(i+1)+" of "+selected.length+": "+selected[i].name);await uploadPhotographyFile(selected[i],id);}renderPhotography();setStatus($("#photo-status"),selected.length+" image(s) uploaded to "+portfolio.photography[id].title+". Click Publish Changes to add them to the public gallery.","success");}catch(error){setStatus($("#photo-status"),error.message,"error");renderPhotography();}finally{event.target.disabled=false;event.target.value="";}});
+  $("#photo-url-form").addEventListener("submit",event=>{event.preventDefault();const value=$("#photo-url").value.trim();if(!/^https:\/\//i.test(value)){setStatus($("#photo-status"),"Please use a secure https:// image URL.","error");return;}const series=selectedPhotoSeries();if(!series)return;series.images.push(value);$("#photo-url").value="";markDirty();renderPhotography();});
 
   function renderProjects() {
     if (!portfolio) return;

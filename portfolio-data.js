@@ -94,7 +94,15 @@ window.PORTFOLIO = {
       "shortLabel": "Short Films",
       "scrollLabel": "SCROLL TO EXPLORE",
       "soundOff": "SOUND OFF",
-      "soundOn": "SOUND ON"
+      "soundOn": "SOUND ON",
+      "aiTitle": "AI <em>Movie.</em>",
+      "aiDescription": "A world built frame by frame.",
+      "weddingTitle": "Wedding <em>Teasers.</em>",
+      "weddingDescription": "Stories of two people, told with feeling.",
+      "preweddingTitle": "Pre-wedding <em>Teasers.</em>",
+      "preweddingDescription": "A little world of their own.",
+      "shortTitle": "Short <em>Films.</em>",
+      "shortDescription": "Light & Shadow — a short film."
     },
     "intro": {
       "eyebrow": "A WAY OF SEEING",

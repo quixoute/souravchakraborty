@@ -28,7 +28,7 @@
  txt("#about .about-copy .eyebrow",a.eyebrow);html("#about .about-copy h2",a.headline);const ap=$("#about .about-copy>p:not(.eyebrow)");if(ap[0])ap[0].textContent=a.body1||"";if(ap[1])ap[1].textContent=a.body2||"";txt("#about .about-copy .text-link",a.link);
  txt(".capabilities>.eyebrow",c.eyebrow);const caps=$(".capabilities>div");[["directionTitle","directionBody"],["editingTitle","editingBody"],["aiTitle","aiBody"],["photographyTitle","photographyBody"]].forEach((keys,j)=>{if(caps[j]){const hh=$("h3",caps[j]),pp=$("p",caps[j]);if(hh)hh.textContent=c[keys[0]]||"";if(pp)pp.textContent=c[keys[1]]||""}});
  txt(".contact-heading .eyebrow",ct.eyebrow);html(".contact-heading h2",ct.headline);txt(".contact-sub",ct.subtitle);txt(".contact-direct a:first-child",ct.emailLabel);txt(".contact-direct a:last-child",ct.whatsappLabel);
- const landingForm=$("#enquiry-form");if(landingForm){const ls=$("label",landingForm);const lvals=[ct.nameLabel,ct.emailFieldLabel,ct.categoryLabel,ct.budgetLabel,ct.detailsLabel,ct.timelineLabel];ls.forEach((el,j)=>{if(lvals[j]&&el.firstChild?.nodeType===Node.TEXT_NODE)el.firstChild.textContent=lvals[j]});const sel=$('select[name="Project category"]',form);if(sel&&ct.categoryPlaceholder)sel.options[0].textContent=ct.categoryPlaceholder;const budget=$('input[name="Budget range"]',form),details=$('textarea[name="Project details"]',form),timeline=$('input[name="Timeline"]',form);if(budget)budget.placeholder=ct.budgetPlaceholder||"";if(details)details.placeholder=ct.detailsPlaceholder||"";if(timeline)timeline.placeholder=ct.timelinePlaceholder||"";txt(".enquiry-form .contact-button",ct.submit);txt("#form-note",ct.note)}
+ const landingForm=$("#enquiry-form");if(landingForm){const ls=$("label",landingForm);const lvals=[ct.nameLabel,ct.emailFieldLabel,ct.categoryLabel,ct.budgetLabel,ct.detailsLabel,ct.timelineLabel];ls.forEach((el,j)=>{if(lvals[j]&&el.firstChild?.nodeType===Node.TEXT_NODE)el.firstChild.textContent=lvals[j]});const sel=$('select[name="Project category"]',landingForm);if(sel&&ct.categoryPlaceholder)sel.options[0].textContent=ct.categoryPlaceholder;const budget=$('input[name="Budget range"]',landingForm),details=$('textarea[name="Project details"]',landingForm),timeline=$('input[name="Timeline"]',landingForm);if(budget)budget.placeholder=ct.budgetPlaceholder||"";if(details)details.placeholder=ct.detailsPlaceholder||"";if(timeline)timeline.placeholder=ct.timelinePlaceholder||"";txt(".enquiry-form .contact-button",ct.submit);txt("#form-note",ct.note)}
  txt("footer>div:first-child>p",ft.tagline);txt(".footer-links a:first-child",ft.emailLabel);txt(".footer-links a:last-child",ft.instagramLabel);txt("footer small",ft.copyright+" ");
  const media=$("#showreel-media"),title=$("#active-title"),desc=$("#active-description"),kicker=$("#active-kicker"),counter=$("#showreel-counter"),buttons=$$(".recent-item");
  let activeKey="ai",cycle={wedding:0,prewedding:0,short:0},currentVideo=$("#hero-video"),muted=localStorage.getItem("portfolioSound")!=="on",mediaRequest=0;
@@ -77,7 +77,11 @@
   currentVideo=next;
   const sound=$("#sound-toggle");sound.textContent=muted?"SOUND OFF":"SOUND ON";sound.setAttribute("aria-label",muted?"Turn video sound on":"Turn video sound off");
  };
- // Expose the selector for the explicit onclick attributes in index.html.
+ // Bind category controls after all page-copy initialization has completed.
+ // Explicit listeners avoid relying on inline HTML handlers/global scope.
+ buttons.forEach(button=>{
+  button.addEventListener("click",()=>setMedia(button.dataset.showreel));
+ });
  window.selectShowreel=setMedia;
  $("#sound-toggle").addEventListener("click",()=>{
   if(!currentVideo)return;

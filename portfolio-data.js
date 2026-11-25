@@ -76,6 +76,11 @@ window.PORTFOLIO = {
       "description": "Brand films, product stories and social-first visual campaigns.",
       "projects": [
         {
+          "title": "Uber Eats Launch",
+          "description": "Video project.",
+          "videoId": "GOVlnItgDXk"
+        },
+        {
           "title": "Mumuso",
           "description": "Mumuso × Jessica — brand film.",
           "href": "mumuso.html",

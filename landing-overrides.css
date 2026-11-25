@@ -344,3 +344,11 @@ html,body{width:100%;max-width:100%;margin:0;overflow-x:hidden}
 @media (prefers-reduced-motion:reduce){
   .nav .nav-work-trigger .nav-chevron{transition:none}
 }
+
+/* Featured section: move its editorial text block to the right on desktop. */
+.feature{align-items:center!important;justify-content:flex-end!important}
+.feature-copy{width:min(48%,760px)!important;max-width:760px!important;margin-left:auto!important;margin-right:clamp(22px,5vw,76px)!important;padding-bottom:0!important}
+@media(max-width:760px){
+  .feature{align-items:flex-end!important;justify-content:flex-start!important}
+  .feature-copy{width:100%!important;max-width:100%!important;margin:0!important;padding-bottom:20px!important}
+}

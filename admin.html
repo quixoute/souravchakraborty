@@ -49,6 +49,13 @@
 </form>
 </section>
 
+<section class="add-panel photography-panel">
+<div class="panel-heading"><div><p class="eyebrow">PHOTOGRAPHY · IMAGE GALLERIES</p><h2>Manage photographs</h2></div><span class="step">02 / PHOTOS</span></div>
+<p class="photo-help">Choose a photography subgroup, upload images from your computer or add an image URL. Reorder with the arrows. Uploaded files are added to the repository; publish the gallery list to make them appear on the website.</p>
+<div class="photo-controls"><label class="field">Photography subgroup<select id="photo-series"></select></label><label class="field photo-upload">Upload photographs<input id="photo-files" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif" multiple><small>JPG, PNG, WebP, GIF or AVIF · up to 20 MB per image</small></label></div>
+<form id="photo-url-form" class="photo-url-form"><label class="field">Add image URL<input id="photo-url" type="url" placeholder="https://…/photograph.webp"></label><button class="secondary-button" type="submit">ADD URL ＋</button></form>
+<div id="photo-list" class="photo-list"></div><p id="photo-status" class="inline-status">Select a subgroup to manage its photographs.</p>
+</section>
 <section class="library">
 <div class="library-heading"><div><p class="eyebrow">CONTENT LIBRARY</p><h2>Organise projects</h2></div><div class="filters"><input id="search" type="search" placeholder="Search projects…"><select id="filter-category"><option value="all">All categories</option></select></div></div>
 <div id="project-list"></div>

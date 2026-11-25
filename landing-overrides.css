@@ -361,7 +361,7 @@ html,body{width:100%;max-width:100%;margin:0;overflow-x:hidden}
 
 /* A Way of Seeing: birds video fills this section only, with copy layered at left. */
 .intro.section.intro-birds-background{
-  position:relative!important;display:flex!important;align-items:center!important;
+  position:relative!important;display:flex;align-items:center!important;
   min-height:90svh!important;overflow:hidden!important;isolation:isolate;
   padding:clamp(48px,7vw,100px) var(--pad)!important;
   background:#080808!important;

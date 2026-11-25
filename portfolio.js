@@ -93,13 +93,13 @@
   }
   return '<a class="category-tile" data-category-tile style="--tile-ratio:'+esc(p.aspectRatio||"16 / 9")+'" href="'+esc(target)+'">'+mediaHtml+'<span class="category-tile-title">'+esc(p.title)+'</span></a>';
  };
- const photoSeries={
-  tri:{title:"Tri",description:"A photographic series.",directory:"Tri",prefix:"",extension:"webp",count:14},
-  dreamer:{title:"Dreamer",description:"A photographic series.",directory:"Dreamer",prefix:"Dreamer-",extension:"jpg",count:15},
-  untitled:{title:"Untitled",description:"A photographic collection.",directory:"Untitled",prefix:"",extension:"webp",count:52},
-  ubereats:{title:"Uber Eats",description:"A visual project.",directory:"ubereats",prefix:"",extension:"webp",count:12}
+ const photoSeries=data.photography||{
+  tri:{title:"Tri",description:"A photographic series.",directory:"Tri",images:Array.from({length:14},(_,i)=>"Tri/"+(i+1)+".webp")},
+  dreamer:{title:"Dreamer",description:"A photographic series.",directory:"Dreamer",images:Array.from({length:15},(_,i)=>"Dreamer/Dreamer-"+(i+1)+".jpg")},
+  untitled:{title:"Untitled",description:"A photographic collection.",directory:"Untitled",images:Array.from({length:52},(_,i)=>"Untitled/"+(i+1)+".webp")},
+  ubereats:{title:"Uber Eats",description:"A visual project.",directory:"ubereats",images:Array.from({length:12},(_,i)=>"ubereats/"+(i+1)+".webp")}
  };
- const photoSrc=(series,index)=>series.directory+"/"+series.prefix+(index+1)+"."+series.extension;
+ const photoSrc=(series,index)=>series.images?.[index]||(series.directory+"/"+(series.prefix||"")+(index+1)+"."+(series.extension||"webp"));
  const photoEntries=(ids)=>{
   const entries=[];
   ids.forEach(id=>{
@@ -107,7 +107,7 @@
    if(ids.length>1){
     entries.push({id,series:g,index:0,src:photoSrc(g,0),number:1,isProject:true});
    }else{
-    for(let i=0;i<g.count;i++)entries.push({id,series:g,index:i,src:photoSrc(g,i),number:i+1,isProject:false});
+    for(let i=0;i<(g.images?.length??g.count??0);i++)entries.push({id,series:g,index:i,src:photoSrc(g,i),number:i+1,isProject:false});
    }
   });
   return entries;
@@ -141,7 +141,7 @@
    const localJitter=Math.round((rand2-.5)*Math.min(62,slot*.34));
    const left=projectIndex?position.left:Math.max(12,Math.min(viewportW-width-12,Math.round(gap+col*slot+((slot-width)/2)+rowShift+localJitter)));
    const top=projectIndex?position.top:48+row*250+Math.round(rand*74);
-   const caption=projectIndex?esc(item.series.title)+' <small>'+String(item.series.count).padStart(2,"0")+' PHOTOGRAPHS</small>':String(item.number).padStart(2,"0")+' / '+esc(item.series.title);
+   const caption=projectIndex?esc(item.series.title)+' <small>'+String(item.series.images?.length??item.series.count??0).padStart(2,"0")+' PHOTOGRAPHS</small>':String(item.number).padStart(2,"0")+' / '+esc(item.series.title);
    return projectIndex
     ?'<a class="floating-photo floating-project" href="#gallery/'+item.id+'" aria-label="Open '+esc(item.series.title)+' project" style="left:'+left+'px;top:'+top+'px;width:'+width+'px"><img src="'+esc(item.src)+'" alt="'+esc(item.series.title)+' project cover" loading="lazy"><span class="floating-photo-caption">'+caption+'</span></a>'
     :'<button class="floating-photo" type="button" data-photo-src="'+esc(item.src)+'" data-photo-title="'+esc(item.series.title)+'" data-photo-index="'+item.index+'" aria-label="View '+esc(item.series.title)+' photograph '+item.number+'" style="left:'+left+'px;top:'+top+'px;width:'+width+'px"><img src="'+esc(item.src)+'" alt="'+esc(item.series.title)+' — photograph '+item.number+'" loading="lazy"><span class="floating-photo-caption">'+caption+'</span></button>';

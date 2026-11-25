@@ -168,10 +168,10 @@
   const cat=data.categories.find(x=>x.id===id);if(!cat)return false;
   const first=cat.projects[0]||{};
   const feature=first.videoSrc
-   ?'<video class="category-feature__video" src="'+esc(first.videoSrc)+'" autoplay muted loop playsinline></video>'
+   ?'<video class="category-feature__video" style="--media-ratio:'+esc(first.aspectRatio||"16 / 9")+';--media-ratio-width:'+esc((first.aspectRatio||"16 / 9").split(" / ")[0])+';--media-ratio-height:'+esc((first.aspectRatio||"16 / 9").split(" / ")[1])+'" src="'+esc(first.videoSrc)+'" autoplay muted loop playsinline></video>'
    :first.videoId
-    ?'<iframe class="category-feature__video" src="https://www.youtube-nocookie.com/embed/'+encodeURIComponent(first.videoId)+'?autoplay=1&mute=1&controls=0&loop=1&playlist='+encodeURIComponent(first.videoId)+'&playsinline=1&rel=0&modestbranding=1" title="'+esc(first.title)+'" allow="autoplay; encrypted-media; picture-in-picture" loading="eager"></iframe>'
-    :first.image?'<img class="category-feature__video" src="'+esc(first.image)+'" alt="">':'';
+    ?'<iframe class="category-feature__video" style="--media-ratio:'+esc(first.aspectRatio||"16 / 9")+';--media-ratio-width:'+esc((first.aspectRatio||"16 / 9").split(" / ")[0])+';--media-ratio-height:'+esc((first.aspectRatio||"16 / 9").split(" / ")[1])+'" src="https://www.youtube-nocookie.com/embed/'+encodeURIComponent(first.videoId)+'?autoplay=1&mute=1&controls=0&loop=1&playlist='+encodeURIComponent(first.videoId)+'&playsinline=1&rel=0&modestbranding=1" title="'+esc(first.title)+'" allow="autoplay; encrypted-media; picture-in-picture" loading="eager"></iframe>'
+    :first.image?'<img class="category-feature__video" style="--media-ratio:'+esc(first.aspectRatio||"16 / 9")+'" src="'+esc(first.image)+'" alt="">':'';
   mainSections.forEach(s=>s.hidden=true);route.hidden=false;
   const remaining=cat.projects.slice(1);
   route.innerHTML='<div class="category-showcase-page '+(id==="commercials"?"commercial-showcase-page":"")+'"><section class="category-feature">'+feature+'</section><div class="category-project-grid">'+remaining.map((p,i)=>imageCard(p,cat.id,i)).join("")+'</div></div>';

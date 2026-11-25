@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#0b0b0b">
+<title>Portfolio Admin — Sourav Chakraborty</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;1,6..72,300&family=Schibsted+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<header class="topbar"><a class="brand" href="./">SC<span>.</span></a><span class="top-label">PORTFOLIO MANAGEMENT</span><button id="logout" class="quiet-button" hidden>LOG OUT</button></header>
+<main class="shell">
+<section id="login-panel" class="login-panel">
+<p class="eyebrow">PRIVATE WORKSPACE</p>
+<h1>Manage your<br><em>portfolio.</em></h1>
+<p class="lede">Connect your GitHub account to add, rename, move and reorder projects on your website.</p>
+<form id="login-form">
+<label for="github-token">Fine-grained GitHub token</label>
+<input id="github-token" type="password" autocomplete="current-password" placeholder="github_pat_…" required>
+<button class="primary-button" type="submit">CONNECT GITHUB <span>↗</span></button>
+</form>
+<div class="help">
+<strong>One-time setup</strong>
+<ol>
+<li>Open <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">GitHub fine-grained tokens</a>.</li>
+<li>Choose only the <b>souravchakraborty</b> repository.</li>
+<li>Under Repository permissions, set <b>Contents</b> to <b>Read and write</b>.</li>
+<li>Generate the token and paste it above. It is kept only for this browser session.</li>
+</ol>
+</div>
+<p id="login-status" class="status" role="status"></p>
+</section>
+
+<section id="dashboard" hidden>
+<div class="page-heading"><div><p class="eyebrow">YOUR WEBSITE · CONTENT</p><h1>Projects<span class="period">.</span></h1><p class="lede">Changes stay here until you publish them to your website.</p></div><div class="save-area"><span id="change-state" class="change-state">All changes saved</span><button id="publish" class="primary-button" disabled>PUBLISH CHANGES <span>↗</span></button></div></div>
+
+<section class="add-panel">
+<div class="panel-heading"><div><p class="eyebrow">ADD TO YOUR PORTFOLIO</p><h2>New project</h2></div><span class="step">01 / ADD</span></div>
+<form id="add-form" class="add-grid">
+<label class="field wide">YouTube URL<input id="new-url" type="url" placeholder="https://youtu.be/…" required></label>
+<label class="field">Project title<input id="new-title" type="text" placeholder="Untitled" required></label>
+<label class="field">Category<select id="new-category" required></select></label>
+<label class="field">Position<select id="new-position"><option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="manual">Add to end (reorder later)</option></select></label>
+<div class="add-action"><button class="primary-button" type="submit">ADD PROJECT <span>＋</span></button><p id="add-status" class="inline-status">Paste a YouTube link to add a film.</p></div>
+</form>
+</section>
+
+<section class="library">
+<div class="library-heading"><div><p class="eyebrow">CONTENT LIBRARY</p><h2>Organise projects</h2></div><div class="filters"><input id="search" type="search" placeholder="Search projects…"><select id="filter-category"><option value="all">All categories</option></select></div></div>
+<div id="project-list"></div>
+</section>
+<div class="bottom-save"><span id="bottom-state">Your published website is unchanged until you publish.</span><button id="publish-bottom" class="primary-button" disabled>PUBLISH CHANGES <span>↗</span></button></div>
+<p id="dashboard-status" class="status" role="status"></p>
+</section>
+</main>
+<footer><span>SC. · PRIVATE PORTFOLIO ADMIN</span><a href="./">VIEW WEBSITE ↗</a></footer>
+<script src="admin.js"></script>
+</body>
+</html>

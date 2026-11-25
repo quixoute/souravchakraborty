@@ -232,3 +232,23 @@ html,body{width:100%;max-width:100%;margin:0;overflow-x:hidden}
 @media(max-width:640px){
  .showreel-bottom{left:22px!important;right:22px!important;bottom:86px!important;width:auto!important}
 }
+
+
+/* Full-bleed landing video: cover the entire hero viewport without letterbox bars. */
+.showreel{overflow:hidden!important;background:#080808!important}
+.showreel-media{overflow:hidden!important;background:#080808!important}
+.showreel-media video{
+  position:absolute!important;inset:0!important;
+  width:100%!important;height:100%!important;
+  object-fit:cover!important;object-position:center center!important;
+  max-width:none!important;max-height:none!important;
+}
+.showreel-media iframe{
+  position:absolute!important;
+  left:50%!important;top:50%!important;right:auto!important;bottom:auto!important;
+  width:max(100%,177.78svh)!important;
+  height:max(100%,56.25vw)!important;
+  max-width:none!important;max-height:none!important;
+  transform:translate(-50%,-50%)!important;
+  border:0!important;background:transparent!important;
+}

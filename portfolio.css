@@ -379,3 +379,69 @@ footer{padding:56px var(--pad) 30px;border-top:1px solid #252525;display:grid;gr
   .intro-film-collage .intro-film-primary{width:70%!important}
   .intro-film-collage .intro-film-sunrise{width:50%!important}
 }
+
+
+/* Responsive collision fixes: keep showreel text and controls in separate,
+   naturally flowing regions on compact and short viewports. */
+.showreel-top{gap:18px;align-items:flex-start;min-width:0}
+.showreel-top>.eyebrow{max-width:65%;line-height:1.5}
+.showreel-counter{white-space:nowrap;text-align:right}
+.showreel-bottom{min-width:0}
+.showreel-title,.recent-works{min-width:0}
+.showreel-title h1{max-width:100%;overflow-wrap:anywhere}
+.showreel-title p{max-width:54ch;line-height:1.65}
+.recent-item{min-width:0}
+.recent-item b{min-width:0;overflow-wrap:anywhere}
+.showreel-scroll{max-width:calc(100% - 150px);white-space:normal;line-height:1.5}
+.sound-toggle{white-space:nowrap}
+@media(max-width:760px){
+ .showreel{height:auto;min-height:100svh;padding:0 0 112px;overflow:hidden}
+ .showreel-top{top:30px;left:22px;right:22px;gap:12px}
+ .showreel-top>.eyebrow{max-width:68%;font-size:8px;letter-spacing:.14em}
+ .showreel-bottom{position:relative;left:auto;right:auto;bottom:auto;padding:150px 22px 0;display:grid;grid-template-columns:minmax(0,1fr);gap:34px}
+ .showreel-title h1{font-size:clamp(48px,11vw,82px);line-height:1.02;overflow-wrap:normal}
+ .showreel-title p{font-size:12px;max-width:42ch}
+ .recent-works{width:100%;max-width:520px}
+ .recent-works>.eyebrow{line-height:1.5}
+ .recent-item{grid-template-columns:26px minmax(0,1fr) auto 14px;gap:9px;padding:12px 0}
+ .recent-item b{font-size:11px;line-height:1.4}
+ .recent-item i{font-size:9px;white-space:nowrap}
+ .showreel-scroll{left:22px;bottom:25px;max-width:calc(100% - 150px);font-size:8px;letter-spacing:.12em}
+ .sound-toggle{right:22px;bottom:17px;padding:7px 9px;font-size:8px}
+}
+@media(max-width:480px){
+ .showreel-top{top:24px}
+ .showreel-top>.eyebrow{max-width:62%;font-size:7px;letter-spacing:.11em}
+ .showreel-bottom{padding-top:132px;gap:28px}
+ .showreel-title h1{font-size:clamp(43px,11.5vw,58px);margin:12px 0}
+ .recent-item{grid-template-columns:22px minmax(0,1fr) auto;gap:8px}
+ .recent-item .recent-arrow{display:none}
+ .showreel-scroll{max-width:calc(100% - 132px);font-size:7px}
+ .sound-toggle{font-size:7px;padding:7px 8px}
+}
+@media(max-width:360px){
+ .showreel-top>.eyebrow{max-width:58%;font-size:6.5px;letter-spacing:.08em}
+ .showreel-counter{font-size:8px}
+ .showreel-bottom{padding-left:18px;padding-right:18px}
+ .showreel-title h1{font-size:42px}
+ .recent-item b{font-size:10px}
+ .showreel-scroll{left:18px;max-width:calc(100% - 122px)}
+ .sound-toggle{right:18px}
+}
+
+/* Sunrise is intentionally larger, while the title film remains the dominant frame. */
+.intro-film-collage .intro-film-sunrise{width:40%!important}
+@media(max-width:1024px){.intro-film-collage .intro-film-sunrise{width:45%!important}}
+@media(max-width:760px){.intro-film-collage .intro-film-sunrise{width:52%!important}}
+@media(max-width:420px){.intro-film-collage .intro-film-sunrise{width:56%!important}}
+
+/* Keep long labels and project metadata from colliding in narrow layouts. */
+.route-heading h1,.project-detail h1,.work-card-meta h3,.category-tile-title{min-width:0;overflow-wrap:anywhere}
+.work-card-meta{flex-wrap:wrap}
+.work-card-meta h3{max-width:100%}
+@media(max-width:480px){
+ .route-view{padding-left:18px;padding-right:18px}
+ .route-heading h1,.project-detail h1{font-size:clamp(44px,12vw,72px);line-height:1.02}
+ .work-card-meta{align-items:flex-start;gap:8px}
+ .work-card-meta span{white-space:normal}
+}

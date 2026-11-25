@@ -445,3 +445,12 @@ footer{padding:56px var(--pad) 30px;border-top:1px solid #252525;display:grid;gr
  .work-card-meta{align-items:flex-start;gap:8px}
  .work-card-meta span{white-space:normal}
 }
+
+
+/* Small birds film accent above the A Way of Seeing headline. */
+.intro-birds{
+  display:block;width:clamp(104px,10vw,148px);height:auto;aspect-ratio:16/9;
+  object-fit:cover;object-position:center;border:0;margin:0 0 22px;
+  background:#080808;opacity:.94;
+}
+@media(max-width:760px){.intro-birds{width:116px;margin-bottom:16px}}

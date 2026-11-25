@@ -339,3 +339,5 @@ footer{padding:56px var(--pad) 30px;border-top:1px solid #252525;display:grid;gr
 
 /* SC navigation logo */
 .brand{display:inline-flex;align-items:center;justify-content:center;width:48px;height:46px;letter-spacing:0;font-size:0;line-height:0}.brand img{display:block;width:100%;height:100%;object-fit:contain}.brand:hover img{opacity:.82;transition:opacity .2s}@media(max-width:640px){.brand{width:40px;height:39px}}
+
+.route-sound-toggle{position:fixed;z-index:30;right:var(--pad);bottom:22px;border:1px solid rgba(255,255,255,.45);background:rgba(0,0,0,.58);backdrop-filter:blur(8px);color:#eee;padding:9px 13px;font-size:9px;letter-spacing:.14em;cursor:pointer}

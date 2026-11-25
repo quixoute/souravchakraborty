@@ -9,11 +9,11 @@ window.PORTFOLIO={
  },
  categories:[
   {id:"commercials",title:"Commercials",description:"Brand films, product stories and social-first visual campaigns.",projects:[
-   {title:"Mumuso",description:"Mumuso × Jessica — brand film.",href:"mumuso.html",image:"mumuso.png",videoId:"LSJQhoILbIQ"},
-   {title:"Commercial Reels",description:"A collection of commercial and social-first films.",href:"r.html",image:"reels.png",videoId:"3Xkhmkpkgxg"},
-   {title:"Spacify",description:"Commercial visual storytelling.",href:"spacify.html",image:"spacify.png",videoId:"OM6LmPrAXyQ"},
-   {title:"Rimi Nayak",description:"Fashion and brand film.",href:"riminayak.html",image:"rimi.png",videoId:"7DN05qqWSvo"},
-   {title:"Turtle",description:"Brand reels and campaign films.",href:"turtle.html",image:"turtle.png",videoId:"h10JM4QkF5w"},{title:"Turtle Reel 02",description:"Brand reel.",href:"turtle.html",image:"turtle.png",videoId:"GtxUGHRSlYI"}]},
+   {title:"Mumuso",description:"Mumuso × Jessica — brand film.",href:"mumuso.html",image:"mumuso.png",videoId:"LSJQhoILbIQ",aspectRatio:"9 / 16"},
+   {title:"Commercial Reels",description:"A collection of commercial and social-first films.",href:"r.html",image:"reels.png",videoId:"3Xkhmkpkgxg",aspectRatio:"9 / 16"},
+   {title:"Spacify",description:"Commercial visual storytelling.",href:"spacify.html",image:"spacify.png",videoId:"OM6LmPrAXyQ",aspectRatio:"9 / 16"},
+   {title:"Rimi Nayak",description:"Fashion and brand film.",href:"riminayak.html",image:"rimi.png",videoId:"7DN05qqWSvo",aspectRatio:"9 / 16"},
+   {title:"Turtle",description:"Brand reels and campaign films.",href:"turtle.html",image:"turtle.png",videoId:"h10JM4QkF5w",aspectRatio:"9 / 16"},{title:"Turtle Reel 02",description:"Brand reel.",href:"turtle.html",image:"turtle.png",videoId:"GtxUGHRSlYI",aspectRatio:"9 / 16"}]},
   {id:"weddings",title:"Weddings",description:"Wedding films, teasers and reels shaped around the people and the moments.",projects:[
    {title:"Sukanya & Sayak",description:"Wedding film.",href:"wedding.html",image:"wedding.png",videoId:"j6KxpiUJJ1Y"},
    {title:"Sayantani & Debarshi",description:"Wedding film.",href:"wedding.html",image:"wedding1.png",videoId:"Zy1IGA-aFNI"},

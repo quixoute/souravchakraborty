@@ -82,7 +82,7 @@
   }else{
    mediaHtml='<img class="category-tile-media" src="'+esc(p.image||"")+'" alt="" loading="lazy">';
   }
-  return '<a class="category-tile" data-category-tile href="'+esc(target)+'">'+mediaHtml+'<span class="category-tile-title">'+esc(p.title)+'</span></a>';
+  return '<a class="category-tile" data-category-tile style="--tile-ratio:'+esc(p.aspectRatio||"16 / 9")+'" href="'+esc(target)+'">'+mediaHtml+'<span class="category-tile-title">'+esc(p.title)+'</span></a>';
  };
  const photoSeries={
   tri:{title:"Tri",description:"A photographic series.",directory:"Tri",prefix:"",extension:"webp",count:14},
@@ -174,7 +174,7 @@
     :first.image?'<img class="category-feature__video" src="'+esc(first.image)+'" alt="">':'';
   mainSections.forEach(s=>s.hidden=true);route.hidden=false;
   const remaining=cat.projects.slice(1);
-  route.innerHTML='<div class="category-showcase-page"><section class="category-feature">'+feature+'</section><div class="category-project-grid">'+remaining.map((p,i)=>imageCard(p,cat.id,i)).join("")+'</div></div>';
+  route.innerHTML='<div class="category-showcase-page '+(id==="commercials"?"commercial-showcase-page":"")+'"><section class="category-feature">'+feature+'</section><div class="category-project-grid">'+remaining.map((p,i)=>imageCard(p,cat.id,i)).join("")+'</div></div>';
   initCategoryTilePlayback();
   scrollTo({top:0,behavior:reduced?"auto":"smooth"});return true;
  };

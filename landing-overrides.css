@@ -386,3 +386,6 @@ html,body{width:100%;max-width:100%;margin:0;overflow-x:hidden}
   .intro-birds-background:after{background:linear-gradient(90deg,rgba(0,0,0,.64),rgba(0,0,0,.28))}
   .intro-birds-background .intro-copy{width:min(100%,520px)!important}
 }
+
+/* Respect hidden state for routed pages; section display styles must not override it. */
+[hidden]{display:none!important}

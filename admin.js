@@ -126,6 +126,7 @@
     $("#logout").hidden = false;
     populateCategoryControls();
     renderProjects();
+    renderTextEditor();
     markClean();
     setStatus(dashboardStatus, "Connected as " + (user.login || "GitHub user") + ". Changes publish to the main branch.", "success");
   }
@@ -134,6 +135,25 @@
     const options = categoryList().map((category) => '<option value="' + escapeHtml(category.id) + '">' + escapeHtml(category.title) + '</option>').join("");
     $("#new-category").innerHTML = options;
     $("#filter-category").innerHTML = '<option value="all">All categories</option>' + options;
+  }
+
+
+  const textGroups = [
+    ["Navigation",["navigation.work","navigation.about","navigation.contact","navigation.menu","navigation.close","navigation.home","navigation.commercials","navigation.weddings","navigation.prewedding","navigation.shortFilms","navigation.photography"]],
+    ["Showreel",["showreel.topLabel","showreel.activeKicker","showreel.recentLabel","showreel.recentHint","showreel.aiLabel","showreel.weddingLabel","showreel.preweddingLabel","showreel.shortLabel","showreel.scrollLabel","showreel.soundOff","showreel.soundOn"]],
+    ["A way of seeing",["intro.eyebrow","intro.headline","intro.body"]],
+    ["Featured section",["feature.eyebrow","feature.headline","feature.body","feature.link"]],
+    ["About",["about.eyebrow","about.headline","about.body1","about.body2","about.link"]],
+    ["Practice & tools",["capabilities.eyebrow","capabilities.directionTitle","capabilities.directionBody","capabilities.editingTitle","capabilities.editingBody","capabilities.aiTitle","capabilities.aiBody","capabilities.photographyTitle","capabilities.photographyBody"]],
+    ["Contact",["contact.eyebrow","contact.headline","contact.subtitle","contact.emailLabel","contact.whatsappLabel","contact.nameLabel","contact.emailFieldLabel","contact.categoryLabel","contact.categoryPlaceholder","contact.budgetLabel","contact.budgetPlaceholder","contact.detailsLabel","contact.detailsPlaceholder","contact.timelineLabel","contact.timelinePlaceholder","contact.submit","contact.note"]],
+    ["Footer",["footer.tagline","footer.emailLabel","footer.instagramLabel","footer.copyright"]]
+  ];
+  function getCopy(path){return path.split(".").reduce((obj,key)=>obj&&obj[key],portfolio.copy||{})??"";}
+  function setCopy(path,value){const parts=path.split(".");let obj=portfolio.copy;for(let i=0;i<parts.length-1;i++){if(!obj[parts[i]])obj[parts[i]]={};obj=obj[parts[i]];}obj[parts[parts.length-1]]=value;}
+  function renderTextEditor(){
+    const root=$("#text-editor");if(!root)return;
+    root.innerHTML=textGroups.map((group,idx)=>'<section class="text-group"><div class="text-group-heading"><h3>'+escapeHtml(group[0])+'</h3><span>'+String(idx+1).padStart(2,"0")+'</span></div><div class="text-fields">'+group[1].map(path=>{const value=String(getCopy(path));const multiline=value.length>85||/headline|body|description|Placeholder|note/i.test(path);const label=path.split(".").slice(1).join(" ").replace(/([A-Z])/g," $1");return '<label class="text-field"><span>'+escapeHtml(label)+'</span>'+(multiline?'<textarea data-copy-path="'+escapeHtml(path)+'" rows="2">'+escapeHtml(value)+'</textarea>':'<input data-copy-path="'+escapeHtml(path)+'" value="'+escapeHtml(value)+'">')+'</label>';}).join("")+'</div></section>').join("");
+    root.querySelectorAll("[data-copy-path]").forEach(el=>el.addEventListener("change",()=>{setCopy(el.dataset.copyPath,el.value);markDirty();}));
   }
 
   function renderProjects() {

@@ -14,6 +14,22 @@
  $(".menu-close").addEventListener("click",closeMenu);$$("a",menu).forEach(a=>a.addEventListener("click",closeMenu));addEventListener("keydown",e=>{if(e.key==="Escape")closeMenu()});
  addEventListener("scroll",()=>nav.classList.toggle("scrolled",scrollY>24),{passive:true});
  $("#year").textContent=new Date().getFullYear();
+ const cp=data.copy||{}, n=cp.navigation||{}, h=cp.showreel||{}, i=cp.intro||{}, f=cp.feature||{}, a=cp.about||{}, c=cp.capabilities||{}, ct=cp.contact||{}, ft=cp.footer||{};
+ const txt=(s,v)=>{const el=$(s);if(el&&v!==undefined)el.textContent=v};
+ const html=(s,v)=>{const el=$(s);if(el&&v!==undefined)el.innerHTML=String(v).replace(/<(?!\\/?(?:em|br)\\b)[^>]*>/gi,"")};
+ txt(".nav-work-trigger",n.work);txt('.desktop a[href="#about"]',n.about);txt('.desktop a[href="#contact"]',n.contact);txt(".menu-toggle",n.menu);txt(".menu-close",n.close);
+ const navKeys={"#home":"home","#work/commercials":"commercials","#work/weddings":"weddings","#work/pre-wedding":"prewedding","#work/short-films":"shortFilms","#work/photography":"photography","#about":"about","#contact":"contact"};$(".mobile-menu a").forEach(el=>{const k=navKeys[el.getAttribute("href")];if(k&&n[k])el.textContent=n[k]});
+ txt(".showreel-top .eyebrow",h.topLabel);txt("#active-kicker",h.activeKicker);txt(".recent-works>.eyebrow",h.recentLabel+" ");
+ const labels={ai:h.aiLabel,wedding:h.weddingLabel,prewedding:h.preweddingLabel,short:h.shortLabel};$(".recent-item").forEach(el=>{const b=$("b",el);if(b&&labels[el.dataset.showreel])b.textContent=labels[el.dataset.showreel]});
+ const recent=$(".recent-works>.eyebrow");if(recent&&h.recentHint){const em=document.createElement("i");em.textContent=h.recentHint;recent.appendChild(em)}
+ txt(".showreel-scroll",h.scrollLabel);txt("#sound-toggle",h.soundOff);
+ txt("#way-of-seeing .eyebrow",i.eyebrow);html("#way-of-seeing h2",i.headline);txt("#way-of-seeing .intro-copy>p:last-child",i.body);
+ txt("#feature .eyebrow",f.eyebrow);html("#feature h2",f.headline);txt("#feature .feature-copy>p:not(.eyebrow)",f.body);txt("#feature .text-link",f.link);
+ txt("#about .about-copy .eyebrow",a.eyebrow);html("#about .about-copy h2",a.headline);const ap=$("#about .about-copy>p:not(.eyebrow)");if(ap[0])ap[0].textContent=a.body1||"";if(ap[1])ap[1].textContent=a.body2||"";txt("#about .about-copy .text-link",a.link);
+ txt(".capabilities>.eyebrow",c.eyebrow);const caps=$(".capabilities>div");[["directionTitle","directionBody"],["editingTitle","editingBody"],["aiTitle","aiBody"],["photographyTitle","photographyBody"]].forEach((keys,j)=>{if(caps[j]){const hh=$("h3",caps[j]),pp=$("p",caps[j]);if(hh)hh.textContent=c[keys[0]]||"";if(pp)pp.textContent=c[keys[1]]||""}});
+ txt(".contact-heading .eyebrow",ct.eyebrow);html(".contact-heading h2",ct.headline);txt(".contact-sub",ct.subtitle);txt(".contact-direct a:first-child",ct.emailLabel);txt(".contact-direct a:last-child",ct.whatsappLabel);
+ const form=$("#enquiry-form");if(form){const ls=$("label",form);const lvals=[ct.nameLabel,ct.emailFieldLabel,ct.categoryLabel,ct.budgetLabel,ct.detailsLabel,ct.timelineLabel];ls.forEach((el,j)=>{if(lvals[j]&&el.firstChild?.nodeType===Node.TEXT_NODE)el.firstChild.textContent=lvals[j]});const sel=$('select[name="Project category"]',form);if(sel&&ct.categoryPlaceholder)sel.options[0].textContent=ct.categoryPlaceholder;const budget=$('input[name="Budget range"]',form),details=$('textarea[name="Project details"]',form),timeline=$('input[name="Timeline"]',form);if(budget)budget.placeholder=ct.budgetPlaceholder||"";if(details)details.placeholder=ct.detailsPlaceholder||"";if(timeline)timeline.placeholder=ct.timelinePlaceholder||"";txt(".enquiry-form .contact-button",ct.submit);txt("#form-note",ct.note)}
+ txt("footer>div:first-child>p",ft.tagline);txt(".footer-links a:first-child",ft.emailLabel);txt(".footer-links a:last-child",ft.instagramLabel);
  const media=$("#showreel-media"),title=$("#active-title"),desc=$("#active-description"),kicker=$("#active-kicker"),counter=$("#showreel-counter"),buttons=$$(".recent-item");
  let activeKey="ai",cycle={wedding:0,prewedding:0,short:0},currentVideo=$("#hero-video"),muted=localStorage.getItem("portfolioSound")!=="on",mediaRequest=0;
  const categoryEntries=(key)=>{
@@ -76,7 +92,7 @@
   }
   localStorage.setItem("portfolioSound",muted?"off":"on");
   const button=$("#sound-toggle");
-  button.textContent=muted?"SOUND OFF":"SOUND ON";
+  button.textContent=muted?(data.copy?.showreel?.soundOff||"SOUND OFF"):(data.copy?.showreel?.soundOn||"SOUND ON");
   button.setAttribute("aria-label",muted?"Turn video sound on":"Turn video sound off");
  });
  const route=$("#route-view"),mainSections=[$("#home"),$("#way-of-seeing"),$("#feature"),$("#about"),$("#contact")];

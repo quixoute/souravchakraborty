@@ -341,3 +341,41 @@ footer{padding:56px var(--pad) 30px;border-top:1px solid #252525;display:grid;gr
 .brand{display:inline-flex;align-items:center;justify-content:center;width:48px;height:46px;letter-spacing:0;font-size:0;line-height:0}.brand img{display:block;width:100%;height:100%;object-fit:contain}.brand:hover img{opacity:.82;transition:opacity .2s}@media(max-width:640px){.brand{width:40px;height:39px}}
 
 .route-sound-toggle{position:fixed;z-index:30;right:var(--pad);bottom:22px;border:1px solid rgba(255,255,255,.45);background:rgba(0,0,0,.58);backdrop-filter:blur(8px);color:#eee;padding:9px 13px;font-size:9px;letter-spacing:.14em;cursor:pointer}
+
+
+/* A Way of Seeing: two differently scaled, offset moving-image fragments.
+   The overlap and unequal widths are intentional; avoid mirrored symmetry. */
+.intro.section{grid-template-columns:minmax(280px,.72fr) minmax(0,1.7fr)!important;gap:clamp(34px,6vw,100px)!important}
+.intro-film.intro-film-collage{
+  position:relative!important;width:100%!important;aspect-ratio:auto!important;
+  height:clamp(390px,42vw,610px)!important;overflow:visible!important;
+  background:transparent!important;isolation:isolate;
+}
+.intro-film-collage video{
+  position:absolute!important;display:block!important;height:auto!important;
+  aspect-ratio:16/9!important;object-fit:cover!important;background:#080808;
+  border:0!important;box-shadow:0 18px 55px rgba(0,0,0,.22);
+}
+.intro-film-collage .intro-film-primary{
+  width:68%!important;left:0!important;top:2%!important;z-index:1;
+}
+.intro-film-collage .intro-film-sunrise{
+  width:49%!important;right:0!important;bottom:2%!important;z-index:2;
+}
+@media(max-width:1024px){
+  .intro.section{grid-template-columns:minmax(230px,.72fr) minmax(0,1.4fr)!important;gap:28px!important}
+  .intro-film.intro-film-collage{height:clamp(330px,48vw,470px)!important}
+  .intro-film-collage .intro-film-primary{width:74%!important;top:4%!important}
+  .intro-film-collage .intro-film-sunrise{width:53%!important;bottom:4%!important}
+}
+@media(max-width:760px){
+  .intro.section{grid-template-columns:1fr!important;gap:28px!important}
+  .intro-film.intro-film-collage{height:clamp(300px,82vw,440px)!important;margin-top:4px}
+  .intro-film-collage .intro-film-primary{width:76%!important;left:0!important;top:0!important}
+  .intro-film-collage .intro-film-sunrise{width:58%!important;right:0!important;bottom:0!important}
+}
+@media(max-width:420px){
+  .intro-film.intro-film-collage{height:300px!important}
+  .intro-film-collage .intro-film-primary{width:82%!important}
+  .intro-film-collage .intro-film-sunrise{width:62%!important}
+}

@@ -205,3 +205,30 @@ html,body{width:100%;max-width:100%;margin:0;overflow-x:hidden}
  .showreel-bottom .recent-works>.eyebrow{font-size:7px!important}
  .showreel-bottom .recent-works .recent-item{min-height:34px!important;padding:6px 0!important}
 }
+
+
+/* Keep the Recent Works selector in its original lower-right hero position. */
+.showreel-bottom{
+  position:absolute!important;
+  top:auto!important;
+  left:auto!important;
+  right:clamp(56px,20vw,420px)!important;
+  bottom:clamp(116px,13.2vh,142px)!important;
+  width:clamp(300px,25vw,440px)!important;
+  height:auto!important;
+  margin:0!important;
+  padding:0!important;
+  transform:none!important;
+}
+.showreel-bottom .recent-works{
+  position:relative!important;
+  top:auto!important;
+  bottom:auto!important;
+  transform:none!important;
+}
+@media(max-width:1100px){
+ .showreel-bottom{right:7vw!important;bottom:110px!important;width:min(45vw,440px)!important}
+}
+@media(max-width:640px){
+ .showreel-bottom{left:22px!important;right:22px!important;bottom:86px!important;width:auto!important}
+}

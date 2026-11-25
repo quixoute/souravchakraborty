@@ -89,7 +89,7 @@ window.PORTFOLIO = {
           "aspectRatio": "9 / 16"
         },
         {
-          "title": "Commercial Reels",
+          "title": "Spacify",
           "description": "A collection of commercial and social-first films.",
           "href": "r.html",
           "image": "reels.png",

@@ -15,7 +15,7 @@
  addEventListener("scroll",()=>nav.classList.toggle("scrolled",scrollY>24),{passive:true});
  $("#year").textContent=new Date().getFullYear();
  const media=$("#showreel-media"),title=$("#active-title"),desc=$("#active-description"),kicker=$("#active-kicker"),counter=$("#showreel-counter"),buttons=$$(".recent-item");
- let activeKey="ai",cycle={wedding:0,prewedding:0},currentVideo=$("#hero-video"),muted=true,mediaRequest=0;
+ let activeKey="ai",cycle={wedding:0,prewedding:0,short:0},currentVideo=$("#hero-video"),muted=true,mediaRequest=0;
  const categoryEntries=(key)=>{
   const categoryId=key==="wedding"?"weddings":key==="prewedding"?"pre-wedding":key==="short"?"short-films":null;
   const category=data.categories.find(c=>c.id===categoryId);

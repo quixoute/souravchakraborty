@@ -144,6 +144,10 @@
   const photoSeriesList=()=>photoSeriesOrder.filter(id=>portfolio?.photography?.[id]);
   const selectedPhotoSeries=()=>portfolio.photography[$("#photo-series").value];
   function populatePhotographyControls(){$("#photo-series").innerHTML=photoSeriesList().map(id=>'<option value="'+escapeHtml(id)+'">'+escapeHtml(portfolio.photography[id].title)+'</option>').join("");}
+  function syncPhotographyProjects(){
+    const category=portfolio.categories.find(item=>item.id==="photography");if(!category)return;
+    photoSeriesList().forEach(id=>{const series=portfolio.photography[id],project=category.projects.find(item=>(item.href||"").endsWith("/"+id));if(project){project.image=series.images[0]||"";project.count=series.images.length+" photographs";}});
+  }
   function renderPhotography(){
     if(!portfolio?.photography)return;const id=$("#photo-series").value||photoSeriesList()[0],series=portfolio.photography[id];if(!series)return;
     const images=series.images||[];
@@ -160,11 +164,11 @@
     const base=safeImageFilename(file.name.replace(/\.[^.]+$/,"")),path=series.directory+"/admin-"+Date.now()+"-"+Math.random().toString(36).slice(2,7)+"-"+base+"."+ext;
     const bytes=new Uint8Array(await file.arrayBuffer());let binary="";for(let i=0;i<bytes.length;i+=0x8000)binary+=String.fromCharCode(...bytes.subarray(i,i+0x8000));
     await github("/repos/"+OWNER+"/"+REPO+"/contents/"+path.split("/").map(encodeURIComponent).join("/"),{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:"Add photography image: "+file.name,content:btoa(binary),branch:"main"})});
-    series.images.push(path);markDirty();
+    series.images.push(path);syncPhotographyProjects();markDirty();
   }
   $("#photo-series").addEventListener("change",renderPhotography);
   $("#photo-files").addEventListener("change",async event=>{const selected=Array.from(event.target.files||[]),id=$("#photo-series").value;if(!selected.length||!id)return;event.target.disabled=true;try{for(let i=0;i<selected.length;i++){setStatus($("#photo-status"),"Uploading "+(i+1)+" of "+selected.length+": "+selected[i].name);await uploadPhotographyFile(selected[i],id);}renderPhotography();setStatus($("#photo-status"),selected.length+" image(s) uploaded to "+portfolio.photography[id].title+". Click Publish Changes to add them to the public gallery.","success");}catch(error){setStatus($("#photo-status"),error.message,"error");renderPhotography();}finally{event.target.disabled=false;event.target.value="";}});
-  $("#photo-url-form").addEventListener("submit",event=>{event.preventDefault();const value=$("#photo-url").value.trim();if(!/^https:\/\//i.test(value)){setStatus($("#photo-status"),"Please use a secure https:// image URL.","error");return;}const series=selectedPhotoSeries();if(!series)return;series.images.push(value);$("#photo-url").value="";markDirty();renderPhotography();});
+  $("#photo-url-form").addEventListener("submit",event=>{event.preventDefault();const value=$("#photo-url").value.trim();if(!/^https:\/\//i.test(value)){setStatus($("#photo-status"),"Please use a secure https:// image URL.","error");return;}const series=selectedPhotoSeries();if(!series)return;series.images.push(value);$("#photo-url").value="";syncPhotographyProjects();markDirty();renderPhotography();});
 
   function renderProjects() {
     if (!portfolio) return;

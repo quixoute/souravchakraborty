@@ -15,7 +15,7 @@
  addEventListener("scroll",()=>nav.classList.toggle("scrolled",scrollY>24),{passive:true});
  $("#year").textContent=new Date().getFullYear();
  const media=$("#showreel-media"),title=$("#active-title"),desc=$("#active-description"),kicker=$("#active-kicker"),counter=$("#showreel-counter"),buttons=$$(".recent-item");
- let activeKey="ai",cycle={wedding:0,prewedding:0,short:0},currentVideo=$("#hero-video"),muted=true,mediaRequest=0;
+ let activeKey="ai",cycle={wedding:0,prewedding:0,short:0},currentVideo=$("#hero-video"),muted=localStorage.getItem("portfolioSound")!=="on",mediaRequest=0;
  const categoryEntries=(key)=>{
   const categoryId=key==="wedding"?"weddings":key==="prewedding"?"pre-wedding":key==="short"?"short-films":null;
   const category=data.categories.find(c=>c.id===categoryId);
@@ -40,7 +40,7 @@
   let next;
   if(entry?.type==="youtube"){
    next=document.createElement("iframe");
-   next.src="https://www.youtube-nocookie.com/embed/"+encodeURIComponent(entry.id)+"?autoplay=1&mute=1&controls=0&playsinline=1&rel=0&modestbranding=1&iv_load_policy=3&enablejsapi=1";
+   next.src="https://www.youtube-nocookie.com/embed/"+encodeURIComponent(entry.id)+"?autoplay=1&mute=1&controls=0&playsinline=1&rel=0&modestbranding=1&enablejsapi=1&iv_load_policy=3&enablejsapi=1";
    next.title=entry.title+" — "+(key==="wedding"?"Wedding teaser":key==="prewedding"?"Pre-wedding teaser":"Short film");
    next.allow="autoplay; encrypted-media; picture-in-picture; fullscreen";
    next.referrerPolicy="strict-origin-when-cross-origin";
@@ -59,7 +59,7 @@
   requestAnimationFrame(()=>{if(request!==mediaRequest)return;next.style.opacity="1";if(old)old.style.opacity="0"});
   setTimeout(()=>{if(request===mediaRequest&&old&&old!==next&&old.parentNode)old.remove()},reduced?0:850);
   currentVideo=next;
-  const sound=$("#sound-toggle");sound.textContent="SOUND OFF";sound.setAttribute("aria-label","Turn video sound on");muted=true;
+  const sound=$("#sound-toggle");sound.textContent=muted?"SOUND OFF":"SOUND ON";sound.setAttribute("aria-label",muted?"Turn video sound on":"Turn video sound off");
  };
  // Expose the selector for the explicit onclick attributes in index.html.
  window.selectShowreel=setMedia;
@@ -74,6 +74,7 @@
    currentVideo.contentWindow?.postMessage(JSON.stringify({event:"command",func:muted?"mute":"unMute",args:[]}),"*");
    currentVideo.contentWindow?.postMessage(JSON.stringify({event:"command",func:"setVolume",args:[100]}),"*");
   }
+  localStorage.setItem("portfolioSound",muted?"off":"on");
   const button=$("#sound-toggle");
   button.textContent=muted?"SOUND OFF":"SOUND ON";
   button.setAttribute("aria-label",muted?"Turn video sound on":"Turn video sound off");
@@ -178,14 +179,16 @@
   const feature=first.videoSrc
    ?'<video class="category-feature__video" style="--media-ratio:'+esc(first.aspectRatio||"16 / 9")+';--media-ratio-width:'+esc((first.aspectRatio||"16 / 9").split(" / ")[0])+';--media-ratio-height:'+esc((first.aspectRatio||"16 / 9").split(" / ")[1])+'" src="'+esc(first.videoSrc)+'" autoplay muted loop playsinline></video>'
    :first.videoId
-    ?'<iframe class="category-feature__video" style="--media-ratio:'+esc(first.aspectRatio||"16 / 9")+';--media-ratio-width:'+esc((first.aspectRatio||"16 / 9").split(" / ")[0])+';--media-ratio-height:'+esc((first.aspectRatio||"16 / 9").split(" / ")[1])+'" src="https://www.youtube-nocookie.com/embed/'+encodeURIComponent(first.videoId)+'?autoplay=1&mute=1&controls=0&loop=1&playlist='+encodeURIComponent(first.videoId)+'&playsinline=1&rel=0&modestbranding=1" title="'+esc(first.title)+'" allow="autoplay; encrypted-media; picture-in-picture" loading="eager"></iframe>'
+    ?'<iframe class="category-feature__video" style="--media-ratio:'+esc(first.aspectRatio||"16 / 9")+';--media-ratio-width:'+esc((first.aspectRatio||"16 / 9").split(" / ")[0])+';--media-ratio-height:'+esc((first.aspectRatio||"16 / 9").split(" / ")[1])+'" src="https://www.youtube-nocookie.com/embed/'+encodeURIComponent(first.videoId)+'?autoplay=1&mute=1&controls=0&loop=1&playlist='+encodeURIComponent(first.videoId)+'&playsinline=1&rel=0&modestbranding=1&enablejsapi=1" title="'+esc(first.title)+'" allow="autoplay; encrypted-media; picture-in-picture" loading="eager"></iframe>'
     :first.image?'<img class="category-feature__video" style="--media-ratio:'+esc(first.aspectRatio||"16 / 9")+'" src="'+esc(first.image)+'" alt="">':'';
   mainSections.forEach(s=>s.hidden=true);route.hidden=false;
   const remaining=cat.projects.slice(1);
-  route.innerHTML='<div class="category-showcase-page '+(id==="commercials"?"commercial-showcase-page":"")+'"><section class="category-feature">'+feature+'</section><div class="category-project-grid">'+remaining.map((p,i)=>imageCard(p,cat.id,i)).join("")+'</div></div>';
+  route.innerHTML='<div class="category-showcase-page '+(id==="commercials"?"commercial-showcase-page":"")+'"><section class="category-feature">'+feature+'</section><button class="route-sound-toggle" type="button">SOUND OFF</button><div class="category-project-grid">'+remaining.map((p,i)=>imageCard(p,cat.id,i)).join("")+'</div></div>';
+  bindRouteSound();
   initCategoryTilePlayback();
   scrollTo({top:0,behavior:reduced?"auto":"smooth"});return true;
  };
+ const bindRouteSound=()=>{const b=$(".route-sound-toggle",route);if(!b)return;b.textContent=muted?"SOUND OFF":"SOUND ON";b.addEventListener("click",()=>{muted=!muted;localStorage.setItem("portfolioSound",muted?"off":"on");b.textContent=muted?"SOUND OFF":"SOUND ON";$("video",route).forEach(v=>{v.muted=muted;if(!muted)v.play().catch(()=>{});});$("iframe",route).forEach(f=>{f.contentWindow?.postMessage(JSON.stringify({event:"command",func:muted?"mute":"unMute",args:[]}),"*");});});};
  const initCategoryTilePlayback=()=>{
   const tiles=$$("[data-category-tile]");
   if(!("IntersectionObserver" in window)){
@@ -201,7 +204,7 @@
   const video=$("video[data-src]",tile);
   if(frame){
    const id=frame.dataset.videoId;
-   if(visible&&!frame.src)frame.src="https://www.youtube-nocookie.com/embed/"+encodeURIComponent(id)+"?autoplay=1&mute=1&controls=0&loop=1&playlist="+encodeURIComponent(id)+"&playsinline=1&rel=0&modestbranding=1";
+   if(visible&&!frame.src)frame.src="https://www.youtube-nocookie.com/embed/"+encodeURIComponent(id)+"?autoplay=1&mute=1&controls=0&loop=1&playlist="+encodeURIComponent(id)+"&playsinline=1&rel=0&modestbranding=1&enablejsapi=1";
    else if(!visible&&frame.src){frame.src="about:blank";frame.removeAttribute("src");}
   }
   if(video){

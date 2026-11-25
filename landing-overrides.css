@@ -358,3 +358,31 @@ html,body{width:100%;max-width:100%;margin:0;overflow-x:hidden}
   .feature h2{font-size:clamp(50px,7.8vw,108px)!important}
   .feature-copy{top:-24px}
 }
+
+/* A Way of Seeing: birds video fills this section only, with copy layered at left. */
+.intro.section.intro-birds-background{
+  position:relative!important;display:flex!important;align-items:center!important;
+  min-height:90svh!important;overflow:hidden!important;isolation:isolate;
+  padding:clamp(48px,7vw,100px) var(--pad)!important;
+  background:#080808!important;
+}
+.intro-birds-background>.intro-birds{
+  position:absolute!important;inset:0!important;z-index:-2!important;
+  display:block!important;width:100%!important;height:100%!important;
+  max-width:none!important;aspect-ratio:auto!important;object-fit:cover!important;
+  object-position:center!important;margin:0!important;opacity:1!important;
+}
+.intro-birds-background:after{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:linear-gradient(90deg,rgba(0,0,0,.68) 0%,rgba(0,0,0,.38) 42%,rgba(0,0,0,.16) 100%);
+}
+.intro-birds-background .intro-copy{
+  position:relative!important;z-index:1;width:min(100%,520px)!important;
+  max-width:520px!important;
+}
+@media(max-width:760px){
+  .intro.section.intro-birds-background{min-height:78svh!important;padding:88px var(--pad)!important}
+  .intro-birds-background>.intro-birds{object-position:center!important}
+  .intro-birds-background:after{background:linear-gradient(90deg,rgba(0,0,0,.64),rgba(0,0,0,.28))}
+  .intro-birds-background .intro-copy{width:min(100%,520px)!important}
+}

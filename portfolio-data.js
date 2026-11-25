@@ -256,18 +256,18 @@ window.PORTFOLIO = {
           "videoId": "jWXZ7Knp0EI"
         },
         {
-          "title": "Sayantani & Debarshi",
-          "description": "Pre-wedding film.",
-          "href": "Prewedding.html",
-          "image": "prewedding.png",
-          "videoId": "zztWIlzzVQ0"
-        },
-        {
           "title": "Priyanka & Puneet",
           "description": "Pre-wedding film.",
           "href": "Prewedding.html",
           "image": "prewedding.png",
           "videoId": "0bxzEQHPqH8"
+        },
+        {
+          "title": "Sayantani & Debarshi",
+          "description": "Pre-wedding film.",
+          "href": "Prewedding.html",
+          "image": "prewedding.png",
+          "videoId": "zztWIlzzVQ0"
         }
       ]
     },

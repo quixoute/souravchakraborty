@@ -99,8 +99,7 @@
   untitled:{title:"Untitled",description:"A photographic collection.",directory:"Untitled",images:Array.from({length:52},(_,i)=>"Untitled/"+(i+1)+".webp")},
   ubereats:{title:"Uber Eats",description:"A visual project.",directory:"ubereats",images:Array.from({length:12},(_,i)=>"ubereats/"+(i+1)+".webp")}
  };
- photoSeries.fashion={title:"Commercial Work",description:"Fashion and commercial photography collections.",directory:photoSeries.tri.directory,images:photoSeries.tri.images,series:["tri","untitled","ubereats"]};
- photoSeries.ubereats.title="Commercial Work";
+ photoSeries.fashion={title:"Commercial Work",description:"Fashion and commercial photography collections.",directory:photoSeries.tri.directory,images:photoSeries.tri.images,count:78,series:["tri","untitled","ubereats"]};
  const photoSrc=(series,index)=>series.images?.[index]||(series.directory+"/"+(series.prefix||"")+(index+1)+"."+(series.extension||"webp"));
  const photoEntries=(ids)=>{
   const entries=[];
@@ -146,7 +145,7 @@
    const localJitter=Math.round((rand2-.5)*Math.min(62,slot*.34));
    const left=projectIndex?position.left:Math.max(12,Math.min(viewportW-width-12,Math.round(gap+col*slot+((slot-width)/2)+rowShift+localJitter)));
    const top=projectIndex?position.top:48+row*250+Math.round(rand*74);
-   const caption=projectIndex?esc(item.series.title)+' <small>'+String(item.series.images?.length??item.series.count??0).padStart(2,"0")+' PHOTOGRAPHS</small>':String(item.number).padStart(2,"0")+' / '+esc(item.series.title);
+   const caption=projectIndex?esc(item.series.title)+' <small>'+String(item.series.count??item.series.images?.length??0).padStart(2,"0")+' PHOTOGRAPHS</small>':String(item.number).padStart(2,"0")+' / '+esc(item.series.title);
    return item.isStandalone
     ?'<button class="floating-photo floating-photo-standalone" type="button" data-photo-src="'+esc(item.src)+'" data-photo-title="Photography" data-photo-index="0" aria-label="View standalone photography image" style="left:'+left+'px;top:'+top+'px;width:'+width+'px"><img src="'+esc(item.src)+'" alt="Photography" loading="lazy"><span class="floating-photo-caption">01 / PHOTOGRAPHY</span></button>'
     :projectIndex

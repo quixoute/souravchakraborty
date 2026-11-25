@@ -99,10 +99,11 @@
   untitled:{title:"Untitled",description:"A photographic collection.",directory:"Untitled",images:Array.from({length:52},(_,i)=>"Untitled/"+(i+1)+".webp")},
   ubereats:{title:"Uber Eats",description:"A visual project.",directory:"ubereats",images:Array.from({length:12},(_,i)=>"ubereats/"+(i+1)+".webp")}
  };
+ photoSeries.fashion={title:"Fashion",description:"Fashion photography collections.",directory:photoSeries.tri.directory,images:photoSeries.tri.images,series:["tri","untitled"]};
  const photoSrc=(series,index)=>series.images?.[index]||(series.directory+"/"+(series.prefix||"")+(index+1)+"."+(series.extension||"webp"));
  const photoEntries=(ids)=>{
   const entries=[];
-  if(ids.length>1){
+  if(ids.includes("fashion")){
    entries.push({id:"standalone",series:{title:"Photography"},index:0,src:"fcdff11cd40ed32148681d3a7729cdee.jpg",number:1,isStandalone:true});
   }
   ids.forEach(id=>{
@@ -173,7 +174,7 @@
  };
  const showPhotographyIndex=()=>{
   mainSections.forEach(s=>s.hidden=true);route.hidden=false;route.classList.add("photography-route");
-  route.innerHTML=renderFloatingCanvas(Object.keys(photoSeries),'<span>PHOTOGRAPHY / SELECTED WORK</span>');
+  route.innerHTML=renderFloatingCanvas(["fashion","dreamer","ubereats"],'<span>PHOTOGRAPHY / SELECTED WORK</span>');
   bindFloatingGallery();scrollTo({top:0,behavior:reduced?"auto":"smooth"});return true;
  };
  const showCategory=id=>{
@@ -231,7 +232,8 @@
  const showGallery=id=>{
   const series=photoSeries[id];if(!series)return false;
   mainSections.forEach(s=>s.hidden=true);route.hidden=false;route.classList.add("photography-route");
-  route.innerHTML=renderFloatingCanvas([id],'<a href="#work/photography">← ALL PHOTOGRAPHY</a><span>'+esc(series.title)+'</span>');
+  const galleryIds=id==="fashion"?series.series:[id];
+  route.innerHTML=renderFloatingCanvas(galleryIds,'<a href="#work/photography">← ALL PHOTOGRAPHY</a><span>'+esc(series.title)+'</span>');
   bindFloatingGallery();scrollTo({top:0,behavior:reduced?"auto":"smooth"});return true;
  };
  const showProject=id=>{

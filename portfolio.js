@@ -14,6 +14,22 @@
  $(".menu-close").addEventListener("click",closeMenu);$$("a",menu).forEach(a=>a.addEventListener("click",closeMenu));addEventListener("keydown",e=>{if(e.key==="Escape")closeMenu()});
  addEventListener("scroll",()=>nav.classList.toggle("scrolled",scrollY>24),{passive:true});
  $("#year").textContent=new Date().getFullYear();
+ const cp=data.copy||{}, n=cp.navigation||{}, h=cp.showreel||{}, i=cp.intro||{}, f=cp.feature||{}, a=cp.about||{}, c=cp.capabilities||{}, ct=cp.contact||{}, ft=cp.footer||{};
+ const txt=(s,v)=>{const el=$(s);if(!el||v===undefined)return;const node=[...el.childNodes].find(n=>n.nodeType===Node.TEXT_NODE);if(node)node.textContent=v;else el.textContent=v};
+ const html=(s,v)=>{const el=$(s);if(el&&v!==undefined){const safe=String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/&lt;(\/?)(em|br)&gt;/gi,"<$1$2>");el.innerHTML=safe}};
+ txt(".nav-work-trigger",n.work);txt('.desktop a[href="#about"]',n.about);txt('.desktop a[href="#contact"]',n.contact);txt(".menu-toggle",n.menu);txt(".menu-close",n.close);
+ const navKeys={"#home":"home","#work/commercials":"commercials","#work/weddings":"weddings","#work/pre-wedding":"prewedding","#work/short-films":"shortFilms","#work/photography":"photography","#about":"about","#contact":"contact"};$(".mobile-menu a").forEach(el=>{const k=navKeys[el.getAttribute("href")];if(k&&n[k])el.textContent=n[k]});
+ txt(".showreel-top .eyebrow",h.topLabel);txt("#active-kicker",h.activeKicker);txt(".recent-works>.eyebrow",h.recentLabel+" ");txt(".recent-works>.eyebrow i",h.recentHint);
+ const labels={ai:h.aiLabel,wedding:h.weddingLabel,prewedding:h.preweddingLabel,short:h.shortLabel};$(".recent-item").forEach(el=>{const b=$("b",el);if(b&&labels[el.dataset.showreel])b.textContent=labels[el.dataset.showreel]});
+ html("#active-title",h.aiTitle||data.showreel.ai.title);txt("#active-description",h.aiDescription||data.showreel.ai.description);
+ txt(".showreel-scroll",h.scrollLabel);txt("#sound-toggle",h.soundOff);
+ txt("#way-of-seeing .eyebrow",i.eyebrow);html("#way-of-seeing h2",i.headline);txt("#way-of-seeing .intro-copy>p:last-child",i.body);
+ txt("#feature .eyebrow",f.eyebrow);html("#feature h2",f.headline);txt("#feature .feature-copy>p:not(.eyebrow)",f.body);txt("#feature .text-link",f.link);
+ txt("#about .about-copy .eyebrow",a.eyebrow);html("#about .about-copy h2",a.headline);const ap=$("#about .about-copy>p:not(.eyebrow)");if(ap[0])ap[0].textContent=a.body1||"";if(ap[1])ap[1].textContent=a.body2||"";txt("#about .about-copy .text-link",a.link);
+ txt(".capabilities>.eyebrow",c.eyebrow);const caps=$(".capabilities>div");[["directionTitle","directionBody"],["editingTitle","editingBody"],["aiTitle","aiBody"],["photographyTitle","photographyBody"]].forEach((keys,j)=>{if(caps[j]){const hh=$("h3",caps[j]),pp=$("p",caps[j]);if(hh)hh.textContent=c[keys[0]]||"";if(pp)pp.textContent=c[keys[1]]||""}});
+ txt(".contact-heading .eyebrow",ct.eyebrow);html(".contact-heading h2",ct.headline);txt(".contact-sub",ct.subtitle);txt(".contact-direct a:first-child",ct.emailLabel);txt(".contact-direct a:last-child",ct.whatsappLabel);
+ const landingForm=$("#enquiry-form");if(landingForm){const ls=$("label",landingForm);const lvals=[ct.nameLabel,ct.emailFieldLabel,ct.categoryLabel,ct.budgetLabel,ct.detailsLabel,ct.timelineLabel];ls.forEach((el,j)=>{if(lvals[j]&&el.firstChild?.nodeType===Node.TEXT_NODE)el.firstChild.textContent=lvals[j]});const sel=$('select[name="Project category"]',landingForm);if(sel&&ct.categoryPlaceholder)sel.options[0].textContent=ct.categoryPlaceholder;const budget=$('input[name="Budget range"]',landingForm),details=$('textarea[name="Project details"]',landingForm),timeline=$('input[name="Timeline"]',landingForm);if(budget)budget.placeholder=ct.budgetPlaceholder||"";if(details)details.placeholder=ct.detailsPlaceholder||"";if(timeline)timeline.placeholder=ct.timelinePlaceholder||"";txt(".enquiry-form .contact-button",ct.submit);txt("#form-note",ct.note)}
+ txt("footer>div:first-child>p",ft.tagline);txt(".footer-links a:first-child",ft.emailLabel);txt(".footer-links a:last-child",ft.instagramLabel);txt("footer small",ft.copyright+" ");
  const media=$("#showreel-media"),title=$("#active-title"),desc=$("#active-description"),kicker=$("#active-kicker"),counter=$("#showreel-counter"),buttons=$$(".recent-item");
  let activeKey="ai",cycle={wedding:0,prewedding:0,short:0},currentVideo=$("#hero-video"),muted=localStorage.getItem("portfolioSound")!=="on",mediaRequest=0;
  const categoryEntries=(key)=>{
@@ -31,8 +47,8 @@
   else if(entries.length)cycle[key]=0;
   activeKey=key;
   const entry=entries.length?entries[cycle[key]]:null;
-  title.innerHTML=item.title;
-  desc.textContent=item.description;
+  title.innerHTML=(data.copy?.showreel?.[key+"Title"]||item.title);
+  desc.textContent=(data.copy?.showreel?.[key+"Description"]||item.description);
   kicker.textContent="SELECTED WORK";
   counter.textContent=String(["ai","wedding","prewedding","short"].indexOf(key)+1).padStart(2,"0")+" / 04";
   buttons.forEach(b=>{const active=b.dataset.showreel===key;b.classList.toggle("active",active);b.setAttribute("aria-pressed",String(active))});
@@ -61,7 +77,11 @@
   currentVideo=next;
   const sound=$("#sound-toggle");sound.textContent=muted?"SOUND OFF":"SOUND ON";sound.setAttribute("aria-label",muted?"Turn video sound on":"Turn video sound off");
  };
- // Expose the selector for the explicit onclick attributes in index.html.
+ // Bind category controls after all page-copy initialization has completed.
+ // Explicit listeners avoid relying on inline HTML handlers/global scope.
+ buttons.forEach(button=>{
+  button.addEventListener("click",()=>setMedia(button.dataset.showreel));
+ });
  window.selectShowreel=setMedia;
  $("#sound-toggle").addEventListener("click",()=>{
   if(!currentVideo)return;
@@ -76,7 +96,7 @@
   }
   localStorage.setItem("portfolioSound",muted?"off":"on");
   const button=$("#sound-toggle");
-  button.textContent=muted?"SOUND OFF":"SOUND ON";
+  button.textContent=muted?(data.copy?.showreel?.soundOff||"SOUND OFF"):(data.copy?.showreel?.soundOn||"SOUND ON");
   button.setAttribute("aria-label",muted?"Turn video sound on":"Turn video sound off");
  });
  const route=$("#route-view"),mainSections=[$("#home"),$("#way-of-seeing"),$("#feature"),$("#about"),$("#contact")];

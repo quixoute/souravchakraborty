@@ -456,3 +456,7 @@ footer{padding:56px var(--pad) 30px;border-top:1px solid #252525;display:grid;gr
 @media(max-width:1024px){.intro-birds{width:clamp(180px,22vw,220px)}}
 @media(max-width:760px){.intro-birds{width:clamp(150px,42vw,190px);margin-bottom:16px}}
 @media(max-width:420px){.intro-birds{width:150px}}
+
+
+/* Keep nested photography project cards above the canvas and clickable. */
+.route-view.photography-route .floating-project{z-index:4;pointer-events:auto;cursor:pointer}

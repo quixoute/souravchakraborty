@@ -357,7 +357,7 @@ footer{padding:56px var(--pad) 30px;border-top:1px solid #252525;display:grid;gr
   border:0!important;box-shadow:0 18px 55px rgba(0,0,0,.22);
 }
 .intro-film-collage .intro-film-primary{
-  width:68%!important;left:0!important;top:2%!important;z-index:1;
+  width:54%!important;left:0!important;top:2%!important;z-index:1;
 }
 .intro-film-collage .intro-film-sunrise{
   width:35%!important;right:0!important;bottom:2%!important;z-index:2;
@@ -365,17 +365,17 @@ footer{padding:56px var(--pad) 30px;border-top:1px solid #252525;display:grid;gr
 @media(max-width:1024px){
   .intro.section{grid-template-columns:minmax(230px,.72fr) minmax(0,1.4fr)!important;gap:28px!important}
   .intro-film.intro-film-collage{height:clamp(330px,48vw,470px)!important}
-  .intro-film-collage .intro-film-primary{width:74%!important;top:4%!important}
+  .intro-film-collage .intro-film-primary{width:62%!important;top:4%!important}
   .intro-film-collage .intro-film-sunrise{width:40%!important;bottom:4%!important}
 }
 @media(max-width:760px){
   .intro.section{grid-template-columns:1fr!important;gap:28px!important}
   .intro-film.intro-film-collage{height:clamp(300px,82vw,440px)!important;margin-top:4px}
-  .intro-film-collage .intro-film-primary{width:76%!important;left:0!important;top:0!important}
+  .intro-film-collage .intro-film-primary{width:66%!important;left:0!important;top:0!important}
   .intro-film-collage .intro-film-sunrise{width:48%!important;right:0!important;bottom:0!important}
 }
 @media(max-width:420px){
   .intro-film.intro-film-collage{height:300px!important}
-  .intro-film-collage .intro-film-primary{width:82%!important}
+  .intro-film-collage .intro-film-primary{width:70%!important}
   .intro-film-collage .intro-film-sunrise{width:50%!important}
 }

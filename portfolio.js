@@ -99,7 +99,8 @@
   untitled:{title:"Untitled",description:"A photographic collection.",directory:"Untitled",images:Array.from({length:52},(_,i)=>"Untitled/"+(i+1)+".webp")},
   ubereats:{title:"Uber Eats",description:"A visual project.",directory:"ubereats",images:Array.from({length:12},(_,i)=>"ubereats/"+(i+1)+".webp")}
  };
- photoSeries.fashion={title:"Fashion",description:"Fashion photography collections.",directory:photoSeries.tri.directory,images:photoSeries.tri.images,series:["tri","untitled"]};
+ photoSeries.fashion={title:"Fashion",description:"Fashion photography collections.",directory:photoSeries.tri.directory,images:photoSeries.tri.images,series:["tri","untitled","ubereats"]};
+ photoSeries.ubereats.title="Commercial Work";
  const photoSrc=(series,index)=>series.images?.[index]||(series.directory+"/"+(series.prefix||"")+(index+1)+"."+(series.extension||"webp"));
  const photoEntries=(ids)=>{
   const entries=[];
@@ -174,7 +175,7 @@
  };
  const showPhotographyIndex=()=>{
   mainSections.forEach(s=>s.hidden=true);route.hidden=false;route.classList.add("photography-route");
-  route.innerHTML=renderFloatingCanvas(["fashion","dreamer","ubereats"],'<span>PHOTOGRAPHY / SELECTED WORK</span>');
+  route.innerHTML=renderFloatingCanvas(["fashion","dreamer"],'<span>PHOTOGRAPHY / SELECTED WORK</span>');
   bindFloatingGallery();scrollTo({top:0,behavior:reduced?"auto":"smooth"});return true;
  };
  const showCategory=id=>{

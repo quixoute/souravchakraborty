@@ -81,11 +81,11 @@ window.PORTFOLIO = {
           "videoId": "GOVlnItgDXk"
         },
         {
-          "title": "Mumuso",
-          "description": "Mumuso × Jessica — brand film.",
-          "href": "mumuso.html",
-          "image": "mumuso.png",
-          "videoId": "LSJQhoILbIQ",
+          "title": "Rimi Nayak",
+          "description": "Fashion and brand film.",
+          "href": "riminayak.html",
+          "image": "rimi.png",
+          "videoId": "7DN05qqWSvo",
           "aspectRatio": "9 / 16"
         },
         {
@@ -97,22 +97,6 @@ window.PORTFOLIO = {
           "aspectRatio": "9 / 16"
         },
         {
-          "title": "Spacify",
-          "description": "Commercial visual storytelling.",
-          "href": "spacify.html",
-          "image": "spacify.png",
-          "videoId": "OM6LmPrAXyQ",
-          "aspectRatio": "9 / 16"
-        },
-        {
-          "title": "Rimi Nayak",
-          "description": "Fashion and brand film.",
-          "href": "riminayak.html",
-          "image": "rimi.png",
-          "videoId": "7DN05qqWSvo",
-          "aspectRatio": "9 / 16"
-        },
-        {
           "title": "Turtle",
           "description": "Brand reels and campaign films.",
           "href": "turtle.html",
@@ -121,11 +105,27 @@ window.PORTFOLIO = {
           "aspectRatio": "9 / 16"
         },
         {
-          "title": "Turtle Reel 02",
+          "title": "Turtle",
           "description": "Brand reel.",
           "href": "turtle.html",
           "image": "turtle.png",
           "videoId": "GtxUGHRSlYI",
+          "aspectRatio": "9 / 16"
+        },
+        {
+          "title": "Spacify",
+          "description": "Commercial visual storytelling.",
+          "href": "spacify.html",
+          "image": "spacify.png",
+          "videoId": "OM6LmPrAXyQ",
+          "aspectRatio": "9 / 16"
+        },
+        {
+          "title": "Mumuso",
+          "description": "Mumuso × Jessica — brand film.",
+          "href": "mumuso.html",
+          "image": "mumuso.png",
+          "videoId": "LSJQhoILbIQ",
           "aspectRatio": "9 / 16"
         }
       ]

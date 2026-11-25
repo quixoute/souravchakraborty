@@ -15,7 +15,7 @@
  addEventListener("scroll",()=>nav.classList.toggle("scrolled",scrollY>24),{passive:true});
  $("#year").textContent=new Date().getFullYear();
  const media=$("#showreel-media"),title=$("#active-title"),desc=$("#active-description"),kicker=$("#active-kicker"),counter=$("#showreel-counter"),buttons=$$(".recent-item");
- let activeKey="ai",cycle={wedding:0,prewedding:0,short:0},currentVideo=$("#hero-video"),muted=true,mediaRequest=0;
+ let activeKey="ai",cycle={wedding:0,prewedding:0,short:0},currentVideo=$("#hero-video"),muted=localStorage.getItem("portfolioSound")!=="on",mediaRequest=0;
  const categoryEntries=(key)=>{
   const categoryId=key==="wedding"?"weddings":key==="prewedding"?"pre-wedding":key==="short"?"short-films":null;
   const category=data.categories.find(c=>c.id===categoryId);
@@ -59,7 +59,7 @@
   requestAnimationFrame(()=>{if(request!==mediaRequest)return;next.style.opacity="1";if(old)old.style.opacity="0"});
   setTimeout(()=>{if(request===mediaRequest&&old&&old!==next&&old.parentNode)old.remove()},reduced?0:850);
   currentVideo=next;
-  const sound=$("#sound-toggle");sound.textContent="SOUND OFF";sound.setAttribute("aria-label","Turn video sound on");muted=true;
+  const sound=$("#sound-toggle");sound.textContent=muted?"SOUND OFF":"SOUND ON";sound.setAttribute("aria-label",muted?"Turn video sound on":"Turn video sound off");
  };
  // Expose the selector for the explicit onclick attributes in index.html.
  window.selectShowreel=setMedia;
@@ -74,6 +74,7 @@
    currentVideo.contentWindow?.postMessage(JSON.stringify({event:"command",func:muted?"mute":"unMute",args:[]}),"*");
    currentVideo.contentWindow?.postMessage(JSON.stringify({event:"command",func:"setVolume",args:[100]}),"*");
   }
+  localStorage.setItem("portfolioSound",muted?"off":"on");
   const button=$("#sound-toggle");
   button.textContent=muted?"SOUND OFF":"SOUND ON";
   button.setAttribute("aria-label",muted?"Turn video sound on":"Turn video sound off");
@@ -182,10 +183,12 @@
     :first.image?'<img class="category-feature__video" style="--media-ratio:'+esc(first.aspectRatio||"16 / 9")+'" src="'+esc(first.image)+'" alt="">':'';
   mainSections.forEach(s=>s.hidden=true);route.hidden=false;
   const remaining=cat.projects.slice(1);
-  route.innerHTML='<div class="category-showcase-page '+(id==="commercials"?"commercial-showcase-page":"")+'"><section class="category-feature">'+feature+'</section><div class="category-project-grid">'+remaining.map((p,i)=>imageCard(p,cat.id,i)).join("")+'</div></div>';
+  route.innerHTML='<div class="category-showcase-page '+(id==="commercials"?"commercial-showcase-page":"")+'"><section class="category-feature">'+feature+'</section><button class="route-sound-toggle" type="button">SOUND OFF</button><div class="category-project-grid">'+remaining.map((p,i)=>imageCard(p,cat.id,i)).join("")+'</div></div>';
+  bindRouteSound();
   initCategoryTilePlayback();
   scrollTo({top:0,behavior:reduced?"auto":"smooth"});return true;
  };
+ const bindRouteSound=()=>{const b=$(".route-sound-toggle",route);if(!b)return;b.textContent=muted?"SOUND OFF":"SOUND ON";b.addEventListener("click",()=>{muted=!muted;localStorage.setItem("portfolioSound",muted?"off":"on");b.textContent=muted?"SOUND OFF":"SOUND ON";$("video",route).forEach(v=>{v.muted=muted;if(!muted)v.play().catch(()=>{});});$("iframe",route).forEach(f=>{f.contentWindow?.postMessage(JSON.stringify({event:"command",func:muted?"mute":"unMute",args:[]}),"*");});});};
  const initCategoryTilePlayback=()=>{
   const tiles=$$("[data-category-tile]");
   if(!("IntersectionObserver" in window)){
